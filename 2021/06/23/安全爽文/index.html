@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="SX1ang&#39;s blog">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      安全爽文 | SX1ang
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>SX1ang</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>安全爽文</h2>
+  <p class="post-date">2021-06-23</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><blockquote>
+<p>  记录学习过程中一些零散的知识。持续更新中。。。</p>
+</blockquote>
+<p>➜ 在用 binwalk -Me 解包时，面对某些文件系统的时候可能不大好用，所以常备一个专业的工具(firmware-mod-kit)。<strong>firmware-mod-kit</strong>工具的功能和binwalk工具的类似，其实firmware-mod-kit工具在功能上有调用binwalk工具提供的功能以及其他的固件解包工具的整合。 </p>
+<p>➜ MIPS，所以天生没有NX，MIPS硬件不支持NX。</p>
+<p>➜ uboot详解<br>(1)uboot详解——板子刚上电时都干了些什么<a target="_blank" rel="noopener" href="https://blog.csdn.net/lee244868149/article/details/49681987?spm=1001.2014.3001.5501">https://blog.csdn.net/lee244868149/article/details/49681987?spm=1001.2014.3001.5501</a></p>
+<p>➜ Typora中插入视频问题：<a target="_blank" rel="noopener" href="https://elmagnifico.tech/2020/09/28/Typora-Video/">https://elmagnifico.tech/2020/09/28/Typora-Video/</a><br>主要问题是与qq录频有关，需要视频转码工具将视频格式mp4v转换成avc</p>
+<p>➜ linux常见保护机制详解：<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-262639.htm">https://bbs.pediy.com/thread-262639.htm</a></p>
+<p>➜ armel、armhf和arm64</p>
+<p>​        <a target="_blank" rel="noopener" href="https://www.cnblogs.com/hustdc/p/7224980.html">https://www.cnblogs.com/hustdc/p/7224980.html</a></p>
+<p>​        <a target="_blank" rel="noopener" href="http://www.vjiot.net/typecho/index.php/archives/75/">http://www.vjiot.net/typecho/index.php/archives/75/</a></p>
+<p>➜ MIPS中的分支延迟槽：<a target="_blank" rel="noopener" href="https://blog.csdn.net/LJL1603/article/details/6553957#:~:text=%E5%88%86%E6%94%AF%E5%BB%B6%E8%BF%9F%E6%A7%BD(Branch%20delay,%E5%88%86%E6%94%AF%E6%8C%87%E4%BB%A4%E6%8F%90%E4%BA%A4(commit)%E3%80%82">https://blog.csdn.net/LJL1603/article/details/6553957#:~:text=%E5%88%86%E6%94%AF%E5%BB%B6%E8%BF%9F%E6%A7%BD(Branch%20delay,%E5%88%86%E6%94%AF%E6%8C%87%E4%BB%A4%E6%8F%90%E4%BA%A4(commit)%E3%80%82</a></p>
+<p>➜ 切换glibc版本：<a target="_blank" rel="noopener" href="https://www.wangan.com/docs/1426">https://www.wangan.com/docs/1426</a></p>
+<p>➜ 命令注入绕过：<a target="_blank" rel="noopener" href="https://uuzdaisuki.com/2020/07/15/%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E7%BB%95%E8%BF%87%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/">https://uuzdaisuki.com/2020/07/15/%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E7%BB%95%E8%BF%87%E6%96%B9%E5%BC%8F%E6%80%BB%E7%BB%93/</a></p>
+<p>➜ 芯片手册：<a target="_blank" rel="noopener" href="https://www.alldatasheet.com/">https://www.alldatasheet.com/</a></p>
+<p>➜ 确定路由器的web服务：</p>
+<ol>
+<li>  <code>grep -ri &quot;etc/passwd&quot;</code> ，路由器密码一般是从/etc/passwd中获取；</li>
+<li> <code>find httpd</code>。</li>
+</ol>
+<p>➜ 调试开启PIE和多进程程序的方法：</p>
+<p>➜ IOT环境搭建–如何使用qemu运行各种指令架构程序：<a target="_blank" rel="noopener" href="https://island123.github.io/2020/02/12/IOT%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA--%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8qemu%E8%BF%90%E8%A1%8C%E5%90%84%E7%A7%8D%E6%8C%87%E4%BB%A4%E6%9E%B6%E6%9E%84%E7%A8%8B%E5%BA%8F/#%E4%BD%BF%E7%94%A8docker%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8-armhf%E4%B8%BA%E4%BE%8B">https://island123.github.io/2020/02/12/IOT%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA--%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8qemu%E8%BF%90%E8%A1%8C%E5%90%84%E7%A7%8D%E6%8C%87%E4%BB%A4%E6%9E%B6%E6%9E%84%E7%A8%8B%E5%BA%8F/#%E4%BD%BF%E7%94%A8docker%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8-armhf%E4%B8%BA%E4%BE%8B</a></p>
+<p>➜ <a target="_blank" rel="noopener" href="https://ctf101.org/binary-exploitation/relocation-read-only/">https://ctf101.org/binary-exploitation/relocation-read-only/</a></p>
+<p>➜ Hexo博客谷歌收录验证，将验证文件放到博客目录的source目录下即可：</p>
+<p><img src="/2021/06/23/%E5%AE%89%E5%85%A8%E7%88%BD%E6%96%87/image-20211020221021654.png"></p>
+<p>➜ Python字符串前缀u、R、B、f的含义,urbf：<a target="_blank" rel="noopener" href="https://www.pythonf.cn/read/146684">https://www.pythonf.cn/read/146684</a></p>
+<p>➜ Ubuntu18.04安装过程中分区窗口太小：Alt+F7+鼠标左键可以移动窗口。</p>
+<p>➜ scp传输文件输入密码后报错：<code>Permission denied, please try again.</code>，解决办法：<a target="_blank" rel="noopener" href="https://www.cxyzjd.com/article/qq_37382077/89409304">https://www.cxyzjd.com/article/qq_37382077/89409304</a></p>
+<p>注意最后要重启ssh服务。</p>
+<p>➜ qemu-system虚拟机无法安装软件包：</p>
+<p><img src="/2021/06/23/%E5%AE%89%E5%85%A8%E7%88%BD%E6%96%87/image-20211206115520817.png"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;deb http:&#x2F;&#x2F;archive.debian.org&#x2F;debian&#x2F; wheezy main contrib non-free&quot; &gt;&#x2F;etc&#x2F;apt&#x2F;sources.list</span><br></pre></td></tr></table></figure>
+<p>➜ 【原创】使用buildroot创建自己的交叉编译工具链：<a target="_blank" rel="noopener" href="https://blog.csdn.net/linczone/article/details/45894181?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param">https://blog.csdn.net/linczone/article/details/45894181?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param</a></p>
+<p>➜ ubuntu18.04在使用apt安装qemu的时候，qemu的版本是2.x，在使用gdb-multiarch调试程序的时候，qemu会崩溃报错，需要源码安装更高版本qemu，可以安装qemu5.0版本：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd qemu</span><br><span class="line">.&#x2F;configure --prefix&#x3D;&#x2F;usr&#x2F;local</span><br><span class="line">make</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+<p>源码编译安装之后没有qemu-user-static的程序，需要静态再编译一次：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;configure --static --prefix&#x3D;&quot;$PWD&#x2F;qemu-user-static&quot; --disable-system --enable-linux-user</span><br><span class="line">make</span><br><span class="line">sudo make install </span><br></pre></td></tr></table></figure>
+<p>编译有警告可以不用管，make install之后才会在qemu-user-static目录下看到编译出来的二进制程序。</p>
+<p>➜ linux应用编程：<a target="_blank" rel="noopener" href="https://blog.51cto.com/u_9291927/category8.html">https://blog.51cto.com/u_9291927/category8.html</a></p>
+<p>➜ linux系统移植：<a target="_blank" rel="noopener" href="https://blog.51cto.com/u_9291927/category5.html">https://blog.51cto.com/u_9291927/category5.html</a></p>
+<p>➜ <a target="_blank" rel="noopener" href="https://blog.51cto.com/u_9291927/1829971">嵌入式linux项目开发（一）——web数据交互</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#其他" >
+    <span class="tag-code">其他</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2021/06/05/CVE-2018-5767/">
+        <span class="nav-arrow">← </span>
+        
+          CVE-2018-5767
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2021/06/23/%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/">
+        
+          施耐德充电桩系列漏洞复现
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="nav">none</ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/2021/06/23/安全爽文/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2023 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

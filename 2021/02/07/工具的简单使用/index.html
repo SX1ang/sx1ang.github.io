@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="SX1ang&#39;s blog">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      工具的简单使用 | SX1ang
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>SX1ang</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>工具的简单使用</h2>
+  <p class="post-date">2021-02-07</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h2 id="gdb"><a href="#gdb" class="headerlink" title="gdb"></a>gdb</h2><p>➜ 对于开启PIE保护的程序，能够比较方便的下断点，要安装pwndbg插件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">b *$rebase(偏移)</span><br><span class="line">b *$rebase(0x110)</span><br></pre></td></tr></table></figure>
+<p>➜ 输出详细信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">context.log_level &#x3D; &quot;debug&quot;</span><br></pre></td></tr></table></figure>
+<p>➜ 如果想要在exp发送完payload之后查看程序的运行状态，有两种方法：</p>
+<ol>
+<li><p> <code>io = gdb.debug([&#39;./valun_file&#39;], &quot;b main&quot;)</code></p>
+</li>
+<li><p>在send payload的代码之后加上：</p>
+<p> <code>pause() # 按任何一个按键exp就会继续运行</code></p>
+<p> 然后exp在发送完payload之后就会让程序挂起，并打印进程id，然后可以再开一个终端，打开gdb，用<code>attach 进程id</code>命令去 attach 程序并进行调试。</p>
+</li>
+</ol>
+<p>➜ 运行完当前函数的命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">finish&#x2F;return</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h2 id="pwntools"><a href="#pwntools" class="headerlink" title="pwntools"></a>pwntools</h2><p><a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-247217.htm">https://bbs.pediy.com/thread-247217.htm</a></p>
+<p>在ubuntu16.04上安装参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/asd413850393/article/details/101349924">https://blog.csdn.net/asd413850393/article/details/101349924</a></p>
+<p>建议ubuntu16.04 apt换aliyun源。</p>
+<h2 id="IDA-Pro"><a href="#IDA-Pro" class="headerlink" title="IDA Pro"></a>IDA Pro</h2><p>➜ ascii转换成字符：R键；字符转换成ascii：H键</p>
+<h2 id="ropper"><a href="#ropper" class="headerlink" title="ropper"></a>ropper</h2><p>ropper -f [文件名] –search [“指令”]</p>
+<p>ropper -f pwn-2 –search “pop rdi; ret”<br>（注意rdi后面的分号和空格）</p>
+<h2 id="ROPgadget"><a href="#ROPgadget" class="headerlink" title="ROPgadget"></a>ROPgadget</h2><p>ROPgadget –binary [文件名] –only [“指令”]</p>
+<p>ROPgadget –binary filename –only “pop|ret”</p>
+<h2 id="cyclic"><a href="#cyclic" class="headerlink" title="cyclic"></a>cyclic</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">webysx@webysx-virtual-machine:~$ cyclic -h</span><br><span class="line">usage: pwn cyclic [-h] [-a alphabet] [-n length] [-c context]</span><br><span class="line">                  [-l lookup_value]</span><br><span class="line">                  [count]</span><br><span class="line"></span><br><span class="line">positional arguments:</span><br><span class="line">  count                 Number of characters to print</span><br><span class="line"></span><br><span class="line">optional arguments:</span><br><span class="line">  -h, --help            show this help message and exit</span><br><span class="line">  -a alphabet, --alphabet alphabet</span><br><span class="line">                        The alphabet to use in the cyclic pattern (defaults to</span><br><span class="line">                        all lower case letters)</span><br><span class="line">  -n length, --length length</span><br><span class="line">                        Size of the unique subsequences (defaults to 4).</span><br><span class="line">  -c context, --context context</span><br><span class="line">                        The os&#x2F;architecture&#x2F;endianness&#x2F;bits the shellcode will</span><br><span class="line">                        run in (default: linux&#x2F;i386), choose from: [&#39;16&#39;,</span><br><span class="line">                        &#39;32&#39;, &#39;64&#39;, &#39;android&#39;, &#39;cgc&#39;, &#39;freebsd&#39;, &#39;linux&#39;,</span><br><span class="line">                        &#39;windows&#39;, &#39;powerpc64&#39;, &#39;aarch64&#39;, &#39;powerpc&#39;,</span><br><span class="line">                        &#39;sparc64&#39;, &#39;mips64&#39;, &#39;msp430&#39;, &#39;alpha&#39;, &#39;amd64&#39;,</span><br><span class="line">                        &#39;sparc&#39;, &#39;thumb&#39;, &#39;cris&#39;, &#39;i386&#39;, &#39;ia64&#39;, &#39;m68k&#39;,</span><br><span class="line">                        &#39;mips&#39;, &#39;s390&#39;, &#39;none&#39;, &#39;avr&#39;, &#39;arm&#39;, &#39;vax&#39;, &#39;little&#39;,</span><br><span class="line">                        &#39;big&#39;, &#39;be&#39;, &#39;eb&#39;, &#39;le&#39;, &#39;el&#39;]</span><br><span class="line">  -l lookup_value, -o lookup_value, --offset lookup_value, --lookup lookup_value</span><br><span class="line">                        Do a lookup instead printing the alphabet</span><br></pre></td></tr></table></figure>
+<p>通过cyclic [number] 获得一个长度为number的序列。</p>
+<p><img src="/2021/02/07/%E5%B7%A5%E5%85%B7%E7%9A%84%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/image-20210302190804456.png"></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/liuyimin/p/7379985.html">pwntools使用简介2 </a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_37921080/article/details/80594133"> pwn 工具使用小技巧 </a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Tools" >
+    <span class="tag-code">Tools</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+    
+      <a class="nav-right" href="/2021/02/07/%E5%BB%B6%E6%97%B6%E7%BB%91%E5%AE%9A%E5%92%8Cplt%E8%A1%A8-got%E8%A1%A8/">
+        
+          延时绑定和plt表-got表
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#gdb"><span class="toc-nav-text">gdb</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#pwntools"><span class="toc-nav-text">pwntools</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#IDA-Pro"><span class="toc-nav-text">IDA Pro</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#ropper"><span class="toc-nav-text">ropper</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#ROPgadget"><span class="toc-nav-text">ROPgadget</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#cyclic"><span class="toc-nav-text">cyclic</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/2021/02/07/工具的简单使用/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2023 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

