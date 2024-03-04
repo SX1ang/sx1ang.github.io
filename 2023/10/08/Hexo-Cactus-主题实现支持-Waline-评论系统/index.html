@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Cactus 主题暂未集成对 Waline 的支持：https:&#x2F;&#x2F;github.com&#x2F;probberechts&#x2F;hexo-theme-cactus&#x2F;issues&#x2F;343 ，Cactus 作者提示可以自己实现，将 Waline 评论系统集成到 Cactus 主题中，参考：https:&#x2F;&#x2F;github.com&#x2F;probberechts&#x2F;hexo-theme-cactus&#x2F;pull&#x2F;54&#x2F;comm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo Cactus主题实现支持Waline评论系统">
+<meta property="og:url" content="https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:site_name" content="SX1ang&#39;s Blog.">
+<meta property="og:description" content="Cactus 主题暂未集成对 Waline 的支持：https:&#x2F;&#x2F;github.com&#x2F;probberechts&#x2F;hexo-theme-cactus&#x2F;issues&#x2F;343 ，Cactus 作者提示可以自己实现，将 Waline 评论系统集成到 Cactus 主题中，参考：https:&#x2F;&#x2F;github.com&#x2F;probberechts&#x2F;hexo-theme-cactus&#x2F;pull&#x2F;54&#x2F;comm">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/image-20231009095927447.png">
+<meta property="og:image" content="https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/image-20231009101549242.png">
+<meta property="og:image" content="https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/image-20231009140108177.png">
+<meta property="og:image" content="https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/image-20231009113252832.png">
+<meta property="og:image" content="https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/image-20231009113029346.png">
+<meta property="article:published_time" content="2023-10-08T08:51:57.000Z">
+<meta property="article:modified_time" content="2024-02-19T09:18:17.447Z">
+<meta property="article:author" content="SX1ang">
+<meta property="article:tag" content="博客">
+<meta property="article:tag" content="Hexo">
+<meta property="article:tag" content="Cactus">
+<meta property="article:tag" content="Waline">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/image-20231009095927447.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Hexo Cactus主题实现支持Waline评论系统</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="SX1ang&#39;s Blog." type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Archives</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Categories</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tags</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/note/">Note</a></li><!--
+     --><!--
+       --><li><a href="/link/">Links</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2023/12/12/%E6%89%8B%E6%9C%BA-%E8%BD%A6%E6%9C%BA-APP-%E6%8A%93%E5%8F%96-HTTPS-%E6%B5%81%E9%87%8F/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/&text=Hexo Cactus主题实现支持Waline评论系统"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/&title=Hexo Cactus主题实现支持Waline评论系统"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/&is_video=false&description=Hexo Cactus主题实现支持Waline评论系统"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Hexo Cactus主题实现支持Waline评论系统&body=Check out this article: https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/&title=Hexo Cactus主题实现支持Waline评论系统"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/&title=Hexo Cactus主题实现支持Waline评论系统"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/&title=Hexo Cactus主题实现支持Waline评论系统"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/&title=Hexo Cactus主题实现支持Waline评论系统"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/&name=Hexo Cactus主题实现支持Waline评论系统&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/&t=Hexo Cactus主题实现支持Waline评论系统"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%AF%E6%8C%81-Waline"><span class="toc-number">1.</span> <span class="toc-text">支持 Waline</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E5%85%A5-Waline"><span class="toc-number">2.</span> <span class="toc-text">引入 Waline</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AA%E8%A7%A3%E5%86%B3%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">4.</span> <span class="toc-text">未解决的问题</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Hexo Cactus主题实现支持Waline评论系统
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">SX1ang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-10-08T08:51:57.000Z" class="dt-published" itemprop="datePublished">2023-10-08</time>
+        
+        (Updated: <time datetime="2024-02-19T09:18:17.447Z" class="dt-updated" itemprop="dateModified">2024-02-19</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%8D%9A%E5%AE%A2/">博客</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Cactus/" rel="tag">Cactus</a>, <a class="p-category" href="/tags/Hexo/" rel="tag">Hexo</a>, <a class="p-category" href="/tags/Waline/" rel="tag">Waline</a>, <a class="p-category" href="/tags/%E5%8D%9A%E5%AE%A2/" rel="tag">博客</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <blockquote>
+<p>Cactus 主题暂未集成对 Waline 的支持：<a target="_blank" rel="noopener" href="https://github.com/probberechts/hexo-theme-cactus/issues/343">https://github.com/probberechts/hexo-theme-cactus/issues/343</a> ，Cactus 作者提示可以自己实现，将 Waline 评论系统集成到 Cactus 主题中，参考：<a target="_blank" rel="noopener" href="https://github.com/probberechts/hexo-theme-cactus/pull/54/commits">https://github.com/probberechts/hexo-theme-cactus/pull/54/commits</a> 。 </p>
+</blockquote>
+<p>实现 Waline 评论支持需要修改如下文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">themes\cactus\layout\_partial\comments.ejs</span><br><span class="line">themes\cactus\layout\_partial\head.ejs</span><br><span class="line">themes\cactus\layout\_partial\scripts.ejs</span><br></pre></td></tr></table></figure>
+
+<h2 id="支持-Waline"><a href="#支持-Waline" class="headerlink" title="支持 Waline"></a>支持 Waline</h2><p>在 Cactus 主题中，可以通过 themes\cactus\_config.yml 开启并配置 Waline：</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># themes\cactus\_config.yml</span></span><br><span class="line"></span><br><span class="line"><span class="attr">waline:</span></span><br><span class="line">  <span class="attr">enabled:</span> <span class="literal">true</span> <span class="comment"># 是否开启</span></span><br><span class="line">  <span class="attr">serverURL:</span> <span class="string">&#x27;https://xxx.vercel.app&#x27;</span> <span class="comment"># Waline Vercel服务端地址，替换为自己的服务端地址</span></span><br><span class="line">  <span class="attr">avatar:</span> <span class="string">mm</span> <span class="comment"># 头像风格</span></span><br><span class="line">  <span class="attr">meta:</span> [<span class="string">nick</span>, <span class="string">mail</span>] <span class="comment"># 自定义评论框上面的三个输入框的内容</span></span><br><span class="line">  <span class="attr">pageSize:</span> <span class="number">10</span> <span class="comment"># 评论数量多少时显示分页</span></span><br><span class="line">  <span class="attr">lang:</span> <span class="string">zh-CN</span> <span class="comment"># 语言, 可选值: en, zh-CN</span></span><br><span class="line">  <span class="comment"># Warning: 不要同时启用 `waline.visitor` 以及 `leancloud_visitors`.</span></span><br><span class="line">  <span class="attr">visitor:</span> <span class="literal">false</span> <span class="comment"># 文章阅读统计</span></span><br><span class="line">  <span class="attr">comment_count:</span> <span class="literal">true</span> <span class="comment"># 如果为 false , 评论数量只会在当前评论页面显示, 主页则不显示</span></span><br><span class="line">  <span class="attr">requiredFields:</span> [<span class="string">nick</span>, <span class="string">mail</span>] <span class="comment"># 设置用户评论时必填的信息，[nick,mail]: [nick] | [nick, mail]</span></span><br><span class="line">  <span class="attr">emoji:</span> <span class="string">//unpkg.com/@waline/emojis@1.2.0/qq</span></span><br><span class="line">  <span class="attr">dark:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>配置文件的属性可以参考：<a target="_blank" rel="noopener" href="https://waline.js.org/reference/client/props.html">https://waline.js.org/reference/client/props.html</a></p>
+<p>接下来修改 themes\cactus\layout_partial\comments.ejs 支持 Waline：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- themes\cactus\layout\_partial\comments.ejs --&gt;</span><br><span class="line"></span><br><span class="line">&lt;% if(page.comments &amp;&amp; theme.disqus.enabled)&#123; %&gt;</span><br><span class="line">    &lt;div class=&quot;blog-post-comments&quot;&gt;</span><br><span class="line">        &lt;div id=&quot;disqus_thread&quot;&gt;</span><br><span class="line">            &lt;noscript&gt;&lt;%= __(&#x27;comments.no_js&#x27;) %&gt;&lt;/noscript&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;% &#125; %&gt;</span><br><span class="line">&lt;% if(page.comments &amp;&amp; theme.utterances.enabled)&#123; %&gt;</span><br><span class="line">    &lt;div class=&quot;blog-post-comments&quot;&gt;</span><br><span class="line">        &lt;div id=&quot;utterances_thread&quot;&gt;</span><br><span class="line">            &lt;noscript&gt;&lt;%= __(&#x27;comments.no_js&#x27;) %&gt;&lt;/noscript&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;% &#125; %&gt;</span><br><span class="line">&lt;% if(page.comments &amp;&amp; theme.waline &amp;&amp; theme.waline.enabled)&#123; %&gt;</span><br><span class="line">    &lt;div class=&quot;blog-post-comments&quot;&gt;</span><br><span class="line">        &lt;div id=&quot;waline_thread&quot;&gt;&lt;/div&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/image-20231009095927447.png"></p>
+<p>page.comments 表示当前页面是否支持评论，在文章前面设置，Cactus 主题默认在文章中开启，在其他页面中关闭；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">title: Tags and Categories</span><br><span class="line">date: 2017-12-24 23:29:53</span><br><span class="line">tags:</span><br><span class="line">- Foo</span><br><span class="line">- Bar</span><br><span class="line">categories: </span><br><span class="line">- Baz</span><br><span class="line">comments: true</span><br></pre></td></tr></table></figure>
+
+<p>theme.waline.enabled 表示 Waline 评论是否启用。如果页面支持评论并且启用 Waline 评论系统，那么就向网页中插入如下 html 代码：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;blog-post-comments&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;waline_thread&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>其中 waline_thread 在后续初始化 Waline 时会用到。</p>
+<h2 id="引入-Waline"><a href="#引入-Waline" class="headerlink" title="引入 Waline"></a>引入 Waline</h2><p>首先需要在 Cactus 主题的代码中引入 Waline，参考：<a target="_blank" rel="noopener" href="https://waline.js.org/guide/get-started/#html-%E5%BC%95%E5%85%A5-%E5%AE%A2%E6%88%B7%E7%AB%AF">https://waline.js.org/guide/get-started/#html-%E5%BC%95%E5%85%A5-%E5%AE%A2%E6%88%B7%E7%AB%AF</a> 。主要是从外部引入 waline.css 和 waline.mjs 这两个文件。</p>
+<p><strong>引入 waline.css</strong></p>
+<p>在 themes\cactus\layout_partial\head.ejs 文件中引入 waline.css，head.ejs 可以向网页 html 的 &lt;head&gt; 元素中注入代码：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- themes\cactus\layout\_partial\head<span class="selector-class">.ejs</span> --&gt;</span><br><span class="line"></span><br><span class="line">&lt;head&gt;</span><br><span class="line"></span><br><span class="line">    ···</span><br><span class="line">    </span><br><span class="line">  &lt;!-- Waline Comments --&gt;</span><br><span class="line">  &lt;% if (theme<span class="selector-class">.waline</span><span class="selector-class">.enabled</span>)&#123; %&gt;</span><br><span class="line">    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/@waline/client@v2/dist/waline.css<span class="string">&quot;/&gt;</span></span><br><span class="line"><span class="string">  &lt;% &#125; %&gt;</span></span><br><span class="line"><span class="string">&lt;/head&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/image-20231009101549242.png"></p>
+<p>通过 &lt;link&gt;元素从外部引入 waline.css 。</p>
+<p><strong>引入 waline.mjs</strong></p>
+<p>在 themes\cactus\layout_partial\scripts.ejs 文件中引入 waline.mjs，scripts.ejs 可以向网页中注入javascript代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- themes\cactus\layout\_partial\scripts.ejs --&gt;</span><br><span class="line"></span><br><span class="line">···</span><br><span class="line"></span><br><span class="line">&lt;!-- Waline Comments --&gt;</span><br><span class="line">&lt;% if (theme.waline.enabled)&#123; %&gt;</span><br><span class="line">  &lt;script type=&quot;module&quot;&gt;</span><br><span class="line">    import &#123; init &#125; from &#x27;https://unpkg.com/@waline/client@v2/dist/waline.mjs&#x27;;</span><br><span class="line"></span><br><span class="line">    var EMOJI = [&#x27;//unpkg.com/@waline/emojis@1.2.0/weibo&#x27;]</span><br><span class="line">    var META = [&#x27;nick&#x27;, &#x27;mail&#x27;, &#x27;link&#x27;];</span><br><span class="line">    var REQUIREDFIELDS = [&#x27;nick&#x27;, &#x27;mail&#x27;, &#x27;link&#x27;];</span><br><span class="line"></span><br><span class="line">    var emoji = &#x27;&lt;%= theme.waline.emoji %&gt;&#x27;.split(&#x27;,&#x27;).filter(function(item)&#123;</span><br><span class="line">      return item !== &#x27;&#x27;; // filter()返回满足不为空item</span><br><span class="line">    &#125;);</span><br><span class="line">    emoji = emoji.length == 0 ? EMOJI : emoji;</span><br><span class="line"></span><br><span class="line">    var meta = &#x27;&lt;%= theme.waline.meta %&gt;&#x27;.split(&#x27;,&#x27;).filter(function(item)&#123;</span><br><span class="line">      return META.indexOf(item) &gt; -1; // filter()返回满足META.indexOf(item) &gt; -1为true的item</span><br><span class="line">    &#125;);</span><br><span class="line">    meta = meta.length == 0 ? META : meta;</span><br><span class="line"></span><br><span class="line">    var requiredFields = &#x27;&lt;%= theme.waline.requiredFields %&gt;&#x27;.split(&#x27;,&#x27;).filter(function(item)&#123;</span><br><span class="line">      return REQUIREDFIELDS.indexOf(item) &gt; -1; // filter()返回满足META.indexOf(item) &gt; -1为true的item</span><br><span class="line">    &#125;);</span><br><span class="line">    requiredFields = requiredFields.length == 0 ? REQUIREDFIELDS : requiredFields;</span><br><span class="line"></span><br><span class="line">    init(&#123;</span><br><span class="line">      el: &#x27;#waline_thread&#x27;,</span><br><span class="line">      serverURL: &#x27;&lt;%= theme.waline.serverURL %&gt;&#x27;, // Waline 的服务端地址</span><br><span class="line">      path: &#x27;&lt;%= theme.waline.path %&gt;&#x27; == &#x27;&#x27; ? window.location.pathname : &#x27;&lt;%= theme.waline.path %&gt;&#x27;, // 当前文章页路径，用于区分不同的文章页，以保证正确读取该文章页下的评论列表</span><br><span class="line">      lang: &#x27;&lt;%= theme.waline.lang %&gt;&#x27; == &#x27;&#x27; ? &#x27;zh-CN&#x27; : &#x27;&lt;%= theme.waline.lang %&gt;&#x27;, // 多语言支持，未设置默认英文</span><br><span class="line">      emoji: emoji,</span><br><span class="line">      dark: &#x27;&lt;%= theme.waline.dark %&gt;&#x27;, // 暗黑模式适配</span><br><span class="line">      commentSorting: &#x27;&lt;%= theme.waline.commentSorting %&gt;&#x27; == &#x27;&#x27; ? &#x27;latest&#x27; : &#x27;&lt;%= theme.waline.commentSorting %&gt;&#x27;, // 评论列表排序方式</span><br><span class="line">      meta: meta, // 评论者相关属性</span><br><span class="line">      requiredFields: requiredFields, // 设置必填项，默认匿名</span><br><span class="line">      login: &#x27;&lt;%= theme.waline.login %&gt;&#x27;, // 登录模式状态</span><br><span class="line">      wordLimit: &#x27;&lt;%= theme.waline.wordLimit %&gt;&#x27;, // 评论字数限制</span><br><span class="line">      pageSize: &#x27;&lt;%= theme.waline.pageSize %&gt;&#x27; == &#x27;&#x27; ? 10 : &#x27;&lt;%= theme.waline.pageSize %&gt;&#x27;, // 评论列表分页，每页条数</span><br><span class="line">      imageUploader: &#x27;&lt;%= theme.waline.imageUploader %&gt;&#x27;, // 自定义图片上传方法</span><br><span class="line">      highlighter: &#x27;&lt;%= theme.waline.highlighter %&gt;&#x27;, // 代码高亮</span><br><span class="line">      placeholder: &#x27;&lt;%= theme.waline.placeholder %&gt;&#x27;,</span><br><span class="line">      avatar: &#x27;&lt;%= theme.waline.avatar %&gt;&#x27;,</span><br><span class="line">      visitor: &#x27;&lt;%= theme.waline.visitor %&gt;&#x27;,</span><br><span class="line">      comment_count: &#x27;&lt;%= theme.waline.comment_count %&gt;&#x27;,</span><br><span class="line">    &#125;);</span><br><span class="line">  &lt;/script&gt;</span><br><span class="line">&lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/image-20231009140108177.png"></p>
+<p>通过 import 从外部引入 waline.mjs 的 init 函数，并使用 init 从主题配置文件中获取配置用于初始化 Waline。初始化配置参考：<a target="_blank" rel="noopener" href="https://waline.js.org/reference/client/props.html">https://waline.js.org/reference/client/props.html</a> 。上述代码中的 el: ‘#waline_thread’ 就是之前在 comments.ejs 文件中设置的 &lt;div&gt; 元素的 id。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>上述文件都修改完成之后就可以重新 hexo g 生成静态网页，并执行 hexo s 本地查看。效果如下：</p>
+<p><img src="/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/image-20231009113252832.png" alt="image-20231009113252832"></p>
+<p><strong>注意：</strong>如果代码出现 bug 或者配置不正确，都会导致 Waline 不显示，并且 hexo 不一定会报错，需要仔细检查并手动调试排错。</p>
+<h2 id="未解决的问题"><a href="#未解决的问题" class="headerlink" title="未解决的问题"></a>未解决的问题</h2><p>Cactus 主题支持多种配色，主要分为黑白两种模式。Waline 主题也支持黑白两种配色，通过在配置文件中设置 dark: true 来跟随主题颜色改变评论系统的配色，其主要的实现方法是在 html 中注入 style 元素动态修改评论系统的 css 属性，其中 true 就是配置文件中的 dark 属性的值：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span> <span class="attr">id</span>=<span class="string">&quot;waline-darkmode&quot;</span>&gt;</span><span class="language-css">true&#123;<span class="attr">--waline-white</span>:<span class="number">#000</span>;<span class="attr">--waline-light-grey</span>:<span class="number">#666</span>;<span class="attr">--waline-dark-grey</span>:<span class="number">#999</span>;<span class="attr">--waline-color</span>:<span class="number">#888</span>;<span class="attr">--waline-bgcolor</span>:<span class="number">#1e1e1e</span>;<span class="attr">--waline-bgcolor-light</span>:<span class="number">#272727</span>;<span class="attr">--waline-bgcolor-hover</span>: <span class="number">#444</span>;<span class="attr">--waline-border-color</span>:<span class="number">#333</span>;<span class="attr">--waline-disable-bgcolor</span>:<span class="number">#444</span>;<span class="attr">--waline-disable-color</span>:<span class="number">#272727</span>;<span class="attr">--waline-bq-color</span>:<span class="number">#272727</span>;<span class="attr">--waline-info-bgcolor</span>:<span class="number">#272727</span>;<span class="attr">--waline-info-color</span>:<span class="number">#666</span>&#125;</span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>但是设置 dark: true 之后，如上代码不能使评论的颜色随主题切换，暂未解决。</p>
+<p>Waline 默认使用白色配置，如果使用 Cactus 主题的 dark 模式，可以修改 themes\cactus\source\css_partial\comments.styl 文件，强制将 Waline 的背景颜色修改为黑色：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.blog-post-comments</span></span><br><span class="line">  <span class="attribute">margin-top</span>: <span class="number">4rem</span></span><br><span class="line"></span><br><span class="line"><span class="selector-pseudo">:root</span> &#123;</span><br><span class="line">  <span class="comment">/* 常规颜色 */</span></span><br><span class="line">  <span class="attr">--waline-white</span>: <span class="number">#000</span> !important;</span><br><span class="line">  <span class="attr">--waline-light-grey</span>: <span class="number">#666</span> !important;</span><br><span class="line">  <span class="attr">--waline-dark-grey</span>: <span class="number">#999</span> !important;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* 布局颜色 */</span></span><br><span class="line">  <span class="attr">--waline-color</span>: <span class="number">#888</span> !important;</span><br><span class="line">  <span class="attr">--waline-bgcolor</span>: <span class="number">#1e1e1e</span> !important;</span><br><span class="line">  <span class="attr">--waline-bgcolor-light</span>: <span class="number">#272727</span> !important;</span><br><span class="line">  <span class="attr">--waline-border-color</span>: <span class="number">#333</span> !important;</span><br><span class="line">  <span class="attr">--waline-disable-bgcolor</span>: <span class="number">#444</span> !important;</span><br><span class="line">  <span class="attr">--waline-disable-color</span>: <span class="number">#272727</span> !important;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* 特殊颜色 */</span></span><br><span class="line">  <span class="attr">--waline-bq-color</span>: <span class="number">#272727</span> !important;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* 其他颜色 */</span></span><br><span class="line">  <span class="attr">--waline-info-bgcolor</span>: <span class="number">#272727</span> !important;</span><br><span class="line">  <span class="attr">--waline-info-color</span>: <span class="number">#666</span> !important;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>自定义样式参考：<a target="_blank" rel="noopener" href="https://waline.js.org/reference/client/style.html">https://waline.js.org/reference/client/style.html</a> 。修改完效果如下：</p>
+<p><img src="/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/image-20231009113029346.png"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Archives</a></li>
+        
+          <li><a href="/categories/">Categories</a></li>
+        
+          <li><a href="/tags/">Tags</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/note/">Note</a></li>
+        
+          <li><a href="/link/">Links</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%AF%E6%8C%81-Waline"><span class="toc-number">1.</span> <span class="toc-text">支持 Waline</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E5%85%A5-Waline"><span class="toc-number">2.</span> <span class="toc-text">引入 Waline</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AA%E8%A7%A3%E5%86%B3%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">4.</span> <span class="toc-text">未解决的问题</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/&text=Hexo Cactus主题实现支持Waline评论系统"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/&title=Hexo Cactus主题实现支持Waline评论系统"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/&is_video=false&description=Hexo Cactus主题实现支持Waline评论系统"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Hexo Cactus主题实现支持Waline评论系统&body=Check out this article: https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/&title=Hexo Cactus主题实现支持Waline评论系统"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/&title=Hexo Cactus主题实现支持Waline评论系统"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/&title=Hexo Cactus主题实现支持Waline评论系统"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/&title=Hexo Cactus主题实现支持Waline评论系统"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/&name=Hexo Cactus主题实现支持Waline评论系统&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://sx1ang.github.io/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/&t=Hexo Cactus主题实现支持Waline评论系统"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+	Copyright &copy;
+	
+	
+	2023-2024
+	SX1ang
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

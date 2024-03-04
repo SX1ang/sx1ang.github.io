@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="➜ VSCode 配置两次 ssh 连接远程服务器需求：PC 需要连接服务器 A 阅读代码，但是 PC 不能直连服务器 A，其中 PC 可以连接服务器 B ，服务器 B 可以连接服务器 A ； 目标：使用服务器 B 作为跳板机，连接 PC 和服务器 A ； 步骤：  在 PC C:\Users\test\.ssh 路径下运行 ssh-keygen 命令，生成远程连接秘钥文件，并将 id_rsa.p">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Note">
+<meta property="og:url" content="https://sx1ang.github.io/note/index.html">
+<meta property="og:site_name" content="SX1ang&#39;s Blog.">
+<meta property="og:description" content="➜ VSCode 配置两次 ssh 连接远程服务器需求：PC 需要连接服务器 A 阅读代码，但是 PC 不能直连服务器 A，其中 PC 可以连接服务器 B ，服务器 B 可以连接服务器 A ； 目标：使用服务器 B 作为跳板机，连接 PC 和服务器 A ； 步骤：  在 PC C:\Users\test\.ssh 路径下运行 ssh-keygen 命令，生成远程连接秘钥文件，并将 id_rsa.p">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://sx1ang.github.io/note/index/image-20231113095342551.png">
+<meta property="og:image" content="https://sx1ang.github.io/note/index/image-20231113095412706.png">
+<meta property="og:image" content="https://sx1ang.github.io/note/index/image-20231218103438450.png">
+<meta property="og:image" content="https://sx1ang.github.io/note/index/image-20231218123909762.png">
+<meta property="og:image" content="https://sx1ang.github.io/note/index/image-20231218124429756.png">
+<meta property="article:published_time" content="2024-03-04T15:33:50.768Z">
+<meta property="article:modified_time" content="2024-03-04T15:33:50.768Z">
+<meta property="article:author" content="SX1ang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sx1ang.github.io/note/index/image-20231113095342551.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Note</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="SX1ang&#39;s Blog." type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 ">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/logo.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">SX1ang&#39;s Blog.</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">Home</a></li><!--
+   --><!--
+     --><li><a href="/archives/">Archives</a></li><!--
+   --><!--
+     --><li><a href="/categories/">Categories</a></li><!--
+   --><!--
+     --><li><a href="/tags/">Tags</a></li><!--
+   --><!--
+     --><li><a href="/about/">About</a></li><!--
+   --><!--
+     --><li><a href="/note/">Note</a></li><!--
+   --><!--
+     --><li><a href="/link/">Links</a></li><!--
+   --><!--
+     --><li><a href="/search/">Search</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  
+
+  <div class="content" itemprop="articleBody">
+      
+          <h3 id="➜-VSCode-配置两次-ssh-连接远程服务器"><a href="#➜-VSCode-配置两次-ssh-连接远程服务器" class="headerlink" title="➜ VSCode 配置两次 ssh 连接远程服务器"></a>➜ VSCode 配置两次 ssh 连接远程服务器</h3><p>需求：PC 需要连接服务器 A 阅读代码，但是 PC 不能直连服务器 A，其中 PC 可以连接服务器 B ，服务器 B 可以连接服务器 A ；</p>
+<p>目标：使用服务器 B 作为跳板机，连接 PC 和服务器 A ；</p>
+<p>步骤：</p>
+<ol>
+<li><p>在 PC C:\Users\test\.ssh 路径下运行 ssh-keygen 命令，生成远程连接秘钥文件，并将 id_rsa.pub 中的内容复制到服务器 B 的 ~&#x2F;.ssh&#x2F;authorized_keys 文件中，没有 authorized_keys 则新建一个；</p>
+<img src="/note/index/image-20231113095342551.png" style="zoom:200%;">
+
+<img src="/note/index/image-20231113095412706.png" style="zoom:200%;">
+</li>
+<li><p>在服务器 B 中同样运行 ssh-keygen 命令，在 ~&#x2F;.ssh 目录下生成公私钥文件，并将 id_rsa.pub 中的内容复制到服务器 A 的 ~&#x2F;.ssh&#x2F;authorized_keys 文件中，没有 authorized_keys 则新建一个；将 id_rsa 文件下载到 PC 中；</p>
+</li>
+<li><p>PC VSCode 安装 Remote SSH 插件，打开配置文件，输入如下配置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># Read more about SSH config files: https://linux.die.net/man/5/ssh_config</span><br><span class="line">Host ServerB</span><br><span class="line">    HostName x.x.x.x # 服务器B的ip</span><br><span class="line">    User test # ssh远程登录服务器B的用户名</span><br><span class="line">    IdentityFile C:\Users\test\.ssh\id_rsa # PC远程连接服务器B的私钥文件路径</span><br><span class="line">    ForwardAgent yes # 指定是否将与身份验证代理（如果有）的连接转发到远程计算机</span><br><span class="line"></span><br><span class="line">Host ServerA</span><br><span class="line">    HostName x.x.x.x # 服务器A的ip</span><br><span class="line">    ProxyJump ServerB # 先登录ServerB，使用服务器B作为跳板</span><br><span class="line">    User test1 # 服务器B远程登录服务器A的用户名</span><br><span class="line">    IdentityFile C:\Users\test\.ssh\id_rsa-ServerA # 服务器B远程连接服务器A的私钥文件路径（id_rsa下载到PC的本地路径）</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>配置完成之后 PC 即可远程连接服务器 A ，阅读和开发代码。</p>
+<h3 id="➜-linux主机查看监听的端口和对应的服务进程"><a href="#➜-linux主机查看监听的端口和对应的服务进程" class="headerlink" title="➜ linux主机查看监听的端口和对应的服务进程"></a><strong>➜ linux主机查看监听的端口和对应的服务进程</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -tunp</span><br></pre></td></tr></table></figure>
+
+<h3 id="➜-frida-hook"><a href="#➜-frida-hook" class="headerlink" title="➜ frida hook"></a><strong>➜ frida hook</strong></h3><p>frida报错：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Failed to spawn: need Gadget to attach on jailed Android; its default location is: /home/autosec/.cache/frida/gadget-android-arm64.so</span><br></pre></td></tr></table></figure>
+
+<p>解决办法：<a target="_blank" rel="noopener" href="https://github.com/sensepost/objection/pull/579">https://github.com/sensepost/objection/pull/579</a></p>
+<p>pip分别安装对应版本的frida和frida-tools，建议创建一个python虚拟环境，然后再安装：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip install frida==16.0.2</span><br><span class="line">pip install frida-tools==12.0.1</span><br></pre></td></tr></table></figure>
+
+<p>下载16.0.2版本（和frida版本对应）的frida server到设备上，然后给frida server加上执行权限，启动server。</p>
+<p>frida运行hook脚本：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">frida -U -f com.lixiang.car.paintingmaster -l ./okhttp.js</span><br></pre></td></tr></table></figure>
+
+<p>当连接USB的设备有多个时，可以通过-D选项指定设备ID：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">frida -D 2f05abf3a1f -f com.lixiang.car.paintingmaster -l ./okhttp.js</span><br></pre></td></tr></table></figure>
+
+<h3 id="➜-网络爬虫"><a href="#➜-网络爬虫" class="headerlink" title="➜ 网络爬虫"></a><strong>➜ 网络爬虫</strong></h3><p>在编写爬虫爬取网络信息时，可以使用selenium和playwright这些自动化测试框架拉取一个无痕浏览器来加载网页，然后使用xpath解析网页信息。</p>
+<h3 id="➜-adb-root-报错：adbd-cannot-run-as-root-in-production-builds"><a href="#➜-adb-root-报错：adbd-cannot-run-as-root-in-production-builds" class="headerlink" title="➜ adb root 报错：adbd cannot run as root in production builds"></a>➜ adb root 报错：adbd cannot run as root in production builds</h3><img src="/note/index/image-20231218103438450.png" style="zoom:200%;">
+
+<p><strong>解决方法：</strong><a target="_blank" rel="noopener" href="https://github.com/topjohnwu/Magisk/issues/425#issuecomment-1646594803">https://github.com/topjohnwu/Magisk/issues/425#issuecomment-1646594803</a></p>
+<p>设置 ro.debuggable 属性为 1 即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br></pre></td><td class="code"><pre><span class="line">PS D:\&gt; adb shell props</span><br><span class="line"></span><br><span class="line">Loading... Please wait.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">MagiskHide Props Config v6.1.2</span><br><span class="line">by Didgeridoohan @ XDA Developers</span><br><span class="line"></span><br><span class="line">=====================================</span><br><span class="line"> Updating fingerprints list</span><br><span class="line">=====================================</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Checking list version.</span><br><span class="line">Fingerprints list up-to-date.</span><br><span class="line"></span><br><span class="line">Checking for module update.</span><br><span class="line">No update available.</span><br><span class="line"></span><br><span class="line">MagiskHide Props Config v6.1.2</span><br><span class="line">by Didgeridoohan @ XDA Developers</span><br><span class="line"></span><br><span class="line">=====================================</span><br><span class="line"> Select an option below.</span><br><span class="line">=====================================</span><br><span class="line"></span><br><span class="line">1 - Edit device fingerprint</span><br><span class="line">2 - Force BASIC key attestation</span><br><span class="line">3 - Device simulation (disabled)</span><br><span class="line">4 - Edit MagiskHide props (active)</span><br><span class="line">5 - Add/edit custom props</span><br><span class="line">6 - Delete prop values</span><br><span class="line">7 - Script settings</span><br><span class="line">8 - Collect logs</span><br><span class="line">u - Perform module update check</span><br><span class="line">r - Reset all options/settings</span><br><span class="line">b - Reboot device</span><br><span class="line">e - Exit</span><br><span class="line"></span><br><span class="line">See the module readme or the</span><br><span class="line">support thread @ XDA for details.</span><br><span class="line"></span><br><span class="line">Enter your desired option: 5</span><br><span class="line"></span><br><span class="line">MagiskHide Props Config v6.1.2</span><br><span class="line">by Didgeridoohan @ XDA Developers</span><br><span class="line"></span><br><span class="line">=====================================</span><br><span class="line"> Custom props</span><br><span class="line"> Select an option below:</span><br><span class="line">=====================================</span><br><span class="line"></span><br><span class="line">Set or edit custom prop values for your device.</span><br><span class="line"></span><br><span class="line">Currently no custom props set.</span><br><span class="line">Please add one by selecting</span><br><span class="line">&quot;New custom prop&quot; below.</span><br><span class="line"></span><br><span class="line">n - New custom prop</span><br><span class="line">b - Go back to main menu</span><br><span class="line">e - Exit</span><br><span class="line"></span><br><span class="line">See the module readme or the</span><br><span class="line">support thread @ XDA for details.</span><br><span class="line"></span><br><span class="line">Enter your desired option: n</span><br><span class="line"></span><br><span class="line">MagiskHide Props Config v6.1.2</span><br><span class="line">by Didgeridoohan @ XDA Developers</span><br><span class="line"></span><br><span class="line">=====================================</span><br><span class="line"> New custom prop</span><br><span class="line">=====================================</span><br><span class="line"></span><br><span class="line">Enter the prop to set. Example:</span><br><span class="line">ro.sf.lcd_density</span><br><span class="line"></span><br><span class="line">b - Go back</span><br><span class="line">e - Exit</span><br><span class="line"></span><br><span class="line">Enter your desired option: ro.debuggable</span><br><span class="line"></span><br><span class="line">MagiskHide Props Config v6.1.2</span><br><span class="line">by Didgeridoohan @ XDA Developers</span><br><span class="line"></span><br><span class="line">=====================================</span><br><span class="line"> ro.debuggable</span><br><span class="line">=====================================</span><br><span class="line"></span><br><span class="line">ro.debuggable is</span><br><span class="line">one of the sensitive props that can be</span><br><span class="line">set by the MagiskHide props option.</span><br><span class="line"></span><br><span class="line">Are you sure you want to proceed?</span><br><span class="line"></span><br><span class="line">y - Yes</span><br><span class="line">n - No</span><br><span class="line">e - Exit</span><br><span class="line"></span><br><span class="line">Enter your desired option: y</span><br><span class="line"></span><br><span class="line">MagiskHide Props Config v6.1.2</span><br><span class="line">by Didgeridoohan @ XDA Developers</span><br><span class="line"></span><br><span class="line">=====================================</span><br><span class="line"> ro.debuggable</span><br><span class="line">=====================================</span><br><span class="line"></span><br><span class="line">Enter the value you want to set</span><br><span class="line">ro.debuggable to,</span><br><span class="line">or select from the options below.</span><br><span class="line"></span><br><span class="line">The currently set value is:</span><br><span class="line">0</span><br><span class="line">Please enter the new value.</span><br><span class="line"></span><br><span class="line">b - Go back</span><br><span class="line">e - Exit</span><br><span class="line"></span><br><span class="line">Enter your desired option: 1</span><br><span class="line"></span><br><span class="line">MagiskHide Props Config v6.1.2</span><br><span class="line">by Didgeridoohan @ XDA Developers</span><br><span class="line"></span><br><span class="line">=====================================</span><br><span class="line"> ro.debuggable</span><br><span class="line">=====================================</span><br><span class="line"></span><br><span class="line">This will set ro.debuggable to:</span><br><span class="line"></span><br><span class="line">1</span><br><span class="line"></span><br><span class="line">Pick an option below to change</span><br><span class="line">what boot stage the prop will</span><br><span class="line">be set in, or set/reset a delay:</span><br><span class="line"></span><br><span class="line">1 - Default (current)</span><br><span class="line">2 - post-fs-data</span><br><span class="line">3 - late_start service</span><br><span class="line">4 - Both boot stages</span><br><span class="line">d - Delay</span><br><span class="line"></span><br><span class="line">Do you want to continue?</span><br><span class="line"></span><br><span class="line">Enter y(es), n(o), e(xit)</span><br><span class="line">or an option from above: 4</span><br><span class="line"></span><br><span class="line">MagiskHide Props Config v6.1.2</span><br><span class="line">by Didgeridoohan @ XDA Developers</span><br><span class="line"></span><br><span class="line">=====================================</span><br><span class="line"> ro.debuggable</span><br><span class="line">=====================================</span><br><span class="line"></span><br><span class="line">This will set ro.debuggable to:</span><br><span class="line"></span><br><span class="line">1</span><br><span class="line"></span><br><span class="line">Pick an option below to change</span><br><span class="line">what boot stage the prop will</span><br><span class="line">be set in, or set/reset a delay:</span><br><span class="line"></span><br><span class="line">1 - Default</span><br><span class="line">2 - post-fs-data</span><br><span class="line">3 - late_start service</span><br><span class="line">4 - Both boot stages (current)</span><br><span class="line">d - Delay</span><br><span class="line"></span><br><span class="line">Do you want to continue?</span><br><span class="line"></span><br><span class="line">Enter y(es), n(o), e(xit)</span><br><span class="line">or an option from above: y</span><br><span class="line"></span><br><span class="line">Working. Please wait...</span><br><span class="line"></span><br><span class="line">Working. Please wait...</span><br><span class="line"></span><br><span class="line">Working. Please wait...</span><br><span class="line"></span><br><span class="line">Working. Please wait...</span><br><span class="line"></span><br><span class="line">MagiskHide Props Config v6.1.2</span><br><span class="line">by Didgeridoohan @ XDA Developers</span><br><span class="line"></span><br><span class="line">=====================================</span><br><span class="line"> Reboot - ro.debuggable</span><br><span class="line">=====================================</span><br><span class="line"></span><br><span class="line">Reboot for changes to take effect.</span><br><span class="line"></span><br><span class="line">Do you want to reboot now (y/n)?</span><br><span class="line"></span><br><span class="line">Enter y(es), n(o) or e(xit): y</span><br><span class="line"></span><br><span class="line">Rebooting...</span><br><span class="line">PS D:\&gt; adb devices</span><br><span class="line">List of devices attached</span><br><span class="line">8C7X1KERM       device</span><br><span class="line"></span><br><span class="line">PS D:\&gt; adb root</span><br><span class="line">restarting adbd as root</span><br><span class="line">PS D:\&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="➜-adb-remount-报错：Not-running-as-root-Try-“adb-root”-first"><a href="#➜-adb-remount-报错：Not-running-as-root-Try-“adb-root”-first" class="headerlink" title="➜ adb remount 报错：Not running as root. Try “adb root” first."></a>➜ adb remount 报错：Not running as root. Try “adb root” first.</h3><p><strong>问题：</strong>adb root 正常，adb remount报错。</p>
+<img src="/note/index/image-20231218123909762.png" style="zoom:200%;">
+
+<p><strong>解决方法：</strong><a target="_blank" rel="noopener" href="https://medium.com/@tornadohenky1/adb-root-works-but-adb-remount-not-works-troubleshot-google-pixel-2-75a649fd9c15">https://medium.com/@tornadohenky1/adb-root-works-but-adb-remount-not-works-troubleshot-google-pixel-2-75a649fd9c15</a></p>
+<p>adb remount 命令等价于 adb shell mount -o rw,remount,rw &#x2F;system，用于将 &#x2F;system 目录置于可写入的模式，默认情况下 &#x2F;system 是只读模式。</p>
+<img src="/note/index/image-20231218124429756.png" style="zoom:200%;">
+
+<p>&#x2F;system 未挂载，需要先将 &#x2F;system 绑定挂载，然后再修改读写权限：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">blueline:/ # mount --bind /system /system</span><br><span class="line">blueline:/ # mount | grep system</span><br><span class="line">···</span><br><span class="line">/dev/root on /system type ext4 (ro,seclabel,relatime,block_validity,delalloc,barrier,user_xattr,errors=remount-ro)</span><br><span class="line">blueline:/ # mount -o rw,remount,rw /system</span><br><span class="line">blueline:/ # ls -l /</span><br><span class="line">···</span><br><span class="line">drwxr-xr-x  13 root   root      4096 2009-01-01 16:00 system</span><br></pre></td></tr></table></figure>
+
+<h3 id="➜-安装AFL-make-distrib命令编译unicorn报错"><a href="#➜-安装AFL-make-distrib命令编译unicorn报错" class="headerlink" title="➜ 安装AFL++ make distrib命令编译unicorn报错"></a>➜ 安装AFL++ make distrib命令编译unicorn报错</h3><p>cmake版本较低，导致编译报错，解决办法是重新安装高版本cmake：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sudo apt remove --purge --auto-remove cmake</span><br><span class="line">sudo apt update</span><br><span class="line">sudo apt install build-essential libtool autoconf unzip wget libssl-dev</span><br><span class="line">wget https://cmake.org/files/v3.27/cmake-3.27.9.tar.gz</span><br><span class="line">tar -xzvf cmake-3.27.9.tar.gz</span><br><span class="line">cd cmake-3.27.9</span><br><span class="line">./bootstrap</span><br><span class="line">make</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+
+<p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/AFLplusplus/blob/stable/docs/INSTALL.md">https://github.com/AFLplusplus/AFLplusplus/blob/stable/docs/INSTALL.md</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/AFLplusplus/AFLplusplus/issues/1763">https://github.com/AFLplusplus/AFLplusplus/issues/1763</a></p>
+<p><a target="_blank" rel="noopener" href="https://askubuntu.com/questions/355565/how-do-i-install-the-latest-version-of-cmake-from-the-command-line">https://askubuntu.com/questions/355565/how-do-i-install-the-latest-version-of-cmake-from-the-command-line</a></p>
+<h3 id="➜-gdb调试技巧"><a href="#➜-gdb调试技巧" class="headerlink" title="➜ gdb调试技巧"></a>➜ gdb调试技巧</h3><p>gdb在调试时设置变量的值：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set var varname=1</span><br></pre></td></tr></table></figure>
+
+
+        
+  </div>
+</article>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+	Copyright &copy;
+	
+	
+	2023-2024
+	SX1ang
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
