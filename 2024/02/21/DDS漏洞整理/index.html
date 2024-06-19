@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="近期工作项目中涉及到DDS协议，和导师一起整理Fast DDS和OpenDDS的相关漏洞，用于后续学习和工作。  漏洞来源： https:&#x2F;&#x2F;github.com&#x2F;eProsima&#x2F;Fast-DDS&#x2F;security https:&#x2F;&#x2F;github.com&#x2F;OpenDDS&#x2F;OpenDDS&#x2F;security    漏洞编号 漏洞名称 漏洞类型 所属模块    CVE-2023-39534 GAP子消">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DDS漏洞整理">
+<meta property="og:url" content="http://example.com/2024/02/21/DDS%E6%BC%8F%E6%B4%9E%E6%95%B4%E7%90%86/index.html">
+<meta property="og:site_name" content="叶送溪&#39;s Blog">
+<meta property="og:description" content="近期工作项目中涉及到DDS协议，和导师一起整理Fast DDS和OpenDDS的相关漏洞，用于后续学习和工作。  漏洞来源： https:&#x2F;&#x2F;github.com&#x2F;eProsima&#x2F;Fast-DDS&#x2F;security https:&#x2F;&#x2F;github.com&#x2F;OpenDDS&#x2F;OpenDDS&#x2F;security    漏洞编号 漏洞名称 漏洞类型 所属模块    CVE-2023-39534 GAP子消">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2024/02/21/DDS%E6%BC%8F%E6%B4%9E%E6%95%B4%E7%90%86/image-20240527100345837.png">
+<meta property="article:published_time" content="2024-02-21T01:34:09.000Z">
+<meta property="article:modified_time" content="2024-05-27T02:23:53.639Z">
+<meta property="article:author" content="叶送溪">
+<meta property="article:tag" content="Fast DDS">
+<meta property="article:tag" content="漏洞整理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2024/02/21/DDS%E6%BC%8F%E6%B4%9E%E6%95%B4%E7%90%86/image-20240527100345837.png">
+    
+    
+    <!-- title -->
+    <title>DDS漏洞整理</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+  <!-- Waline Comments -->
+  
+    <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css"/>
+  
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Archives</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Categories</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tags</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/note/">Note</a></li><!--
+     --><!--
+       --><li><a href="/links/">Links</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/02/19/FreeRTOS%E6%BC%8F%E6%B4%9E%E6%95%B4%E7%90%86/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/02/21/DDS%E6%BC%8F%E6%B4%9E%E6%95%B4%E7%90%86/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/02/21/DDS%E6%BC%8F%E6%B4%9E%E6%95%B4%E7%90%86/&text=DDS漏洞整理"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/02/21/DDS%E6%BC%8F%E6%B4%9E%E6%95%B4%E7%90%86/&title=DDS漏洞整理"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/02/21/DDS%E6%BC%8F%E6%B4%9E%E6%95%B4%E7%90%86/&is_video=false&description=DDS漏洞整理"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=DDS漏洞整理&body=Check out this article: http://example.com/2024/02/21/DDS%E6%BC%8F%E6%B4%9E%E6%95%B4%E7%90%86/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/02/21/DDS%E6%BC%8F%E6%B4%9E%E6%95%B4%E7%90%86/&title=DDS漏洞整理"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/02/21/DDS%E6%BC%8F%E6%B4%9E%E6%95%B4%E7%90%86/&title=DDS漏洞整理"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/02/21/DDS%E6%BC%8F%E6%B4%9E%E6%95%B4%E7%90%86/&title=DDS漏洞整理"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/02/21/DDS%E6%BC%8F%E6%B4%9E%E6%95%B4%E7%90%86/&title=DDS漏洞整理"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/02/21/DDS%E6%BC%8F%E6%B4%9E%E6%95%B4%E7%90%86/&name=DDS漏洞整理&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/02/21/DDS%E6%BC%8F%E6%B4%9E%E6%95%B4%E7%90%86/&t=DDS漏洞整理"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#GAP%E5%AD%90%E6%B6%88%E6%81%AF%E6%A0%BC%E5%BC%8F%E9%94%99%E8%AF%AF%E8%A7%A6%E5%8F%91%E6%96%AD%E8%A8%80%E5%A4%B1%E8%B4%A5"><span class="toc-number">1.</span> <span class="toc-text">GAP子消息格式错误触发断言失败</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0"><span class="toc-number">1.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85"><span class="toc-number">1.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88"><span class="toc-number">1.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E6%95%B0%E6%8D%AE%E4%B8%AD%E7%9A%84%E5%AD%90%E6%B6%88%E6%81%AF%E6%A0%BC%E5%BC%8F%E9%94%99%E8%AF%AF%E5%AF%BC%E8%87%B4%E6%9C%AA%E5%A4%84%E7%90%86%E7%9A%84%E5%BC%82%E5%B8%B8"><span class="toc-number">2.</span> <span class="toc-text">序列化数据中的子消息格式错误导致未处理的异常</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0-1"><span class="toc-number">2.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-1"><span class="toc-number">2.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88-1"><span class="toc-number">2.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Malformed-GAP-submessage-triggers-assertion-failure"><span class="toc-number">3.</span> <span class="toc-text">Malformed GAP submessage triggers assertion failure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0-2"><span class="toc-number">3.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-2"><span class="toc-number">3.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88-2"><span class="toc-number">3.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Malformed-GAP-submessage-triggers-assertion-failure-1"><span class="toc-number">4.</span> <span class="toc-text">Malformed GAP submessage triggers assertion failure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0-3"><span class="toc-number">4.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-3"><span class="toc-number">4.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88-3"><span class="toc-number">4.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Malformed-GAP-submessage-triggers-assertion-failure-2"><span class="toc-number">5.</span> <span class="toc-text">Malformed GAP submessage triggers assertion failure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0-4"><span class="toc-number">5.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-4"><span class="toc-number">5.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88-4"><span class="toc-number">5.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Malformed-GAP-submessage-triggers-assertion-failure-3"><span class="toc-number">6.</span> <span class="toc-text">Malformed GAP submessage triggers assertion failure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0-5"><span class="toc-number">6.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-5"><span class="toc-number">6.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88-5"><span class="toc-number">6.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Malformed-GAP-submessage-triggers-assertion-failure-4"><span class="toc-number">7.</span> <span class="toc-text">Malformed GAP submessage triggers assertion failure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0-6"><span class="toc-number">7.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-6"><span class="toc-number">7.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88-6"><span class="toc-number">7.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Malformed-GAP-submessage-triggers-assertion-failure-5"><span class="toc-number">8.</span> <span class="toc-text">Malformed GAP submessage triggers assertion failure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0-7"><span class="toc-number">8.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-7"><span class="toc-number">8.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88-7"><span class="toc-number">8.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Malformed-GAP-submessage-triggers-assertion-failure-6"><span class="toc-number">9.</span> <span class="toc-text">Malformed GAP submessage triggers assertion failure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0-8"><span class="toc-number">9.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-8"><span class="toc-number">9.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88-8"><span class="toc-number">9.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Malformed-GAP-submessage-triggers-assertion-failure-7"><span class="toc-number">10.</span> <span class="toc-text">Malformed GAP submessage triggers assertion failure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0-9"><span class="toc-number">10.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-9"><span class="toc-number">10.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88-9"><span class="toc-number">10.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Malformed-GAP-submessage-triggers-assertion-failure-8"><span class="toc-number">11.</span> <span class="toc-text">Malformed GAP submessage triggers assertion failure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0-10"><span class="toc-number">11.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-10"><span class="toc-number">11.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88-10"><span class="toc-number">11.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        DDS漏洞整理
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">叶送溪</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-02-21T01:34:09.000Z" class="dt-published" itemprop="datePublished">2024-02-21</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E6%BC%8F%E6%B4%9E%E6%95%B4%E7%90%86/">漏洞整理</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Fast-DDS/" rel="tag">Fast DDS</a>, <a class="p-category" href="/tags/%E6%BC%8F%E6%B4%9E%E6%95%B4%E7%90%86/" rel="tag">漏洞整理</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <blockquote>
+<p>近期工作项目中涉及到DDS协议，和导师一起整理Fast DDS和OpenDDS的相关漏洞，用于后续学习和工作。</p>
+</blockquote>
+<p><strong>漏洞来源：</strong></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/eProsima/Fast-DDS/security">https://github.com/eProsima/Fast-DDS/security</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/OpenDDS/OpenDDS/security">https://github.com/OpenDDS/OpenDDS/security</a></p>
+<table>
+<thead>
+<tr>
+<th align="center">漏洞编号</th>
+<th>漏洞名称</th>
+<th align="left">漏洞类型</th>
+<th align="center">所属模块</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><a target="_blank" rel="noopener" href="https://github.com/eProsima/Fast-DDS/security/advisories/GHSA-fcr6-x23w-94wp">CVE-2023-39534</a></td>
+<td>GAP子消息格式错误触发断言失败</td>
+<td align="left">拒绝服务</td>
+<td align="center">Fast DDS</td>
+</tr>
+<tr>
+<td align="center"><a target="_blank" rel="noopener" href="https://github.com/eProsima/Fast-DDS/security/advisories/GHSA-2rq6-8j7x-frr9">CVE-2023-39945</a></td>
+<td>序列化数据中的子消息格式错误导致未处理的异常</td>
+<td align="left">拒绝服务</td>
+<td align="center">Fast DDS</td>
+</tr>
+<tr>
+<td align="center"><a target="_blank" rel="noopener" href="https://github.com/eProsima/Fast-DDS/security/advisories/GHSA-j297-rg6j-m7hx">CVE-2023-39946</a></td>
+<td>CDR消息导致push_back_helper堆溢出</td>
+<td align="left">堆溢出</td>
+<td align="center">Fast DDS</td>
+</tr>
+<tr>
+<td align="center"><a target="_blank" rel="noopener" href="https://github.com/eProsima/Fast-DDS/security/advisories/GHSA-mf55-5747-c4pv">CVE-2023-39947</a></td>
+<td>CDR消息导致push_back_helper堆溢出</td>
+<td align="left">堆溢出</td>
+<td align="center">Fast DDS</td>
+</tr>
+<tr>
+<td align="center"><a target="_blank" rel="noopener" href="https://github.com/eProsima/Fast-DDS/security/advisories/GHSA-gq8g-fj58-22gm">CVE-2023-42459</a></td>
+<td>DATA子消息格式错误导致bad-free错误</td>
+<td align="left">Double Free&#x2F;UAF</td>
+<td align="center">Fast DDS</td>
+</tr>
+<tr>
+<td align="center"><a target="_blank" rel="noopener" href="https://github.com/eProsima/Fast-DDS/security/advisories/GHSA-3jv9-j9x3-95cg">CVE-2023-39949</a></td>
+<td>序列号验证不当导致远程触发断言失败</td>
+<td align="left">拒绝服务</td>
+<td align="center">Fast DDS</td>
+</tr>
+<tr>
+<td align="center"><a target="_blank" rel="noopener" href="https://github.com/eProsima/Fast-DDS/security/advisories/GHSA-x9pj-vrgf-f68f">CVE-2023-39948</a></td>
+<td>未捕获fastcdr异常导致fastdds崩溃</td>
+<td align="left">拒绝服务</td>
+<td align="center">Fast DDS</td>
+</tr>
+<tr>
+<td align="center"><a target="_blank" rel="noopener" href="https://github.com/eProsima/Fast-DDS/security/advisories/GHSA-v5r6-8mvh-cp98">CVE-2023-50257</a></td>
+<td>SROS2中的RTPS数据包可强制断开正常连接</td>
+<td align="left">拒绝服务</td>
+<td align="center">Fast DDS</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td></td>
+<td align="left"></td>
+<td align="center">OpenDDS</td>
+</tr>
+</tbody></table>
+<h2 id="GAP子消息格式错误触发断言失败"><a href="#GAP子消息格式错误触发断言失败" class="headerlink" title="GAP子消息格式错误触发断言失败"></a>GAP子消息格式错误触发断言失败</h2><h3 id="漏洞描述"><a href="#漏洞描述" class="headerlink" title="漏洞描述"></a>漏洞描述</h3><p>格式错误的 GAP 子消息可能会触发断言失败，从而导致 FastDDS 崩溃。</p>
+<p><strong>影响版本：2.9.1</strong></p>
+<p><strong>修复版本：&gt;&#x3D; 2.10.0 &#x2F; 2.9.2 &#x2F; 2.6.5</strong></p>
+<h3 id="漏洞详情"><a href="#漏洞详情" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><p>触发崩溃的子消息：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">submessageId<span class="punctuation">:</span> GAP (<span class="number">0x08</span>)</span><br><span class="line">    Flags<span class="punctuation">:</span> <span class="number">0x01</span><span class="punctuation">,</span> Endianness bit</span><br><span class="line">    octetsToNextHeader<span class="punctuation">:</span> <span class="number">28</span></span><br><span class="line">    readerEntityId<span class="punctuation">:</span> ENTITYID_UNKNOWN (<span class="number">0x00000000</span>)</span><br><span class="line">    writerEntityId<span class="punctuation">:</span> ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_WRITER (<span class="number">0x000200c2</span>)</span><br><span class="line">    gapStart<span class="punctuation">:</span> <span class="number">223692704932764539</span></span><br><span class="line">    gapList</span><br><span class="line">        bitmapBase<span class="punctuation">:</span> <span class="number">0</span></span><br><span class="line">        numBits<span class="punctuation">:</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>漏洞代码：</strong></p>
+<p>在处理GAP子消息的代码中，使用CDRMessage::readSequenceNumberSet()函数从msg中读取gapList信息，并传递给processGapMsg()处理，StatefulReader继承RTPSReader：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// https://github.com/eProsima/Fast-DDS/blob/master/src/cpp/rtps/messages/MessageReceiver.cpp#L1261</span></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">MessageReceiver::proc_Submsg_Gap</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">        CDRMessage_t* msg,</span></span></span><br><span class="line"><span class="params"><span class="function">        SubmessageHeader_t* smh,</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="type">bool</span> was_decoded)</span> <span class="type">const</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ···</span><br><span class="line">      </span><br><span class="line">    SequenceNumber_t gapStart;</span><br><span class="line">    CDRMessage::<span class="built_in">readSequenceNumber</span>(msg, &amp;gapStart);</span><br><span class="line">    SequenceNumberSet_t gapList = CDRMessage::<span class="built_in">readSequenceNumberSet</span>(msg);</span><br><span class="line">    <span class="keyword">if</span> (gapStart &lt;= <span class="built_in">SequenceNumber_t</span>(<span class="number">0</span>, <span class="number">0</span>))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">findAllReaders</span>(readerGUID.entityId,</span><br><span class="line">            [was_decoded, &amp;writerGUID, &amp;gapStart, &amp;gapList, <span class="keyword">this</span>](RTPSReader* reader)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// Only used when HAVE_SECURITY is defined</span></span><br><span class="line">                <span class="built_in">static_cast</span>&lt;<span class="type">void</span>&gt;(was_decoded);</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> HAVE_SECURITY</span></span><br><span class="line">                <span class="keyword">if</span> (was_decoded || !reader-&gt;<span class="built_in">getAttributes</span>().<span class="built_in">security_attributes</span>().is_submessage_protected)</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span>  <span class="comment">// HAVE_SECURITY</span></span></span><br><span class="line">                &#123;</span><br><span class="line">                    reader-&gt;<span class="built_in">processGapMsg</span>(writerGUID, gapStart, gapList, source_vendor_id_);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">StatefulReader::processGapMsg</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="type">const</span> GUID_t&amp; writerGUID,</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="type">const</span> SequenceNumber_t&amp; gapStart,</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="type">const</span> SequenceNumberSet_t&amp; gapList)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    WriterProxy* pWP = <span class="literal">nullptr</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">std::unique_lock&lt;RecursiveTimedMutex&gt; <span class="title">lock</span><span class="params">(mp_mutex)</span></span>;</span><br><span class="line">    <span class="keyword">if</span> (!is_alive_)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">acceptMsgFrom</span>(writerGUID, &amp;pWP) &amp;&amp; pWP)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// TODO (Miguel C): Refactor this inside WriterProxy</span></span><br><span class="line">        SequenceNumber_t auxSN;</span><br><span class="line">        <span class="comment">// 如果bitmapBase即gapList.base()的值为0，减操作会造成断言失败</span></span><br><span class="line">        SequenceNumber_t finalSN = gapList.<span class="built_in">base</span>() - <span class="number">1</span>;</span><br><span class="line">        History::const_iterator history_iterator = mp_history-&gt;<span class="built_in">changesBegin</span>();</span><br><span class="line">        <span class="keyword">for</span> (auxSN = gapStart; auxSN &lt;= finalSN; auxSN++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (pWP-&gt;<span class="built_in">irrelevant_change_set</span>(auxSN))</span><br><span class="line">            &#123;</span><br><span class="line">                CacheChange_t* to_remove = <span class="literal">nullptr</span>;</span><br><span class="line">                <span class="keyword">auto</span> ret_iterator = <span class="built_in">findCacheInFragmentedProcess</span>(auxSN, pWP-&gt;<span class="built_in">guid</span>(), &amp;to_remove, history_iterator);</span><br><span class="line">                <span class="keyword">if</span> (to_remove != <span class="literal">nullptr</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="comment">// we called the History version to avoid callbacks</span></span><br><span class="line">                    history_iterator = mp_history-&gt;History::<span class="built_in">remove_change_nts</span>(ret_iterator);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (ret_iterator != mp_history-&gt;<span class="built_in">changesEnd</span>())</span><br><span class="line">                &#123;</span><br><span class="line">                    histoy_iterator = ret_iterator;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义SequenceNumber_t类型和uint32_t类型的减操作</span></span><br><span class="line"><span class="keyword">inline</span> SequenceNumber_t <span class="keyword">operator</span> -(</span><br><span class="line">        <span class="type">const</span> SequenceNumber_t&amp; seq,</span><br><span class="line">        <span class="type">const</span> <span class="type">uint32_t</span> inc) <span class="keyword">noexcept</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function">SequenceNumber_t <span class="title">res</span><span class="params">(seq.high, seq.low - inc)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (inc &gt; seq.low)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// Being the type of the parameter an &#x27;uint32_t&#x27;, the decrement of &#x27;high&#x27; will be as much as 1.</span></span><br><span class="line">        <span class="comment">// res.high值为0，断言会失败</span></span><br><span class="line">        <span class="built_in">assert</span>(<span class="number">0</span> &lt; res.high);</span><br><span class="line">        --res.high;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当GAP子消息中的bitmapBase值为0时，会导致FastDDS崩溃。</p>
+<h3 id="修复方案"><a href="#修复方案" class="headerlink" title="修复方案"></a>修复方案</h3><p><img src="image-20240527100345837.png"></p>
+<h2 id="序列化数据中的子消息格式错误导致未处理的异常"><a href="#序列化数据中的子消息格式错误导致未处理的异常" class="headerlink" title="序列化数据中的子消息格式错误导致未处理的异常"></a>序列化数据中的子消息格式错误导致未处理的异常</h2><h3 id="漏洞描述-1"><a href="#漏洞描述-1" class="headerlink" title="漏洞描述"></a>漏洞描述</h3><p>发送到 PDP 端口的数据子消息会在 fastcdr 中引发未处理的 <code>BadParamException</code> ，从而导致 fastdd 崩溃。</p>
+<h3 id="漏洞详情-1"><a href="#漏洞详情-1" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><h3 id="修复方案-1"><a href="#修复方案-1" class="headerlink" title="修复方案"></a>修复方案</h3><h2 id="Malformed-GAP-submessage-triggers-assertion-failure"><a href="#Malformed-GAP-submessage-triggers-assertion-failure" class="headerlink" title="Malformed GAP submessage triggers assertion failure"></a>Malformed GAP submessage triggers assertion failure</h2><h3 id="漏洞描述-2"><a href="#漏洞描述-2" class="headerlink" title="漏洞描述"></a>漏洞描述</h3><h3 id="漏洞详情-2"><a href="#漏洞详情-2" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><h3 id="修复方案-2"><a href="#修复方案-2" class="headerlink" title="修复方案"></a>修复方案</h3><h2 id="Malformed-GAP-submessage-triggers-assertion-failure-1"><a href="#Malformed-GAP-submessage-triggers-assertion-failure-1" class="headerlink" title="Malformed GAP submessage triggers assertion failure"></a>Malformed GAP submessage triggers assertion failure</h2><h3 id="漏洞描述-3"><a href="#漏洞描述-3" class="headerlink" title="漏洞描述"></a>漏洞描述</h3><h3 id="漏洞详情-3"><a href="#漏洞详情-3" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><h3 id="修复方案-3"><a href="#修复方案-3" class="headerlink" title="修复方案"></a>修复方案</h3><h2 id="Malformed-GAP-submessage-triggers-assertion-failure-2"><a href="#Malformed-GAP-submessage-triggers-assertion-failure-2" class="headerlink" title="Malformed GAP submessage triggers assertion failure"></a>Malformed GAP submessage triggers assertion failure</h2><h3 id="漏洞描述-4"><a href="#漏洞描述-4" class="headerlink" title="漏洞描述"></a>漏洞描述</h3><h3 id="漏洞详情-4"><a href="#漏洞详情-4" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><h3 id="修复方案-4"><a href="#修复方案-4" class="headerlink" title="修复方案"></a>修复方案</h3><h2 id="Malformed-GAP-submessage-triggers-assertion-failure-3"><a href="#Malformed-GAP-submessage-triggers-assertion-failure-3" class="headerlink" title="Malformed GAP submessage triggers assertion failure"></a>Malformed GAP submessage triggers assertion failure</h2><h3 id="漏洞描述-5"><a href="#漏洞描述-5" class="headerlink" title="漏洞描述"></a>漏洞描述</h3><h3 id="漏洞详情-5"><a href="#漏洞详情-5" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><h3 id="修复方案-5"><a href="#修复方案-5" class="headerlink" title="修复方案"></a>修复方案</h3><h2 id="Malformed-GAP-submessage-triggers-assertion-failure-4"><a href="#Malformed-GAP-submessage-triggers-assertion-failure-4" class="headerlink" title="Malformed GAP submessage triggers assertion failure"></a>Malformed GAP submessage triggers assertion failure</h2><h3 id="漏洞描述-6"><a href="#漏洞描述-6" class="headerlink" title="漏洞描述"></a>漏洞描述</h3><h3 id="漏洞详情-6"><a href="#漏洞详情-6" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><h3 id="修复方案-6"><a href="#修复方案-6" class="headerlink" title="修复方案"></a>修复方案</h3><h2 id="Malformed-GAP-submessage-triggers-assertion-failure-5"><a href="#Malformed-GAP-submessage-triggers-assertion-failure-5" class="headerlink" title="Malformed GAP submessage triggers assertion failure"></a>Malformed GAP submessage triggers assertion failure</h2><h3 id="漏洞描述-7"><a href="#漏洞描述-7" class="headerlink" title="漏洞描述"></a>漏洞描述</h3><h3 id="漏洞详情-7"><a href="#漏洞详情-7" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><h3 id="修复方案-7"><a href="#修复方案-7" class="headerlink" title="修复方案"></a>修复方案</h3><h2 id="Malformed-GAP-submessage-triggers-assertion-failure-6"><a href="#Malformed-GAP-submessage-triggers-assertion-failure-6" class="headerlink" title="Malformed GAP submessage triggers assertion failure"></a>Malformed GAP submessage triggers assertion failure</h2><h3 id="漏洞描述-8"><a href="#漏洞描述-8" class="headerlink" title="漏洞描述"></a>漏洞描述</h3><h3 id="漏洞详情-8"><a href="#漏洞详情-8" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><h3 id="修复方案-8"><a href="#修复方案-8" class="headerlink" title="修复方案"></a>修复方案</h3><h2 id="Malformed-GAP-submessage-triggers-assertion-failure-7"><a href="#Malformed-GAP-submessage-triggers-assertion-failure-7" class="headerlink" title="Malformed GAP submessage triggers assertion failure"></a>Malformed GAP submessage triggers assertion failure</h2><h3 id="漏洞描述-9"><a href="#漏洞描述-9" class="headerlink" title="漏洞描述"></a>漏洞描述</h3><h3 id="漏洞详情-9"><a href="#漏洞详情-9" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><h3 id="修复方案-9"><a href="#修复方案-9" class="headerlink" title="修复方案"></a>修复方案</h3><h2 id="Malformed-GAP-submessage-triggers-assertion-failure-8"><a href="#Malformed-GAP-submessage-triggers-assertion-failure-8" class="headerlink" title="Malformed GAP submessage triggers assertion failure"></a>Malformed GAP submessage triggers assertion failure</h2><h3 id="漏洞描述-10"><a href="#漏洞描述-10" class="headerlink" title="漏洞描述"></a>漏洞描述</h3><h3 id="漏洞详情-10"><a href="#漏洞详情-10" class="headerlink" title="漏洞详情"></a>漏洞详情</h3><h3 id="修复方案-10"><a href="#修复方案-10" class="headerlink" title="修复方案"></a>修复方案</h3>
+  </div>
+</article>
+
+
+
+    <div class="blog-post-comments">
+        <div id="waline_thread"></div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Archives</a></li>
+        
+          <li><a href="/categories/">Categories</a></li>
+        
+          <li><a href="/tags/">Tags</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/note/">Note</a></li>
+        
+          <li><a href="/links/">Links</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#GAP%E5%AD%90%E6%B6%88%E6%81%AF%E6%A0%BC%E5%BC%8F%E9%94%99%E8%AF%AF%E8%A7%A6%E5%8F%91%E6%96%AD%E8%A8%80%E5%A4%B1%E8%B4%A5"><span class="toc-number">1.</span> <span class="toc-text">GAP子消息格式错误触发断言失败</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0"><span class="toc-number">1.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85"><span class="toc-number">1.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88"><span class="toc-number">1.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E6%95%B0%E6%8D%AE%E4%B8%AD%E7%9A%84%E5%AD%90%E6%B6%88%E6%81%AF%E6%A0%BC%E5%BC%8F%E9%94%99%E8%AF%AF%E5%AF%BC%E8%87%B4%E6%9C%AA%E5%A4%84%E7%90%86%E7%9A%84%E5%BC%82%E5%B8%B8"><span class="toc-number">2.</span> <span class="toc-text">序列化数据中的子消息格式错误导致未处理的异常</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0-1"><span class="toc-number">2.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-1"><span class="toc-number">2.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88-1"><span class="toc-number">2.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Malformed-GAP-submessage-triggers-assertion-failure"><span class="toc-number">3.</span> <span class="toc-text">Malformed GAP submessage triggers assertion failure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0-2"><span class="toc-number">3.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-2"><span class="toc-number">3.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88-2"><span class="toc-number">3.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Malformed-GAP-submessage-triggers-assertion-failure-1"><span class="toc-number">4.</span> <span class="toc-text">Malformed GAP submessage triggers assertion failure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0-3"><span class="toc-number">4.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-3"><span class="toc-number">4.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88-3"><span class="toc-number">4.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Malformed-GAP-submessage-triggers-assertion-failure-2"><span class="toc-number">5.</span> <span class="toc-text">Malformed GAP submessage triggers assertion failure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0-4"><span class="toc-number">5.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-4"><span class="toc-number">5.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88-4"><span class="toc-number">5.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Malformed-GAP-submessage-triggers-assertion-failure-3"><span class="toc-number">6.</span> <span class="toc-text">Malformed GAP submessage triggers assertion failure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0-5"><span class="toc-number">6.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-5"><span class="toc-number">6.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88-5"><span class="toc-number">6.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Malformed-GAP-submessage-triggers-assertion-failure-4"><span class="toc-number">7.</span> <span class="toc-text">Malformed GAP submessage triggers assertion failure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0-6"><span class="toc-number">7.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-6"><span class="toc-number">7.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88-6"><span class="toc-number">7.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Malformed-GAP-submessage-triggers-assertion-failure-5"><span class="toc-number">8.</span> <span class="toc-text">Malformed GAP submessage triggers assertion failure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0-7"><span class="toc-number">8.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-7"><span class="toc-number">8.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88-7"><span class="toc-number">8.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Malformed-GAP-submessage-triggers-assertion-failure-6"><span class="toc-number">9.</span> <span class="toc-text">Malformed GAP submessage triggers assertion failure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0-8"><span class="toc-number">9.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-8"><span class="toc-number">9.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88-8"><span class="toc-number">9.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Malformed-GAP-submessage-triggers-assertion-failure-7"><span class="toc-number">10.</span> <span class="toc-text">Malformed GAP submessage triggers assertion failure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0-9"><span class="toc-number">10.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-9"><span class="toc-number">10.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88-9"><span class="toc-number">10.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Malformed-GAP-submessage-triggers-assertion-failure-8"><span class="toc-number">11.</span> <span class="toc-text">Malformed GAP submessage triggers assertion failure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0-10"><span class="toc-number">11.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%AF%A6%E6%83%85-10"><span class="toc-number">11.2.</span> <span class="toc-text">漏洞详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88-10"><span class="toc-number">11.3.</span> <span class="toc-text">修复方案</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2023-2024
+    叶送溪
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+ 
+  <link
+    rel="preload"
+    href="/lib/font-awesome/css/all.min.css"
+    as="style"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+  <noscript
+    ><link
+      rel="stylesheet"
+      href="/lib/font-awesome/css/all.min.css"
+  /></noscript>
+
+
+    <!-- jquery -->
+
+  
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+
+
+
+<!-- clipboard -->
+
+  
+    
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+
+<!-- Waline Comments -->
+
+  <script type="module">
+    import { init } from 'https://unpkg.com/@waline/client@v2/dist/waline.mjs';
+
+    var EMOJI = ['//unpkg.com/@waline/emojis@1.2.0/weibo']
+    var META = ['nick', 'mail', 'link'];
+    var REQUIREDFIELDS = ['nick', 'mail', 'link'];
+
+    var emoji = '//unpkg.com/@waline/emojis@1.2.0/qq'.split(',').filter(function(item){
+      return item !== ''; // filter()返回满足不为空item
+    });
+    emoji = emoji.length == 0 ? EMOJI : emoji;
+
+    var meta = 'nick,mail'.split(',').filter(function(item){
+      return META.indexOf(item) > -1; // filter()返回满足META.indexOf(item) > -1为true的item
+    });
+    meta = meta.length == 0 ? META : meta;
+
+    var requiredFields = 'nick,mail'.split(',').filter(function(item){
+      return REQUIREDFIELDS.indexOf(item) > -1; // filter()返回满足META.indexOf(item) > -1为true的item
+    });
+    requiredFields = requiredFields.length == 0 ? REQUIREDFIELDS : requiredFields;
+
+    init({
+      el: '#waline_thread',
+      serverURL: 'blog-comments-vercel-server.vercel.app', // Waline 的服务端地址
+      path: '' == '' ? window.location.pathname : '', // 当前文章页路径，用于区分不同的文章页，以保证正确读取该文章页下的评论列表
+      lang: 'zh-CN' == '' ? 'zh-CN' : 'zh-CN', // 多语言支持，未设置默认英文
+      emoji: emoji,
+      dark: 'true', // 暗黑模式适配
+      commentSorting: '' == '' ? 'latest' : '', // 评论列表排序方式
+      meta: meta, // 评论者相关属性
+      requiredFields: requiredFields, // 设置必填项，默认匿名
+      login: '', // 登录模式状态
+      wordLimit: '', // 评论字数限制
+      pageSize: '10' == '' ? 10 : '10', // 评论列表分页，每页条数
+      imageUploader: '', // 自定义图片上传方法
+      highlighter: '', // 代码高亮
+      placeholder: '',
+      avatar: 'mm',
+      visitor: 'false',
+      comment_count: 'true',
+    });
+  </script>
+
+</body>
+</html>

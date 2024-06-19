@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="ATF代码：https:&#x2F;&#x2F;github.com&#x2F;ARM-software&#x2F;arm-trusted-firmware  1. 调试环境搭建动态调试能够更快速地分析代码的执行流程，本文编译qemu平台的ATF，搭建调试环境。 主机环境：Ubuntu22.04 AArch64  参考资料：https:&#x2F;&#x2F;blog.csdn.net&#x2F;qq_16106195&#x2F;article&#x2F;details&#x2F;126708">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Arm Trusted Firmware-A 安全启动分析">
+<meta property="og:url" content="http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="叶送溪&#39;s Blog">
+<meta property="og:description" content="ATF代码：https:&#x2F;&#x2F;github.com&#x2F;ARM-software&#x2F;arm-trusted-firmware  1. 调试环境搭建动态调试能够更快速地分析代码的执行流程，本文编译qemu平台的ATF，搭建调试环境。 主机环境：Ubuntu22.04 AArch64  参考资料：https:&#x2F;&#x2F;blog.csdn.net&#x2F;qq_16106195&#x2F;article&#x2F;details&#x2F;126708">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/image-20240509165208325.png">
+<meta property="og:image" content="http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/image-20240509162946657.png">
+<meta property="og:image" content="http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/image-20240509170607388.png">
+<meta property="og:image" content="http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/image-20240509164723521.png">
+<meta property="og:image" content="http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/image-20240508172744194.png">
+<meta property="og:image" content="http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/image-20240508172842205.png">
+<meta property="og:image" content="http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/image-20240509175048990.png">
+<meta property="og:image" content="http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/image-20240508175718000.png">
+<meta property="og:image" content="http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/image-20240508175755975.png">
+<meta property="article:published_time" content="2024-05-08T02:32:33.000Z">
+<meta property="article:modified_time" content="2024-05-28T01:58:17.383Z">
+<meta property="article:author" content="叶送溪">
+<meta property="article:tag" content="ATF">
+<meta property="article:tag" content="安全启动">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/image-20240509165208325.png">
+    
+    
+    <!-- title -->
+    <title>Arm Trusted Firmware-A 安全启动分析</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+  <!-- Waline Comments -->
+  
+    <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css"/>
+  
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Archives</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Categories</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tags</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/note/">Note</a></li><!--
+     --><!--
+       --><li><a href="/links/">Links</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2024/06/18/Django%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/02/21/DDS%E6%BC%8F%E6%B4%9E%E6%95%B4%E7%90%86/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/&text=Arm Trusted Firmware-A 安全启动分析"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/&title=Arm Trusted Firmware-A 安全启动分析"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/&is_video=false&description=Arm Trusted Firmware-A 安全启动分析"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Arm Trusted Firmware-A 安全启动分析&body=Check out this article: http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/&title=Arm Trusted Firmware-A 安全启动分析"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/&title=Arm Trusted Firmware-A 安全启动分析"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/&title=Arm Trusted Firmware-A 安全启动分析"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/&title=Arm Trusted Firmware-A 安全启动分析"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/&name=Arm Trusted Firmware-A 安全启动分析&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/05/08/Arm-Trusted-Firmware-A-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E5%88%86%E6%9E%90/&t=Arm Trusted Firmware-A 安全启动分析"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.</span> <span class="toc-text">1. 调试环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-qemu"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 qemu</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-U-boot"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 U-boot</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-mbed-TLS%E5%BA%93"><span class="toc-number">1.3.</span> <span class="toc-text">1.3 mbed TLS库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-%E7%BC%96%E8%AF%91%E6%94%AF%E6%8C%81Trusted-Board-Boot%E7%9A%84%E9%95%9C%E5%83%8F"><span class="toc-number">1.4.</span> <span class="toc-text">1.4 编译支持Trusted Board Boot的镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-qemu%E9%80%9A%E8%BF%87ATF%E5%8A%A0%E8%BD%BDu-boot"><span class="toc-number">1.5.</span> <span class="toc-text">1.5 qemu通过ATF加载u-boot</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-gdb%E8%B0%83%E8%AF%95%E7%9B%AE%E6%A0%87%E9%95%9C%E5%83%8F"><span class="toc-number">1.6.</span> <span class="toc-text">1.6 gdb调试目标镜像</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">安全启动流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%85%A5%E5%8F%A3"><span class="toc-number">2.1.</span> <span class="toc-text">代码入口</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Arm Trusted Firmware-A 安全启动分析
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">叶送溪</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-05-08T02:32:33.000Z" class="dt-published" itemprop="datePublished">2024-05-08</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8/">安全启动</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/ATF/" rel="tag">ATF</a>, <a class="p-category" href="/tags/%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8/" rel="tag">安全启动</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <blockquote>
+<p>ATF代码：<a target="_blank" rel="noopener" href="https://github.com/ARM-software/arm-trusted-firmware">https://github.com/ARM-software/arm-trusted-firmware</a></p>
+</blockquote>
+<h2 id="1-调试环境搭建"><a href="#1-调试环境搭建" class="headerlink" title="1. 调试环境搭建"></a>1. 调试环境搭建</h2><p>动态调试能够更快速地分析代码的执行流程，本文编译qemu平台的ATF，搭建调试环境。</p>
+<p>主机环境：Ubuntu22.04 AArch64</p>
+<p><img src="image-20240509165208325.png"></p>
+<p>参考资料：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_16106195/article/details/126708271">https://blog.csdn.net/qq_16106195/article/details/126708271</a></p>
+<h3 id="1-1-qemu"><a href="#1-1-qemu" class="headerlink" title="1.1 qemu"></a>1.1 qemu</h3><p>qemu是固件的运行平台。建议源码编译安装，直接<code>apt install qemu</code>安装qemu版本比较低，后续会遇到问题。</p>
+<p>参考：<a target="_blank" rel="noopener" href="https://hlyani.github.io/notes/openstack/qemu_make.html">https://hlyani.github.io/notes/openstack/qemu_make.html</a></p>
+<h3 id="1-2-U-boot"><a href="#1-2-U-boot" class="headerlink" title="1.2 U-boot"></a>1.2 U-boot</h3><p>启动过程中的bl33为u-boot，在编译时需要指定BL33为u-boot.bin。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// 下载</span><br><span class="line">git <span class="built_in">clone</span> https://source.denx.de/u-boot/u-boot.git</span><br><span class="line"></span><br><span class="line">// 编译</span><br><span class="line"><span class="built_in">cd</span> u-boot</span><br><span class="line"><span class="built_in">export</span> ARCH=arm64</span><br><span class="line"><span class="built_in">export</span> CROSS_COMPILE=aarch64-linux-gnu- </span><br><span class="line">make qemu_arm64_defconfig</span><br><span class="line">make -j16</span><br></pre></td></tr></table></figure>
+
+<p>编译完成之后在u-boot根目录下生成u-boot.bin镜像文件。</p>
+<h3 id="1-3-mbed-TLS库"><a href="#1-3-mbed-TLS库" class="headerlink" title="1.3 mbed TLS库"></a>1.3 mbed TLS库</h3><p>在安全启动过程中验证镜像需要使用mbedtls库。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 下载mbedtls</span><br><span class="line">git clone https://github.com/Mbed-TLS/mbedtls.git</span><br><span class="line">// 切换分支</span><br><span class="line">cd mbedtls</span><br><span class="line">git checkout mbedtls-3.4.0</span><br></pre></td></tr></table></figure>
+
+<p>**注意:**mbedtls在v3.6.0  v3.5.2 v3.5.1 v3.5.0 mbedtls-3.6.0 mbedtls-3.5.2 mbedtls-3.5.1 mbedtls-3.5.0版本中移除了hash_info模块，但是在新版本的atf代码中要求mbedtls版本为3.x，并且需要hash_info模块，建议使用mbedtls V3.4.0版本。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Mbed-TLS/mbedtls/issues/6993">https://github.com/Mbed-TLS/mbedtls/issues/6993</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Mbed-TLS/mbedtls/commit/13230a4ad3afd51bb935c23c908184f173c37c91">https://github.com/Mbed-TLS/mbedtls/commit/13230a4ad3afd51bb935c23c908184f173c37c91</a></p>
+<p><code>arm-trusted-firmware/drivers/auth/mbedtls/mbedtls_common.mk</code>：</p>
+<p><img src="image-20240509162946657.png"></p>
+<h3 id="1-4-编译支持Trusted-Board-Boot的镜像"><a href="#1-4-编译支持Trusted-Board-Boot的镜像" class="headerlink" title="1.4 编译支持Trusted Board Boot的镜像"></a>1.4 编译支持Trusted Board Boot的镜像</h3><p>在ATF代码中默认不支持Trusted Board Boot功能，如果编译支持Trusted Board Boot的镜像，需要开启TRUSTED_BOARD_BOOT和GENERATE_COT编译选项。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// 安装dtc依赖</span><br><span class="line">sudo apt-get install device-tree-compiler </span><br><span class="line"></span><br><span class="line">// 下载ATF</span><br><span class="line">git clone https://git.trustedfirmware.org/TF-A/trusted-firmware.git</span><br><span class="line"></span><br><span class="line">// 编译ATF，指定BL33为u-boot.bin，开启TRUSTED_BOARD_BOOT和GENERATE_COT选项</span><br><span class="line">export ARCH=arm64                                                           </span><br><span class="line">export CROSS_COMPILE=aarch64-linux-gnu-</span><br><span class="line">MBEDTLS_DIR=../mbedtls \</span><br><span class="line">make PLAT=qemu TRUSTED_BOARD_BOOT=1 GENERATE_COT=1 \</span><br><span class="line">ARM_ROTPK_LOCATION=devel_rsa \</span><br><span class="line">ROT_KEY=plat/arm/board/common/rotpk/arm_rotprivk_rsa.pem \</span><br><span class="line">BL33=../u-boot/u-boot.bin all fip DEBUG=1 LOG_LEVEL=50 </span><br></pre></td></tr></table></figure>
+
+<p>如果开启TRUSTED_BOARD_BOOT和GENERATE_COT编译选项，需要指定mbedtls库源码路径，因为镜像验证需要依赖mbedtls库。ARM_ROTPK_LOCATION选项指定使用位于plat&#x2F;arm&#x2F;board&#x2F;common&#x2F;rotpk&#x2F;arm_rotpk_rsa_sha256.bin 中的默认哈希值；当GENERATE_COT &#x3D; 1时使用ROT_KEY选项，用于指定包含PEM格式的ROT私钥的文件，并强制生成公钥哈希。</p>
+<p>编译完成之后在arm-trusted-firmware&#x2F;build&#x2F;qemu&#x2F;debug目录下生成bl1.bin、bl2.bin、bl31.bin和fip.bin镜像：</p>
+<p><img src="image-20240509170607388.png" alt="image-20240509170607388"></p>
+<p><strong>fip.bin和bl1.bin、bl2.bin以及bl31.bin的关系：</strong></p>
+<ol>
+<li><strong>BL1 (Boot Loader Stage 1)</strong>: BL1 是第一阶段的引导加载程序，也称为 bootROM。bl1固化在 SoC 的 ROM 中，并且是处理器启动后运行的第一个代码。BL1 的主要职责包括初始化处理器核心、设置内存控制器以及加载 BL2；</li>
+<li><strong>FIP (Firmware Image Package)</strong>: FIP 是一个封装容器，里面包含多个固件组件，如 BL2、BL30（引导加载程序的可选部分，用于初始化 GPU），BL31，BL32（安全引导可选部分，如 OP-TEE 等）和 BL33。<code>fip.bin</code> 文件是以上文件的打包版本，包含的镜像在设备引导过程中会被顺序加载；</li>
+<li>在启动时，ROM 代码（BL1）会先执行，然后加载 <code>fip.bin</code> 中的其他组件，从而完成整个系统的引导过程。</li>
+</ol>
+<p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://trustedfirmware-a.readthedocs.io/en/v2.4/design/trusted-board-boot-build.html">https://trustedfirmware-a.readthedocs.io/en/v2.4/design/trusted-board-boot-build.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/arnoldlu/p/14301334.html">https://www.cnblogs.com/arnoldlu/p/14301334.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/jianhua1992/p/16852776.html">https://www.cnblogs.com/jianhua1992/p/16852776.html</a></p>
+<h3 id="1-5-qemu通过ATF加载u-boot"><a href="#1-5-qemu通过ATF加载u-boot" class="headerlink" title="1.5 qemu通过ATF加载u-boot"></a>1.5 qemu通过ATF加载u-boot</h3><p>首先需要准备u-boot.bin镜像，然后使用qemu运行bl1.bin镜像，并由bl1加载bl2镜像，bl2加载bl31镜像，最后通过层层加载，启动bl33固件，即u-boot.bin。</p>
+<p>新建文件夹atf_load_u-boot，拷贝bl1.bin、bl2.bin、bl31.bin到当前目录下，拷贝u-boot.bin到当前目录下并重命名为bl33.bin：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mkdir atf_load_u-boot</span><br><span class="line">cd atf_load_u-boot </span><br><span class="line">cp ../arm-trusted-firmware/build/qemu/debug/*.bin ./ </span><br><span class="line">cp ../u-boot/u-boot.bin ./bl33.bin</span><br></pre></td></tr></table></figure>
+
+<p>启动镜像：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">qemu-system-aarch64 \</span><br><span class="line">    -nographic -machine virt,secure=on \</span><br><span class="line">    -cpu cortex-a53 \</span><br><span class="line">    -smp 2 -m 2048 \</span><br><span class="line">    -d unimp \</span><br><span class="line">    -bios bl1.bin \</span><br><span class="line">    -semihosting-config enable=on,target=native</span><br></pre></td></tr></table></figure>
+
+<p>直接使用上述命令启动镜像会出现如下报错：</p>
+<img src="image-20240509164723521.png" style="zoom:200%;">
+
+<p>需要在gdb调试环境下使用restore命令加载fip镜像到内存中，具体原因见《1.6 gdb调试目标镜像》。</p>
+<h3 id="1-6-gdb调试目标镜像"><a href="#1-6-gdb调试目标镜像" class="headerlink" title="1.6 gdb调试目标镜像"></a>1.6 gdb调试目标镜像</h3><p><strong>使用qemu通过FIP方式启动ATF：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cd atf_load_u-boot </span><br><span class="line"></span><br><span class="line">qemu-system-aarch64 \</span><br><span class="line">    -nographic -machine virt,secure=on \</span><br><span class="line">    -cpu cortex-a53 \</span><br><span class="line">    -smp 2 -m 2048 \</span><br><span class="line">    -d unimp \</span><br><span class="line">    -bios bl1.bin \</span><br><span class="line">    -semihosting-config enable=on,target=native -s -S</span><br></pre></td></tr></table></figure>
+
+<p>-S：表示QEMU虚拟机会冻结CPU，直到远程的GDB输入相应控制命；<br>-s：表示在1234端口接受GDB的调试连接。</p>
+<p><strong>gdb附加调试并加载fip.bin镜像到内存：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd arm-trusted-firmware/build/qemu/debug/</span><br><span class="line">// 启动gdb调试</span><br><span class="line">gdb bl1/bl1.elf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 连接目标板</span><br><span class="line">pwndbg&gt; target remote localhost:1234</span><br><span class="line">// 加载fip.bin到内存</span><br><span class="line">pwndbg&gt; restore fip.bin binary 0x00040000</span><br><span class="line">// 继续运行</span><br><span class="line">pwndbg&gt; c</span><br><span class="line">Continuing.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">sx1ang@sx1ang-vm &gt; ~/WorkSpace/Soc/ATF/atf_load_u-boot &gt; qemu-system-aarch64 \</span><br><span class="line">    -nographic -machine virt,secure=on \</span><br><span class="line">    -cpu cortex-a53 \</span><br><span class="line">    -smp 2 -m 2048 \</span><br><span class="line">    -d unimp \</span><br><span class="line">    -bios bl1.bin \</span><br><span class="line">    -semihosting-config enable=on,target=native -S -s</span><br><span class="line">VERBOSE: Region: 0xe001000 - 0xe100000 has attributes 0xa</span><br><span class="line">VERBOSE: Region: 0x0 - 0x6000 has attributes 0x2</span><br><span class="line">VERBOSE: Region: 0x6000 - 0x9000 has attributes 0x42</span><br><span class="line">mmap:</span><br><span class="line"> VA:0x0  PA:0x0  size:0x6000  attr:0x2  granularity:0x40000000</span><br><span class="line"> VA:0x6000  PA:0x6000  size:0x3000  attr:0x42  granularity:0x40000000</span><br><span class="line"> VA:0x0  PA:0x0  size:0x4000000  attr:0x2  granularity:0x40000000</span><br><span class="line"> VA:0x4000000  PA:0x4000000  size:0x4000000  attr:0x2  granularity:0x40000000</span><br><span class="line"> VA:0x8000000  PA:0x8000000  size:0x1000000  attr:0x8  granularity:0x40000000</span><br><span class="line"> VA:0x9000000  PA:0x9000000  size:0xc00000  attr:0x8  granularity:0x40000000</span><br><span class="line"> VA:0xe000000  PA:0xe000000  size:0x1000  attr:0x8  granularity:0x40000000</span><br><span class="line"> VA:0xe001000  PA:0xe001000  size:0xff000  attr:0xa  granularity:0x40000000</span><br><span class="line"></span><br><span class="line">VERBOSE: Translation tables state:</span><br><span class="line">···</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong>默认从memmap中以FIP方式加载镜像，如果memmap中没有镜像，就会打印<code>Firmware Image Package header check failed.</code> 即FIP校验头失败；这种情况下qemu会使用半主机的方式读取镜像<code>Using Semi-hosting IO</code>，直接半主机方式读取原始镜像到内存地址中（实际上是通过读文件的方式），即不会再校验FIP镜像的header。因此如果需要FIP方式加载镜像，需要提前将镜像加载到memmap中。在gdb调试环境中，可以使用gdb的<strong>restore</strong>命令将fip镜像加载到内存中。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">restore file binary start_addr end_addr</span><br></pre></td></tr></table></figure>
+
+<p>开始地址是在ATF qemu平台的代码中配置的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> PLAT_QEMU_FIP_BASE		0x00040000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PLAT_QEMU_FIP_MAX_SIZE		0x00400000</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="image-20240508172744194.png"></p>
+<p>restore将镜像加载到内存之后再启动：</p>
+<p><img src="image-20240508172842205.png"></p>
+<p>gdb detach之后会得到u-boot的shell：</p>
+<p><img src="image-20240509175048990.png"></p>
+<p>gdb调试页面：</p>
+<p><img src="image-20240508175718000.png"></p>
+<p><img src="image-20240508175755975.png"></p>
+<p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/a565499699/article/details/79294261">https://blog.csdn.net/a565499699/article/details/79294261</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zhangye3017/article/details/80382496">https://blog.csdn.net/zhangye3017/article/details/80382496</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/gnivor/p/15153133.html">https://www.cnblogs.com/gnivor/p/15153133.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://liupzmin.com/2021/07/20/theory/stack-insight-02/">https://liupzmin.com/2021/07/20/theory/stack-insight-02/</a></p>
+<p><a target="_blank" rel="noopener" href="https://nanxiao.me/linux-pstack/">https://nanxiao.me/linux-pstack/</a></p>
+<h2 id="安全启动流程分析"><a href="#安全启动流程分析" class="headerlink" title="安全启动流程分析"></a>安全启动流程分析</h2><h3 id="代码入口"><a href="#代码入口" class="headerlink" title="代码入口"></a>代码入口</h3>
+  </div>
+</article>
+
+
+
+    <div class="blog-post-comments">
+        <div id="waline_thread"></div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Archives</a></li>
+        
+          <li><a href="/categories/">Categories</a></li>
+        
+          <li><a href="/tags/">Tags</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/note/">Note</a></li>
+        
+          <li><a href="/links/">Links</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.</span> <span class="toc-text">1. 调试环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-qemu"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 qemu</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-U-boot"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 U-boot</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-mbed-TLS%E5%BA%93"><span class="toc-number">1.3.</span> <span class="toc-text">1.3 mbed TLS库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-%E7%BC%96%E8%AF%91%E6%94%AF%E6%8C%81Trusted-Board-Boot%E7%9A%84%E9%95%9C%E5%83%8F"><span class="toc-number">1.4.</span> <span class="toc-text">1.4 编译支持Trusted Board Boot的镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-qemu%E9%80%9A%E8%BF%87ATF%E5%8A%A0%E8%BD%BDu-boot"><span class="toc-number">1.5.</span> <span class="toc-text">1.5 qemu通过ATF加载u-boot</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-gdb%E8%B0%83%E8%AF%95%E7%9B%AE%E6%A0%87%E9%95%9C%E5%83%8F"><span class="toc-number">1.6.</span> <span class="toc-text">1.6 gdb调试目标镜像</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">安全启动流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%85%A5%E5%8F%A3"><span class="toc-number">2.1.</span> <span class="toc-text">代码入口</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2023-2024
+    叶送溪
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+ 
+  <link
+    rel="preload"
+    href="/lib/font-awesome/css/all.min.css"
+    as="style"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+  <noscript
+    ><link
+      rel="stylesheet"
+      href="/lib/font-awesome/css/all.min.css"
+  /></noscript>
+
+
+    <!-- jquery -->
+
+  
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+
+
+
+<!-- clipboard -->
+
+  
+    
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+
+<!-- Waline Comments -->
+
+  <script type="module">
+    import { init } from 'https://unpkg.com/@waline/client@v2/dist/waline.mjs';
+
+    var EMOJI = ['//unpkg.com/@waline/emojis@1.2.0/weibo']
+    var META = ['nick', 'mail', 'link'];
+    var REQUIREDFIELDS = ['nick', 'mail', 'link'];
+
+    var emoji = '//unpkg.com/@waline/emojis@1.2.0/qq'.split(',').filter(function(item){
+      return item !== ''; // filter()返回满足不为空item
+    });
+    emoji = emoji.length == 0 ? EMOJI : emoji;
+
+    var meta = 'nick,mail'.split(',').filter(function(item){
+      return META.indexOf(item) > -1; // filter()返回满足META.indexOf(item) > -1为true的item
+    });
+    meta = meta.length == 0 ? META : meta;
+
+    var requiredFields = 'nick,mail'.split(',').filter(function(item){
+      return REQUIREDFIELDS.indexOf(item) > -1; // filter()返回满足META.indexOf(item) > -1为true的item
+    });
+    requiredFields = requiredFields.length == 0 ? REQUIREDFIELDS : requiredFields;
+
+    init({
+      el: '#waline_thread',
+      serverURL: 'blog-comments-vercel-server.vercel.app', // Waline 的服务端地址
+      path: '' == '' ? window.location.pathname : '', // 当前文章页路径，用于区分不同的文章页，以保证正确读取该文章页下的评论列表
+      lang: 'zh-CN' == '' ? 'zh-CN' : 'zh-CN', // 多语言支持，未设置默认英文
+      emoji: emoji,
+      dark: 'true', // 暗黑模式适配
+      commentSorting: '' == '' ? 'latest' : '', // 评论列表排序方式
+      meta: meta, // 评论者相关属性
+      requiredFields: requiredFields, // 设置必填项，默认匿名
+      login: '', // 登录模式状态
+      wordLimit: '', // 评论字数限制
+      pageSize: '10' == '' ? 10 : '10', // 评论列表分页，每页条数
+      imageUploader: '', // 自定义图片上传方法
+      highlighter: '', // 代码高亮
+      placeholder: '',
+      avatar: 'mm',
+      visitor: 'false',
+      comment_count: 'true',
+    });
+  </script>
+
+</body>
+</html>
