@@ -18,8 +18,8 @@
 <meta property="og:image" content="http://example.com/note/index/image-20231218103438450.png">
 <meta property="og:image" content="http://example.com/note/index/image-20231218123909762.png">
 <meta property="og:image" content="http://example.com/note/index/image-20231218124429756.png">
-<meta property="article:published_time" content="2024-07-03T03:00:42.815Z">
-<meta property="article:modified_time" content="2024-07-02T15:14:26.491Z">
+<meta property="article:published_time" content="2024-12-03T01:56:34.485Z">
+<meta property="article:modified_time" content="2024-12-02T02:22:52.492Z">
 <meta property="article:author" content="叶送溪">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/note/index/image-20231113095342551.png">
@@ -157,7 +157,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set var varname=1</span><br></pre></td></tr></table></figure>
 
 <h3 id="➜-C-虚表逆向"><a href="#➜-C-虚表逆向" class="headerlink" title="➜ C++虚表逆向"></a>➜ C++虚表逆向</h3><p><a target="_blank" rel="noopener" href="https://blog.iret.xyz/posts/cpp-vfunc-reversing-1/">https://blog.iret.xyz/posts/cpp-vfunc-reversing-1/</a><br><a target="_blank" rel="noopener" href="https://blog.iret.xyz/posts/cpp-vfunc-reversing-2/">https://blog.iret.xyz/posts/cpp-vfunc-reversing-2/</a></p>
-<h3 id="➜-查看当前目录下文件夹-文件大小"><a href="#➜-查看当前目录下文件夹-文件大小" class="headerlink" title="➜ 查看当前目录下文件夹&#x2F;文件大小"></a>➜ 查看当前目录下文件夹&#x2F;文件大小</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">du -h -d=1 ./*</span><br></pre></td></tr></table></figure>
+<h3 id="➜-查看当前目录下文件夹-文件大小"><a href="#➜-查看当前目录下文件夹-文件大小" class="headerlink" title="➜ 查看当前目录下文件夹&#x2F;文件大小"></a>➜ 查看当前目录下文件夹&#x2F;文件大小</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">du -h -d=1 ./*</span><br><span class="line">ls -alh</span><br></pre></td></tr></table></figure>
 
 <h3 id="➜-adb查询content-provider"><a href="#➜-adb查询content-provider" class="headerlink" title="➜ adb查询content provider"></a>➜ adb查询content provider</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">adb shell content query --uri content://com.mwr.example.sieve.DBContentProvider/Passwords</span><br><span class="line">adb shell content query --uri content://com.mwr.example.sieve.DBContentProvider/Passwords/ --projection &quot;&#x27;&quot;</span><br><span class="line">adb shell content query --uri content://com.mwr.example.sieve.DBContentProvider/Passwords/ --projection &quot;&#x27;&quot;</span><br></pre></td></tr></table></figure>
 
@@ -171,6 +171,17 @@
 
 <h3 id="➜-Android手机刷机救砖"><a href="#➜-Android手机刷机救砖" class="headerlink" title="➜ Android手机刷机救砖"></a>➜ Android手机刷机救砖</h3><p>先将手机切换成fastboot模式，然后再使用fastboot刷机</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">adb reboot bootloader  进入fastboot模式</span><br><span class="line">fastboot devices  查看设备连接状态</span><br></pre></td></tr></table></figure>
+
+<h3 id="➜-Android-System-read-only"><a href="#➜-Android-System-read-only" class="headerlink" title="➜ Android System read only"></a>➜ Android System read only</h3><p><a target="_blank" rel="noopener" href="https://android.stackexchange.com/questions/186630/android-o-failed-to-mount-system-dev-block-dm-0-is-read-only">https://android.stackexchange.com/questions/186630/android-o-failed-to-mount-system-dev-block-dm-0-is-read-only</a></p>
+<p>For debug build, user have to disable-verity at first. nly on debug build, user can <code>disable-verity</code>.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">adb root</span><br><span class="line">adb disable-verity</span><br><span class="line">adb reboot</span><br><span class="line">adb root</span><br><span class="line">adb remount</span><br><span class="line">adb shell</span><br><span class="line">mount -o rw,remount /system</span><br></pre></td></tr></table></figure>
+
+<p>In order to know build type of your android, in adb shell enter the following command:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /system/build.prop | grep build.type</span><br></pre></td></tr></table></figure>
+
+<h3 id="➜-Download-Secured-Artifactory-Artifact-With-WGET-and-Token"><a href="#➜-Download-Secured-Artifactory-Artifact-With-WGET-and-Token" class="headerlink" title="➜ Download Secured Artifactory Artifact With WGET and Token"></a>➜ Download Secured Artifactory Artifact With WGET and Token</h3><p><a target="_blank" rel="noopener" href="https://coding-stream-of-consciousness.com/2019/06/23/download-secured-artifactory-artifact-with-wget-and-token/">https://coding-stream-of-consciousness.com/2019/06/23/download-secured-artifactory-artifact-with-wget-and-token/</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget --header=&#x27;X-JFrog-Art-Api: your-very-long-token-from-artifactory&#x27; https://company.com/artifactory/local-pypi-repo/some_repo/some_project/artifact_name-3.1.0-py3-none-any.whl</span><br></pre></td></tr></table></figure>
+
 
         
   </div>
