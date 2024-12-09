@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="IDA ProIDB快照在使用IDA修改二进制文件之前，可以为最初的IDB做一个快照，通过快照功能可以迅速还原某个时间点的IDB状态。 快捷键：Ctrl+Shift+W，唤起IDB快照窗口  快捷键：Ctrl+Shift+T，唤出IDB快照弹窗，可以选择快照以恢复  IDB设置关键位置标记在逆向过程中可以为关键的判断或者指令设置标记，方便查找。    结构体通过头文件创建结构体在逆向过程中可以通过">
+<meta property="og:type" content="article">
+<meta property="og:title" content="工具使用指南">
+<meta property="og:url" content="http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="叶送溪&#39;s Blog">
+<meta property="og:description" content="IDA ProIDB快照在使用IDA修改二进制文件之前，可以为最初的IDB做一个快照，通过快照功能可以迅速还原某个时间点的IDB状态。 快捷键：Ctrl+Shift+W，唤起IDB快照窗口  快捷键：Ctrl+Shift+T，唤出IDB快照弹窗，可以选择快照以恢复  IDB设置关键位置标记在逆向过程中可以为关键的判断或者指令设置标记，方便查找。    结构体通过头文件创建结构体在逆向过程中可以通过">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/image-20241209173810583.png">
+<meta property="og:image" content="http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/image-20241209173951922.png">
+<meta property="og:image" content="http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/image-20241209174418539.png">
+<meta property="og:image" content="http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/image-20241209174459582.png">
+<meta property="og:image" content="http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/image-20241209174623472.png">
+<meta property="og:image" content="http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/image-20241209175005019.png">
+<meta property="og:image" content="http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/image-20241209175101080.png">
+<meta property="og:image" content="http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/image-20241209175451982.png">
+<meta property="og:image" content="http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/image-20241209175537337.png">
+<meta property="og:image" content="http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/image-20241209180250129.png">
+<meta property="og:image" content="http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/image-20241209180354410.png">
+<meta property="og:image" content="http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/image-20241209180819140.png">
+<meta property="og:image" content="http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/image-20241209181022331.png">
+<meta property="og:image" content="http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/image-20241209181239109.png">
+<meta property="og:image" content="http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/image-20241209181447974.png">
+<meta property="og:image" content="http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/image-20241209181546600.png">
+<meta property="og:image" content="http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/image-20241209182041504.png">
+<meta property="article:published_time" content="2099-12-09T09:26:51.000Z">
+<meta property="article:modified_time" content="2024-12-09T11:22:17.445Z">
+<meta property="article:author" content="叶送溪">
+<meta property="article:tag" content="工具">
+<meta property="article:tag" content="指南">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/image-20241209173810583.png">
+    
+    
+    <!-- title -->
+    <title>工具使用指南</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+  <!-- Waline Comments -->
+  
+    <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css"/>
+  
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Archives</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Categories</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tags</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/note/">Note</a></li><!--
+     --><!--
+       --><li><a href="/links/">Links</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/12/09/%E5%BC%80%E5%8F%91%E5%B8%B8%E7%94%A8%E4%BB%A3%E7%A0%81%E7%89%87%E6%AE%B5/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/&text=工具使用指南"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/&title=工具使用指南"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/&is_video=false&description=工具使用指南"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=工具使用指南&body=Check out this article: http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/&title=工具使用指南"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/&title=工具使用指南"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/&title=工具使用指南"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/&title=工具使用指南"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/&name=工具使用指南&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/&t=工具使用指南"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#IDA-Pro"><span class="toc-number">1.</span> <span class="toc-text">IDA Pro</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#IDB%E5%BF%AB%E7%85%A7"><span class="toc-number">1.1.</span> <span class="toc-text">IDB快照</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IDB%E8%AE%BE%E7%BD%AE%E5%85%B3%E9%94%AE%E4%BD%8D%E7%BD%AE%E6%A0%87%E8%AE%B0"><span class="toc-number">1.2.</span> <span class="toc-text">IDB设置关键位置标记</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-number">1.3.</span> <span class="toc-text">结构体</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E5%A4%B4%E6%96%87%E4%BB%B6%E5%88%9B%E5%BB%BA%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-number">1.3.1.</span> <span class="toc-text">通过头文件创建结构体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E7%BB%93%E6%9E%84%E4%BD%93%E6%95%B0%E7%BB%84"><span class="toc-number">1.3.2.</span> <span class="toc-text">定义结构体数组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%BC%E5%85%A5%E6%A0%87%E5%87%86%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-number">1.3.3.</span> <span class="toc-text">导入标准结构体</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Frida"><span class="toc-number">2.</span> <span class="toc-text">Frida</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#hook-Android-app"><span class="toc-number">2.1.</span> <span class="toc-text">hook Android app</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#hook%E4%BA%8C%E8%BF%9B%E5%88%B6"><span class="toc-number">2.2.</span> <span class="toc-text">hook二进制</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        工具使用指南
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">叶送溪</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2099-12-09T09:26:51.000Z" class="dt-published" itemprop="datePublished">2099-12-09</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag">工具</a>, <a class="p-category" href="/tags/%E6%8C%87%E5%8D%97/" rel="tag">指南</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="IDA-Pro"><a href="#IDA-Pro" class="headerlink" title="IDA Pro"></a>IDA Pro</h1><h2 id="IDB快照"><a href="#IDB快照" class="headerlink" title="IDB快照"></a>IDB快照</h2><p>在使用IDA修改二进制文件之前，可以为最初的IDB做一个快照，通过快照功能可以迅速还原某个时间点的IDB状态。</p>
+<p>快捷键：Ctrl+Shift+W，唤起IDB快照窗口</p>
+<p><img src="image-20241209173810583.png"></p>
+<p>快捷键：Ctrl+Shift+T，唤出IDB快照弹窗，可以选择快照以恢复</p>
+<p><img src="image-20241209173951922.png"></p>
+<h2 id="IDB设置关键位置标记"><a href="#IDB设置关键位置标记" class="headerlink" title="IDB设置关键位置标记"></a>IDB设置关键位置标记</h2><p>在逆向过程中可以为关键的判断或者指令设置标记，方便查找。</p>
+<p><img src="image-20241209174418539.png"></p>
+<p><img src="image-20241209174459582.png"></p>
+<p><img src="image-20241209174623472.png"></p>
+<h2 id="结构体"><a href="#结构体" class="headerlink" title="结构体"></a>结构体</h2><h3 id="通过头文件创建结构体"><a href="#通过头文件创建结构体" class="headerlink" title="通过头文件创建结构体"></a>通过头文件创建结构体</h3><p>在逆向过程中可以通过定义结构体来恢复对结构体的引用代码，减少逆向难度；</p>
+<p>快捷键：Shift+F1，打开本地类型窗口</p>
+<p><img src="image-20241209175005019.png"></p>
+<p><img src="image-20241209175101080.png"></p>
+<p><img src="image-20241209175451982.png"></p>
+<p>双击导入结构体：</p>
+<p><img src="image-20241209175537337.png"></p>
+<p>在函数中修改参数&#x2F;变量的类型即可使用自定义的结构体：</p>
+<p><img src="image-20241209180250129.png"></p>
+<p><img src="image-20241209180354410.png"></p>
+<h3 id="定义结构体数组"><a href="#定义结构体数组" class="headerlink" title="定义结构体数组"></a>定义结构体数组</h3><p>首先要定义结构体Test，示例中定义了3个大小为1 byte的成员，结构体整体大小为3字节：</p>
+<p><img src="image-20241209180819140.png"></p>
+<p>选择要定义结构体数组的首地址，按下快捷键 ALT+Q，将结构体数组的第一个元素定义为结构体：</p>
+<p><img src="image-20241209181022331.png"></p>
+<p>按下快捷键 shift+* 或者选择Array定义数组，数组元素默认为Test结构体：</p>
+<p><img src="image-20241209181239109.png"></p>
+<p>设置数组大小：<img src="image-20241209181447974.png"></p>
+<p><img src="image-20241209181546600.png"></p>
+<h3 id="导入标准结构体"><a href="#导入标准结构体" class="headerlink" title="导入标准结构体"></a>导入标准结构体</h3><p>除了手动创建结构体外，还可以导入 IDA 中已有的结构体，在 Structures 中创建结构体时，按 I 之后，选择已有的结构体即可。</p>
+<p><img src="image-20241209182041504.png"></p>
+<h1 id="Frida"><a href="#Frida" class="headerlink" title="Frida"></a>Frida</h1><h2 id="hook-Android-app"><a href="#hook-Android-app" class="headerlink" title="hook Android app"></a>hook Android app</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line">function getClassWrapper(klass) &#123; </span><br><span class="line">    for (var loader of Java.enumerateClassLoadersSync()) &#123; </span><br><span class="line">        try &#123; </span><br><span class="line">            loader.findClass(klass); </span><br><span class="line">            // console.log(`find class: $&#123;klass&#125;`);</span><br><span class="line">            return Java.ClassFactory.get(loader).use(klass); </span><br><span class="line">        &#125; catch (e) &#123; </span><br><span class="line">        // ignore and continue continue; </span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line">    throw new Error(`$&#123;klass&#125; not found`); </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function getClassInstance(klass) &#123;</span><br><span class="line">    var classInstance;</span><br><span class="line">    try &#123;</span><br><span class="line">        Java.choose(klass, &#123;</span><br><span class="line">            onMatch: function (instance) &#123;</span><br><span class="line">                classInstance = instance;</span><br><span class="line">            &#125;,</span><br><span class="line">            onComplete: function () &#123;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        return classInstance;</span><br><span class="line">    &#125; catch (e) &#123; </span><br><span class="line">        console.log(`$&#123;klass&#125; instance not found`)</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function setXXXState(state) &#123;</span><br><span class="line">    let OtaStateMachineMap_REMOTE = getClassWrapper(`com.xxx.xxx.xxx$OtaStateMachineREMOTE`);</span><br><span class="line">    let REMOTE = OtaStateMachineMap_GET_META_REMOTE.$new(`OtaStateMachineMap.REMOTE`, 11);</span><br><span class="line">    console.log(REMOTE);</span><br><span class="line"></span><br><span class="line">    let FSMContext = getClassInstance(&quot;statemap.FSMContext&quot;)</span><br><span class="line">    if (FSMContext) &#123;</span><br><span class="line">        console.log(FSMContext)</span><br><span class="line">        FSMContext.setState(REMOTE);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function printDebugLog(msg) &#123;</span><br><span class="line">    let mLogUtils = getClassWrapper(&quot;com.xxx.xxx.utils.LogUtils&quot;).$new();</span><br><span class="line">    let classtag = &quot;HookPrint&quot;;</span><br><span class="line"></span><br><span class="line">    mLogUtils[&quot;debug&quot;](classtag, msg);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function setStateLog() &#123;</span><br><span class="line">    let mFSMContext = getClassWrapper(&quot;statemap.FSMContext&quot;)</span><br><span class="line"></span><br><span class="line">    mFSMContext[&quot;setState&quot;].implementation = function (state) &#123;</span><br><span class="line">        console.log(`FSMContext.setState is called: state=$&#123;state&#125;`);</span><br><span class="line">        this[&quot;setState&quot;](state);</span><br><span class="line">        printFotaDebugLog(`setCurrentState: $&#123;state&#125;`);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">function main() &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        // 打印状态切换log</span><br><span class="line">        setStateLog();</span><br><span class="line">        </span><br><span class="line">    &#125; catch (e) &#123;</span><br><span class="line">        console.error(&quot;Error in main processing:&quot;, e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">setImmediate(function() &#123;</span><br><span class="line">    Java.perform(function() &#123;</span><br><span class="line">        main();</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h2 id="hook二进制"><a href="#hook二进制" class="headerlink" title="hook二进制"></a>hook二进制</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line">var moduleName = &quot;service&quot;;</span><br><span class="line"></span><br><span class="line">var baseAddress = Module.findBaseAddress(moduleName);</span><br><span class="line">if (baseAddress) &#123;</span><br><span class="line">    console.log(moduleName + &quot; base address is: &quot; + baseAddress);</span><br><span class="line">&#125; else &#123;</span><br><span class="line">    console.log(&quot;Error: Cannot find &quot; + moduleName);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var recv_fun_addr = &#x27;0x24B10&#x27;;</span><br><span class="line">var res_fun_addr = &#x27;0x24640&#x27;;</span><br><span class="line"></span><br><span class="line">function recvFunHook() &#123;</span><br><span class="line">    if (baseAddress !== null) &#123;</span><br><span class="line">        var targetAddress = baseAddress.add(recv_fun_addr);</span><br><span class="line">        Interceptor.attach(targetAddress, &#123;</span><br><span class="line">            onEnter: function (args) &#123;</span><br><span class="line">                this.args0 = args[0];</span><br><span class="line">                this.args1 = args[1];</span><br><span class="line">                this.args2 = args[2];</span><br><span class="line">                this.args0 = args[3];</span><br><span class="line">                this.args1 = args[4];</span><br><span class="line">                this.args2 = args[5];</span><br><span class="line"></span><br><span class="line">                var memoryData = Memory.readByteArray(this.args0, 0x140);</span><br><span class="line">                console.log(memoryData);</span><br><span class="line">                var data = new Uint8Array(memoryData);</span><br><span class="line">                if (data[0] == 0x5f &amp;&amp; data[1] == 0x1e) &#123;</span><br><span class="line">                    if (data[2] == 0x40) &#123;</span><br><span class="line">                        var length = (data[3] &lt;&lt; 8) | data[4];</span><br><span class="line">                        var memoryData = Memory.readByteArray(this.args0.add(0x6), length);</span><br><span class="line"></span><br><span class="line">                        console.log(&#x27;Recv Cloud Ctrl Data:\n&#x27;);</span><br><span class="line">                        console.log(memoryData);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            onLeave: function (retval) &#123;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        console.log(&#x27;Cannot find baseAddress: &#x27; + baseAddress);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function resFunHook() &#123;</span><br><span class="line">    if (baseAddress !== null) &#123;</span><br><span class="line">        var targetAddress = baseAddress.add(res_fun_addr);</span><br><span class="line">        Interceptor.attach(targetAddress, &#123;</span><br><span class="line">            onEnter: function (args) &#123;</span><br><span class="line">                this.args0 = args[0];</span><br><span class="line">                this.args1 = args[1];</span><br><span class="line">                this.args2 = args[2];</span><br><span class="line"></span><br><span class="line">            &#125;,</span><br><span class="line">            onLeave: function (retval) &#123;</span><br><span class="line">                var memoryData = Memory.readByteArray(this.args0, 0x140);</span><br><span class="line">                console.log(&#x27;Veh Response Data:\n&#x27;);</span><br><span class="line">                console.log(memoryData);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        console.log(&#x27;Cannot find baseAddress: &#x27; + baseAddress);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">recvFunHook();</span><br><span class="line">resFunHook();</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+  </div>
+</article>
+
+
+
+    <div class="blog-post-comments">
+        <div id="waline_thread"></div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Archives</a></li>
+        
+          <li><a href="/categories/">Categories</a></li>
+        
+          <li><a href="/tags/">Tags</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/note/">Note</a></li>
+        
+          <li><a href="/links/">Links</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#IDA-Pro"><span class="toc-number">1.</span> <span class="toc-text">IDA Pro</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#IDB%E5%BF%AB%E7%85%A7"><span class="toc-number">1.1.</span> <span class="toc-text">IDB快照</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IDB%E8%AE%BE%E7%BD%AE%E5%85%B3%E9%94%AE%E4%BD%8D%E7%BD%AE%E6%A0%87%E8%AE%B0"><span class="toc-number">1.2.</span> <span class="toc-text">IDB设置关键位置标记</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-number">1.3.</span> <span class="toc-text">结构体</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E5%A4%B4%E6%96%87%E4%BB%B6%E5%88%9B%E5%BB%BA%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-number">1.3.1.</span> <span class="toc-text">通过头文件创建结构体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E7%BB%93%E6%9E%84%E4%BD%93%E6%95%B0%E7%BB%84"><span class="toc-number">1.3.2.</span> <span class="toc-text">定义结构体数组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%BC%E5%85%A5%E6%A0%87%E5%87%86%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-number">1.3.3.</span> <span class="toc-text">导入标准结构体</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Frida"><span class="toc-number">2.</span> <span class="toc-text">Frida</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#hook-Android-app"><span class="toc-number">2.1.</span> <span class="toc-text">hook Android app</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#hook%E4%BA%8C%E8%BF%9B%E5%88%B6"><span class="toc-number">2.2.</span> <span class="toc-text">hook二进制</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2023-2024
+    叶送溪
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+ 
+  <link
+    rel="preload"
+    href="/lib/font-awesome/css/all.min.css"
+    as="style"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+  <noscript
+    ><link
+      rel="stylesheet"
+      href="/lib/font-awesome/css/all.min.css"
+  /></noscript>
+
+
+    <!-- jquery -->
+
+  
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+
+
+
+<!-- clipboard -->
+
+  
+    
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+
+<!-- Waline Comments -->
+
+  <script type="module">
+    import { init } from 'https://unpkg.com/@waline/client@v2/dist/waline.mjs';
+
+    var EMOJI = ['//unpkg.com/@waline/emojis@1.2.0/weibo']
+    var META = ['nick', 'mail', 'link'];
+    var REQUIREDFIELDS = ['nick', 'mail', 'link'];
+
+    var emoji = '//unpkg.com/@waline/emojis@1.2.0/qq'.split(',').filter(function(item){
+      return item !== ''; // filter()返回满足不为空item
+    });
+    emoji = emoji.length == 0 ? EMOJI : emoji;
+
+    var meta = 'nick,mail'.split(',').filter(function(item){
+      return META.indexOf(item) > -1; // filter()返回满足META.indexOf(item) > -1为true的item
+    });
+    meta = meta.length == 0 ? META : meta;
+
+    var requiredFields = 'nick,mail'.split(',').filter(function(item){
+      return REQUIREDFIELDS.indexOf(item) > -1; // filter()返回满足META.indexOf(item) > -1为true的item
+    });
+    requiredFields = requiredFields.length == 0 ? REQUIREDFIELDS : requiredFields;
+
+    init({
+      el: '#waline_thread',
+      serverURL: 'blog-comments-vercel-server.vercel.app', // Waline 的服务端地址
+      path: '' == '' ? window.location.pathname : '', // 当前文章页路径，用于区分不同的文章页，以保证正确读取该文章页下的评论列表
+      lang: 'zh-CN' == '' ? 'zh-CN' : 'zh-CN', // 多语言支持，未设置默认英文
+      emoji: emoji,
+      dark: 'true', // 暗黑模式适配
+      commentSorting: '' == '' ? 'latest' : '', // 评论列表排序方式
+      meta: meta, // 评论者相关属性
+      requiredFields: requiredFields, // 设置必填项，默认匿名
+      login: '', // 登录模式状态
+      wordLimit: '', // 评论字数限制
+      pageSize: '10' == '' ? 10 : '10', // 评论列表分页，每页条数
+      imageUploader: '', // 自定义图片上传方法
+      highlighter: '', // 代码高亮
+      placeholder: '',
+      avatar: 'mm',
+      visitor: 'false',
+      comment_count: 'true',
+    });
+  </script>
+
+</body>
+</html>
