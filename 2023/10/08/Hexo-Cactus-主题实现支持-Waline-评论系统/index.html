@@ -19,7 +19,7 @@
 <meta property="og:image" content="http://example.com/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/image-20231009113252832.png">
 <meta property="og:image" content="http://example.com/2023/10/08/Hexo-Cactus-%E4%B8%BB%E9%A2%98%E5%AE%9E%E7%8E%B0%E6%94%AF%E6%8C%81-Waline-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/image-20231009113029346.png">
 <meta property="article:published_time" content="2023-10-08T08:51:57.000Z">
-<meta property="article:modified_time" content="2024-05-23T02:27:35.211Z">
+<meta property="article:modified_time" content="2024-12-17T08:40:31.914Z">
 <meta property="article:author" content="叶送溪">
 <meta property="article:tag" content="博客">
 <meta property="article:tag" content="Hexo">
@@ -204,6 +204,7 @@
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>上述文件都修改完成之后就可以重新 hexo g 生成静态网页，并执行 hexo s 本地查看。效果如下：</p>
 <p><img src="image-20231009113252832.png" alt="image-20231009113252832"></p>
 <p><strong>注意：</strong>如果代码出现 bug 或者配置不正确，都会导致 Waline 不显示，并且 hexo 不一定会报错，需要仔细检查并手动调试排错。</p>
+<p><strong>如果生成的静态页面背景颜色未改变，可以先执行hexo clean操作，再hexo g重新生成。</strong></p>
 <h2 id="未解决的问题"><a href="#未解决的问题" class="headerlink" title="未解决的问题"></a>未解决的问题</h2><p>Cactus 主题支持多种配色，主要分为黑白两种模式。Waline 主题也支持黑白两种配色，通过在配置文件中设置 dark: true 来跟随主题颜色改变评论系统的配色，其主要的实现方法是在 html 中注入 style 元素动态修改评论系统的 css 属性，其中 true 就是配置文件中的 dark 属性的值：</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span> <span class="attr">id</span>=<span class="string">&quot;waline-darkmode&quot;</span>&gt;</span><span class="language-css">true&#123;<span class="attr">--waline-white</span>:<span class="number">#000</span>;<span class="attr">--waline-light-grey</span>:<span class="number">#666</span>;<span class="attr">--waline-dark-grey</span>:<span class="number">#999</span>;<span class="attr">--waline-color</span>:<span class="number">#888</span>;<span class="attr">--waline-bgcolor</span>:<span class="number">#1e1e1e</span>;<span class="attr">--waline-bgcolor-light</span>:<span class="number">#272727</span>;<span class="attr">--waline-bgcolor-hover</span>: <span class="number">#444</span>;<span class="attr">--waline-border-color</span>:<span class="number">#333</span>;<span class="attr">--waline-disable-bgcolor</span>:<span class="number">#444</span>;<span class="attr">--waline-disable-color</span>:<span class="number">#272727</span>;<span class="attr">--waline-bq-color</span>:<span class="number">#272727</span>;<span class="attr">--waline-info-bgcolor</span>:<span class="number">#272727</span>;<span class="attr">--waline-info-color</span>:<span class="number">#666</span>&#125;</span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
