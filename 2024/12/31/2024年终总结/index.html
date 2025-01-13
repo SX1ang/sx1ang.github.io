@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="第一次写年终总结，随便记录一下。 工作H1H1主要是做一些安全测试和黑产分析工作。  学习 Android 常见的组件漏洞，Android 组件逻辑漏洞漫谈 这篇文章写的不错，推荐；  学习 Arm 安全启动测试，BootROM 的安全启动代码一般都是移植的 https:&#x2F;&#x2F;github.com&#x2F;ARM-software&#x2F;arm-trusted-firmware 项目，上层的框架和接口基本都是不变">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2024年终总结">
+<meta property="og:url" content="http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="叶送溪&#39;s Blog">
+<meta property="og:description" content="第一次写年终总结，随便记录一下。 工作H1H1主要是做一些安全测试和黑产分析工作。  学习 Android 常见的组件漏洞，Android 组件逻辑漏洞漫谈 这篇文章写的不错，推荐；  学习 Arm 安全启动测试，BootROM 的安全启动代码一般都是移植的 https:&#x2F;&#x2F;github.com&#x2F;ARM-software&#x2F;arm-trusted-firmware 项目，上层的框架和接口基本都是不变">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/20250113-175839.jpeg">
+<meta property="og:image" content="http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/image-20250113192854935.png">
+<meta property="og:image" content="http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/image-20250113193004836.png">
+<meta property="og:image" content="http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/image-20250113193018240.png">
+<meta property="og:image" content="http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/image-20250113193232222.png">
+<meta property="og:image" content="http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/image-20250113193301095.png">
+<meta property="og:image" content="http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/image-20250113193623754.png">
+<meta property="og:image" content="http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/image-20250113193849686.png">
+<meta property="og:image" content="http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/image-20250113193931881.png">
+<meta property="og:image" content="http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/image-20250113194050955.png">
+<meta property="og:image" content="http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/image-20250113194029088.png">
+<meta property="og:image" content="http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/image-20250113194131936.png">
+<meta property="og:image" content="http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/image-20250113194649159.png">
+<meta property="og:image" content="http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/image-20250113194754296.png">
+<meta property="og:image" content="http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/image-20250113194932089.png">
+<meta property="article:published_time" content="2024-12-31T09:16:19.000Z">
+<meta property="article:modified_time" content="2025-01-13T11:55:42.811Z">
+<meta property="article:author" content="叶送溪">
+<meta property="article:tag" content="年终总结">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/20250113-175839.jpeg">
+    
+    
+    <!-- title -->
+    <title>2024年终总结</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+  <!-- Waline Comments -->
+  
+    <link rel="stylesheet" href="https://unpkg.com/@waline/client@v2/dist/waline.css"/>
+  
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Archives</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Categories</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tags</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/note/">Note</a></li><!--
+     --><!--
+       --><li><a href="/links/">Links</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2099/12/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/12/17/%E5%9F%BA%E4%BA%8EJenkins%E6%90%AD%E5%BB%BA%E8%87%AA%E5%8A%A8%E5%8C%96%E5%AE%89%E5%85%A8%E6%A3%80%E6%B5%8B%E5%B9%B3%E5%8F%B0/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/&text=2024年终总结"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/&title=2024年终总结"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/&is_video=false&description=2024年终总结"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=2024年终总结&body=Check out this article: http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/&title=2024年终总结"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/&title=2024年终总结"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/&title=2024年终总结"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/&title=2024年终总结"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/&name=2024年终总结&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/12/31/2024%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/&t=2024年终总结"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C"><span class="toc-number">1.</span> <span class="toc-text">工作</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#H1"><span class="toc-number">1.1.</span> <span class="toc-text">H1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#H2"><span class="toc-number">1.2.</span> <span class="toc-text">H2</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%94%9F%E6%B4%BB"><span class="toc-number">2.</span> <span class="toc-text">生活</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-number">3.</span> <span class="toc-text">其他</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        2024年终总结
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">叶送溪</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-12-31T09:16:19.000Z" class="dt-published" itemprop="datePublished">2024-12-31</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/">年终总结</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" rel="tag">年终总结</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>第一次写年终总结，随便记录一下。</p>
+<h1 id="工作"><a href="#工作" class="headerlink" title="工作"></a>工作</h1><h2 id="H1"><a href="#H1" class="headerlink" title="H1"></a>H1</h2><p>H1主要是做一些安全测试和黑产分析工作。</p>
+<ul>
+<li><p>学习 Android 常见的组件漏洞，<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzA3MzU1MDQwOA==&mid=2247484210&idx=1&sn=e9977a9de0c81a5115e0e04c8469485f">Android 组件逻辑漏洞漫谈</a> 这篇文章写的不错，推荐；</p>
+</li>
+<li><p>学习 Arm 安全启动测试，BootROM 的安全启动代码一般都是移植的 <a target="_blank" rel="noopener" href="https://github.com/ARM-software/arm-trusted-firmware">https://github.com/ARM-software/arm-trusted-firmware</a> 项目，上层的框架和接口基本都是不变的，移植过程主要是开发底层平台相关和三方的驱动代码，为上层提供接口。在安全测试过程中，主要是测试这部分驱动代码；</p>
+</li>
+<li><p>去中汽中心出差，食堂的拌面非常好吃👍</p>
+<img src="20250113-175839.jpeg" alt="20250113-175839" style="zoom:10%;">
+</li>
+<li><p>分析平行出口黑产的本地化方案，感叹一句：外面还是有很多大佬的，APP逆向能力还有待提高；</p>
+</li>
+<li><p>换了新工区办公，味儿挺大。</p>
+</li>
+</ul>
+<h2 id="H2"><a href="#H2" class="headerlink" title="H2"></a>H2</h2><p>H2更多的是做一些安全验证和自动化平台建设工作。</p>
+<ul>
+<li>算是把UDS诊断协议好好学习了一下，推荐一个简短的学习资料：<a target="_blank" rel="noopener" href="https://www.dgtech.com/wp-content/uploads/2019/08/WP1903_UDS_V01.pdf%EF%BC%8C%E5%86%99%E7%9A%84%E5%88%B7%E5%86%99%E4%BB%A3%E7%A0%81%E8%BF%98%E6%98%AF%E6%9C%89%E4%B8%80%E4%BA%9Bbug%EF%BC%8Cpython%E5%BC%80%E5%8F%91%E8%83%BD%E5%8A%9B%E5%92%8C%E8%A7%84%E8%8C%83%E8%BF%98%E6%9C%89%E5%BE%85%E6%8F%90%E5%8D%87%EF%BC%9B">https://www.dgtech.com/wp-content/uploads/2019/08/WP1903_UDS_V01.pdf，写的刷写代码还是有一些bug，python开发能力和规范还有待提升；</a></li>
+<li>开发过程中也是把git好好学习使用了一下，git stash 的暂存功能实在是太好用了；</li>
+<li>自动化平台大老板给推荐了Jenkins，目前用起来还不错，能基本满足需求。任务调度，多任务运行这些核心功能体验下来还是很不错的，但是插件的选用，适配和前端展示弄起来还是挺痛苦的；</li>
+<li>工作中还是多写一些自动化脚本，效率更高，人也更轻松。</li>
+</ul>
+<p>24年工作还算比较顺利，希望25年能更好吧，能学到更多东西。H1公司也发生了一些变故，身边很多同事被迫离职了，希望公司的产品能越买越好吧，挺过这个内卷的时代！</p>
+<h1 id="生活"><a href="#生活" class="headerlink" title="生活"></a>生活</h1><ul>
+<li><p>体验了滑雪，推荐新手滑双板，不要选单板😭</p>
+<img src="image-20250113192854935.png" style="zoom:10%;">
+</li>
+<li><p>大老板手写的龙年龙字福🐲</p>
+<img src="image-20250113193004836.png" alt="image-20250113193004836" style="zoom:25%;">
+</li>
+<li><p>游玩颐和园⛲️</p>
+<img src="image-20250113193018240.png" style="zoom:10%;">
+</li>
+<li><p>女朋友来北京小米实习了，一起度过了很多快乐时光❤️</p>
+</li>
+<li><p>去逛了潘家园，小物件挺多的，顺便配了个眼镜，很便宜</p>
+<img src="image-20250113193232222.png" alt="image-20250113193232222" style="zoom:10%;">
+</li>
+<li><p>五一带女朋友回老家，见家里人了😊</p>
+<img src="image-20250113193301095.png" alt="image-20250113193301095" style="zoom:10%;">
+</li>
+<li><p>体验了一把水立方水上乐园，很刺激🤩</p>
+<img src="image-20250113193623754.png" alt="image-20250113193623754" style="zoom:10%;">
+</li>
+<li><p>去青岛旅游，看海🌊</p>
+</li>
+<li><p>拔了四颗智齿，总算没有痛苦了，推荐北大口腔的王菲医生👨‍⚕️</p>
+</li>
+<li><p>领养了小“十五”，非常可爱🐶</p>
+<img src="image-20250113193849686.png" alt="image-20250113193849686" style="zoom:10%;">
+
+<img src="image-20250113193931881.png" alt="image-20250113193931881" style="zoom:10%;">
+
+<img src="image-20250113194050955.png" alt="image-20250113194050955" style="zoom:10%;">
+
+<img src="image-20250113194029088.png" alt="image-20250113194029088" style="zoom:10%;">
+
+
+</li>
+<li><p>游玩崇礼太舞小镇，风景很棒⛰️</p>
+<img src="image-20250113194131936.png" alt="image-20250113194131936" style="zoom:10%;">
+</li>
+<li><p>带家里人来北京旅游，玩了故宫、人民大会堂、毛主席纪念堂、长城。真心不推荐节假日游玩，人很多🔥</p>
+</li>
+<li><p>和女朋友一起看了杰哥演唱会🎙️</p>
+<img src="image-20250113194649159.png" alt="image-20250113194649159" style="zoom:10%;">
+</li>
+<li><p>买了个相机，学习摄影，推荐教程：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1X7411572f">https://www.bilibili.com/video/BV1X7411572f</a></p>
+</li>
+<li><p>小松鼠、小刺猬</p>
+<img src="image-20250113194754296.png" alt="image-20250113194754296" style="zoom:10%;">
+
+<img src="image-20250113194932089.png" alt="image-20250113194932089" style="zoom:10%;"></li>
+</ul>
+<h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><ul>
+<li>开始听喜马拉雅，比起刷视频，听书更放松，推荐明朝那些事儿、百家讲坛、温铁军老师；</li>
+<li>《毛泽东选集》：<a target="_blank" rel="noopener" href="https://github.com/SX1ang/Highland-of-Thought/tree/main/%E6%AF%9B%E6%B3%BD%E4%B8%9C%E9%80%89%E9%9B%86">https://github.com/SX1ang/Highland-of-Thought/tree/main/%E6%AF%9B%E6%B3%BD%E4%B8%9C%E9%80%89%E9%9B%86</a></li>
+</ul>
+
+  </div>
+</article>
+
+
+
+    <div class="blog-post-comments">
+        <div id="waline_thread"></div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Archives</a></li>
+        
+          <li><a href="/categories/">Categories</a></li>
+        
+          <li><a href="/tags/">Tags</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/note/">Note</a></li>
+        
+          <li><a href="/links/">Links</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C"><span class="toc-number">1.</span> <span class="toc-text">工作</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#H1"><span class="toc-number">1.1.</span> <span class="toc-text">H1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#H2"><span class="toc-number">1.2.</span> <span class="toc-text">H2</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%94%9F%E6%B4%BB"><span class="toc-number">2.</span> <span class="toc-text">生活</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-number">3.</span> <span class="toc-text">其他</span></a></li></ol>
+      </div>
+    
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2023-2025
+    叶送溪
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+ 
+  <link
+    rel="preload"
+    href="/lib/font-awesome/css/all.min.css"
+    as="style"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+  <noscript
+    ><link
+      rel="stylesheet"
+      href="/lib/font-awesome/css/all.min.css"
+  /></noscript>
+
+
+    <!-- jquery -->
+
+  
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+
+
+
+<!-- clipboard -->
+
+  
+    
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+
+<!-- Waline Comments -->
+
+  <script type="module">
+    import { init } from 'https://unpkg.com/@waline/client@v2/dist/waline.mjs';
+
+    var EMOJI = ['//unpkg.com/@waline/emojis@1.2.0/weibo']
+    var META = ['nick', 'mail', 'link'];
+    var REQUIREDFIELDS = ['nick', 'mail', 'link'];
+
+    var emoji = '//unpkg.com/@waline/emojis@1.2.0/qq'.split(',').filter(function(item){
+      return item !== ''; // filter()返回满足不为空item
+    });
+    emoji = emoji.length == 0 ? EMOJI : emoji;
+
+    var meta = 'nick,mail'.split(',').filter(function(item){
+      return META.indexOf(item) > -1; // filter()返回满足META.indexOf(item) > -1为true的item
+    });
+    meta = meta.length == 0 ? META : meta;
+
+    var requiredFields = 'nick,mail'.split(',').filter(function(item){
+      return REQUIREDFIELDS.indexOf(item) > -1; // filter()返回满足META.indexOf(item) > -1为true的item
+    });
+    requiredFields = requiredFields.length == 0 ? REQUIREDFIELDS : requiredFields;
+
+    init({
+      el: '#waline_thread',
+      serverURL: 'blog-comments-vercel-server.vercel.app', // Waline 的服务端地址
+      path: '' == '' ? window.location.pathname : '', // 当前文章页路径，用于区分不同的文章页，以保证正确读取该文章页下的评论列表
+      lang: 'zh-CN' == '' ? 'zh-CN' : 'zh-CN', // 多语言支持，未设置默认英文
+      emoji: emoji,
+      dark: 'true', // 暗黑模式适配
+      commentSorting: '' == '' ? 'latest' : '', // 评论列表排序方式
+      meta: meta, // 评论者相关属性
+      requiredFields: requiredFields, // 设置必填项，默认匿名
+      login: '', // 登录模式状态
+      wordLimit: '', // 评论字数限制
+      pageSize: '10' == '' ? 10 : '10', // 评论列表分页，每页条数
+      imageUploader: '', // 自定义图片上传方法
+      highlighter: '', // 代码高亮
+      placeholder: '',
+      avatar: 'mm',
+      visitor: 'false',
+      comment_count: 'true',
+    });
+  </script>
+
+</body>
+</html>
